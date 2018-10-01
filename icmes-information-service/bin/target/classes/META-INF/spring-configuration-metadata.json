@@ -1,0 +1,27 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.dtelec.icmes.information.config.SystemSettingConfig",
+      "name": "icmes",
+      "type": "com.dtelec.icmes.information.config.SystemSettingConfig"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.dtelec.icmes.information.config.SystemSettingConfig",
+      "name": "icmes.command-timeout",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "com.dtelec.icmes.information.config.SystemSettingConfig",
+      "name": "icmes.command-worker-count",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "com.dtelec.icmes.information.config.SystemSettingConfig",
+      "name": "icmes.version",
+      "type": "java.lang.String"
+    }
+  ]
+}

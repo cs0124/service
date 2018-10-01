@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dtelec.icmes.information.repository.dao.IOrganizationDao">
+	<!-- 获取组织机构全称 -->
+	<select id="getFullNameOrganizations"  resultType="com.dtelec.icmes.information.repository.entity.OrganizationFullNameEntity">
+        select  Id,
+        		Name,
+        		getFullParentOrganizationsName(Id) as fullName ,
+        		getFullParentOrganizationsName(ParentId) as parentFullName ,
+        		ParentId,
+        		versionTag,
+        		(case  when (select count(1) from Organization where parentId=a.Id)>0
+        		then true else false end ) hasChild
+        from 	Organization a
+       <trim prefix="WHERE (" suffix=")" prefixOverrides="AND |OR ">
+        	find_in_set(Id,getFullChildOrganizationsId(#{param.parentId},#{param.hierarchy}))
+			<if test="param.id != null and param.id != ''">
+				and Id like concat('%',#{param.id},'%')
+			</if>
+			<if test="param.name != null and param.name != ''">
+				and Name like concat('%',#{param.name},'%')
+			</if>
+		</trim>
+		<if test="param.orderBy != null and param.orderBy != '' and param.ascending == true">
+		    order by ${param.orderBy} asc
+		</if>
+		<if test="param.orderBy != null and param.orderBy != '' and param.ascending == false">
+		    order by ${param.orderBy} desc
+		</if>
+		<if test="param.startIndex > -1 and param.pageSize > 0">
+		    LIMIT #{param.startIndex}, #{param.pageSize}
+		</if>
+    </select>
+    
+    <!-- 获取组织机构全称数量统计 -->
+    <select id="getFullNameOrganizationsCount"  resultType="java.lang.Integer">
+        select  count(1) as count
+        from 	Organization 
+        <trim prefix="WHERE (" suffix=")" prefixOverrides="AND |OR ">
+        	find_in_set(Id,getFullChildOrganizationsId(#{param.parentId},#{param.hierarchy}))
+			<if test="param.id != null and param.id != ''">
+				and Id like concat('%',#{param.id},'%')
+			</if>
+			<if test="param.name != null and param.name != ''">
+				and Name like concat('%',#{param.name},'%')
+			</if>
+		</trim>
+    </select>
+    
+	<!-- 创建组织机构 -->
+	<insert id="createOrganization" parameterType="com.dtelec.icmes.information.repository.entity.OrganizationEntity">
+		insert into Organization 
+			(Id,Name,ParentId,VersionTag) 
+		values 
+			(#{entity.id},#{entity.name},#{entity.parentId},#{entity.versionTag}) 
+	
+	</insert>
+	
+	<!--查询传入的组织机构版本号  -->
+	<select id="fetchOrganizationVersionTag" parameterType="com.dtelec.icmes.information.repository.entity.OrganizationEntity" resultType="com.dtelec.icmes.information.repository.entity.OrganizationEntity">
+		select VersionTag from Organization where Id = #{entity.id}
+	
+	</select>
+	
+	<!-- 编辑组织机构 -->
+	<update id="updateOrganization" parameterType="com.dtelec.icmes.information.repository.entity.OrganizationEntity">
+		update  Organization 
+		set	Name = #{entity.name},ParentId=#{entity.parentId},VersionTag=#{entity.versionTag},UpdateTime=now()
+		where Id = #{entity.id}
+	
+	</update>
+	
+	<!--查询是否和角色以及用户表关联  -->
+	<select id="countOrganizationASS" parameterType="com.dtelec.icmes.information.repository.entity.OrganizationEntity" resultType="java.lang.Integer">
+		select count(1) as count from UserRoleAss_Organization_ASS where OrganizationId = #{entity.id}
+	
+	</select>
+	
+	<!--查询是否和员工表关联  -->
+	<select id="countOrganizationEmployeeASS" parameterType="com.dtelec.icmes.information.repository.entity.OrganizationEntity" resultType="java.lang.Integer">
+		select count(1) as count from Employee where OrganizationId = #{entity.id}
+	
+	</select>
+	
+	<!--查询是否是叶子  -->
+	<select id="countOrganizationIfEnd" parameterType="com.dtelec.icmes.information.repository.entity.OrganizationEntity" resultType="java.lang.Integer">
+		select count(1) as count from Organization where ParentId = #{entity.id}
+	
+	</select>
+	
+	<!-- 删除组织机构 -->
+	<delete id="deleteOrganization" parameterType="com.dtelec.icmes.information.repository.entity.OrganizationEntity">
+		delete from   Organization 
+		where Id = #{entity.id}
+	
+	</delete>
+	
+	<!--查询组织机构和账户关系树  -->
+	<select id="getOrganizationAccounts" parameterType="java.lang.String" resultType="com.dtelec.icmes.information.repository.entity.OrganizationAccountEntity">
+		SELECT 
+		    IFNULL(a.OrganizationId, '0') AS parentId,
+		    (SELECT 
+		            Organization.Name
+		        FROM
+		            Organization
+		        WHERE
+		            Organization.Id = IFNULL(a.OrganizationId, '0')) AS parentName,
+		    a.Id AS id,
+		    a.Name AS name,
+		    b.Id AS userId,
+		    FALSE AS hasChild
+		FROM
+		    Employee a
+		        INNER JOIN
+		    User b
+		WHERE
+		    b.EmployeeId = a.Id
+		 <if test="name != null and name != ''">
+		    AND a.Name LIKE CONCAT('%', #{name}, '%')
+		 </if>
+		UNION 
+		SELECT 
+		    MAX('0') AS parentId,
+		    MAX((SELECT 
+		            Name
+		        FROM
+		            Organization
+		        WHERE
+		            Id = '0')) AS parentName,
+		    a.OrganizationId AS id,
+		    MAX((SELECT 
+		            Organization.Name
+		        FROM
+		            Organization
+		        WHERE
+		            Organization.Id = a.OrganizationId)) AS name,
+		    '',
+		    TRUE AS hasChild
+		FROM
+		    Employee a
+		        INNER JOIN
+		    User b
+		WHERE
+		    b.EmployeeId = a.Id
+		     <![CDATA[   AND a.OrganizationId <> '0' ]]>
+		GROUP BY a.OrganizationId 
+			<if test="name != null and name != ''">
+						AND a.Name LIKE CONCAT('%', #{name}, '%')
+			</if>
+		UNION 
+		SELECT 
+		    ParentId, '', Id, Name, '', TRUE AS hasChild
+		FROM
+		    Organization
+		WHERE
+		    Id = '0'
+	</select>
+</mapper>
