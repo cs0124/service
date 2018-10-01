@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dtelec.icmes.auth.repository.dao.IUserDao">
+    <resultMap id="userMapping" type="com.dtelec.icmes.auth.repository.entity.UserEntity">
+        <result property="id" column="Id"/>
+        <result property="employeeId" column="EmployeeId"/>
+        <result property="password" column="Password"/>
+        <result property="changePassword" column="ChangePassword"/>
+        <result property="isLock" column="IsLocked"/>
+        <result property="retryCount" column="RetryCount"/>
+        <collection property="roles" ofType="com.dtelec.icmes.auth.repository.entity.RoleEntity">
+            <result property="id" column="RoleId"/>
+            <result property="name" column="RoleName"/>
+        </collection>
+    </resultMap>    
+    <select id="findByEmployeeId"  resultMap="userMapping">
+        SELECT U.*, R.Id as RoleId, R.Name as RoleName
+        FROM `User` U
+        LEFT JOIN `User_Role_ASS` A ON U.Id = A.UserId
+        LEFT JOIN `Role` R ON R.Id = RoleId
+        WHERE U.EmployeeId = #{employeeId} and U.IsDeleted = 0
+    </select>
+</mapper>

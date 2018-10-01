@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: icmes-auth-service
+Implementation-Version: 1.0.0-SNAPSHOT
+Built-By: Administrator
+Implementation-Vendor-Id: com.dtelec.icmes
+Build-Jdk: 1.8.0_45
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/icmes-server/icmes-auth-service
+Created-By: Maven Integration for Eclipse
+
