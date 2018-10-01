@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dtelec.icmes.account.repository.dao.IRoleDao">
+
+    <!-- 查询role列表 -->
+    <select id="searchRoleByParam" resultType="com.dtelec.icmes.account.repository.entity.RoleEntity">
+    	SELECT 
+		    Id,
+		    Name,
+		    Remark,
+		    VersionTag,
+		    GROUP_CONCAT(b.FeatureId) AS features
+		FROM
+		    Role a
+		        LEFT JOIN
+		    Role_Feature_ASS b ON a.id = b.RoleId
+    	<where>
+			<if test="params.id != null and params.id != ''">
+				and Id like concat('%',#{params.id},'%')
+			</if>
+			<if test="params.name != null and params.name != ''">
+				and Name like concat('%',#{params.name},'%')
+			</if>
+		</where>
+		GROUP BY a.Id , a.Name , a.Remark , a.VersionTag
+		<if test="params.orderBy != null and params.orderBy != '' and params.ascending == true">
+		    order by ${params.orderBy} asc
+		</if>
+		<if test="params.orderBy != null and params.orderBy != '' and params.ascending == false">
+		    order by ${params.orderBy} desc
+		</if>
+		<if test="params.startIndex > -1 and params.pageSize > 0">
+		    LIMIT #{params.startIndex}, #{params.pageSize}
+		</if>
+    </select>
+    
+    <!-- 查询role列表总数 -->
+    <select id="searchRoleTotalCountByParam"  resultType="long">
+    	select count(1) as count 
+    	from Role 
+    	<where>
+			<if test="params.id != null and params.id != ''">
+				and Id like concat('%',#{params.id},'%')
+			</if>
+			<if test="params.name != null and params.name != ''">
+				and Name like concat('%',#{params.name},'%')
+			</if>
+		</where>
+    </select>
+
+
+
+	<!-- 检查role是否有关联User的数据 -->
+    <select id="checkRoleCount" parameterType="java.lang.String"  resultType="java.lang.Integer">
+    	select count(1) from User_Role_ASS where RoleId=#{id}
+    </select>
+    
+    <!-- 删除role -->
+    <delete id="deleteRole" parameterType="java.lang.String" >
+    	delete from Role_Feature_ASS where RoleId=#{id};
+    	delete from User_Proxy_Assignment where ConsignUserRoleAss in (select id from User_Role_ASS where RoleId=#{id} );
+    	delete from UserRoleAss_Organization_ASS where AssId in (select id from User_Role_ASS where RoleId=#{id} );
+    	delete from User_Role_ASS where roleId = #{id};
+    	delete from Role where Id = #{id}
+    </delete>
+    
+    <!-- 检查role是否存在 -->
+    <select id="countRole" parameterType="java.lang.String"  resultType="java.lang.Integer">
+    	select count(1) from Role where Id=#{id}
+    </select>
+    
+    <!--新增role和feature  -->
+    <insert id="createRole" parameterType="com.dtelec.icmes.account.repository.param.RoleCreateParam">
+        insert into Role (Id,Name,Remark,VersionTag) values (#{param.id},#{param.name},#{param.remark},#{param.versionTag});
+    	<foreach collection="param.features"   item="featureId" >
+       	 insert into Role_Feature_ASS (RoleId,FeatureId) values (#{param.id}, #{featureId});
+        </foreach>
+    
+    </insert>
+    
+    <!--新增role和feature  -->
+    <update id="updateRole" parameterType="com.dtelec.icmes.account.repository.param.RoleCreateParam">
+    	delete from Role where Id = #{param.id};
+        delete from Role_Feature_ASS where RoleId = #{param.id};
+        insert into Role (Id,Name,Remark,VersionTag) values (#{param.id},#{param.name},#{param.remark},#{param.versionTag});
+    	<foreach collection="param.features"   item="featureId" >
+       	 insert into Role_Feature_ASS (RoleId,FeatureId) values (#{param.id}, #{featureId});
+        </foreach>
+    
+    </update>
+    
+    <!-- 检查role的versionTag -->
+    <select id="checkRoleVersionTag" parameterType="java.lang.String"  resultType="java.lang.String">
+    	select VersionTag from Role where Id=#{id}
+    </select>
+    
+    <!-- 查询roleAccountOrg关系 -->
+    <select id="searchAccountOrgByParams" parameterType="map"  resultType="com.dtelec.icmes.account.repository.param.AccountOrgPageableReturnParam">
+   			SELECT 
+			    a.UserId AS id,
+			    c.Name,
+			    c.OrganizationId,
+			    GETFULLPARENTORGANIZATIONSNAME(c.OrganizationId) AS fullOrgName
+			FROM
+			    User_Role_ASS a
+			        INNER JOIN
+			    `User` b ON b.Id = a.UserId
+			        INNER JOIN
+			    `Employee` c ON c.Id = b.EmployeeId
+			WHERE
+			    a.RoleId = #{params.roleId}
+			    
+		    <if test="params.orderBy != null and params.orderBy != '' and params.ascending == true">
+			    order by ${params.orderBy} asc
+			</if>
+			<if test="params.orderBy != null and params.orderBy != '' and params.ascending == false">
+			    order by ${params.orderBy} desc
+			</if>
+			<if test="params.startIndex > -1 and params.pageSize > 0">
+			    LIMIT #{params.startIndex}, #{params.pageSize}
+			</if>
+   
+   
+    </select>
+     <!-- 查询roleAccountOrg条数 -->
+    <select id="searchAccountOrgByParamsCount" parameterType="map"  resultType="java.lang.Integer">
+   
+  		    SELECT 
+			    count(1) as count
+			FROM
+			    User_Role_ASS a
+			        INNER JOIN
+			    `User` b ON b.Id = a.UserId
+			        INNER JOIN
+			    `Employee` c ON c.Id = b.EmployeeId
+			WHERE
+			    a.RoleId = #{params.roleId}
+   
+    </select>
+    
+    
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dtelec.icmes.account.repository.dao.IFeatureDao">
+	<!-- 通过角色ids获取功能 -->
+    <select id="findByRoleIds" parameterType="map" 
+       resultType="com.dtelec.icmes.account.repository.entity.FeatureEntity">
+         SELECT F.`Id`, F.`Code`, F.`MenuId`, F.`Name`, F.`Remark` FROM Feature as F
+	      INNER JOIN Role_Feature_ASS as RF ON RF.FeatureId = F.Id and RF.RoleId IN 
+	      <foreach item="roleId" collection="roleIds" open="(" separator="," close=")">
+	       #{roleId}
+	      </foreach>
+    </select>
+    
+    <!-- 通过角色id获取全部功能 -->
+    <select id="getAllFeatureByRoleId" parameterType="map" 
+       resultType="com.dtelec.icmes.account.repository.entity.FeatureEntity">
+         SELECT F.`Id`, F.`Code`, F.`MenuId`, F.`Name`, F.`Remark` FROM Feature as F
+	      INNER JOIN Role_Feature_ASS as RF ON RF.FeatureId = F.Id and RF.RoleId = #{roleId}
+    </select>
+    
+    <!-- 获取全部功能 -->
+    <select id="getAllFeatures" parameterType="map" 
+       resultType="com.dtelec.icmes.account.repository.entity.FeatureEntity">
+         SELECT F.`Id`, F.`Code`, F.`MenuId`, F.`Name`, F.`Remark` 
+         FROM Feature as F
+    </select>
+</mapper>

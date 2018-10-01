@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dtelec.icmes.account.repository.dao.IUserDao">
+	<!-- 获取账号列表 -->
+	<select id="searchAccountByParams" resultType="com.dtelec.icmes.account.repository.entity.AccountEntity">
+	    SELECT U.Id, U.EmployeeId, U.IsLocked, U.RetryCount, U.Password, E.Name, E.SpecialDevice, E.VersionTag
+	    FROM `User` as U
+	      INNER JOIN `Employee` as E
+	        ON U.EmployeeId = E.Id
+	    <where>
+	        U.IsDeleted = 0
+	        <if test="params.employeeId != null and params.employeeId != ''">
+				and U.EmployeeId like concat('%',#{params.employeeId},'%')
+			</if>
+			<if test="params.employeeName != null and params.employeeName != ''">
+				and E.Name like concat('%',#{params.employeeName},'%')
+			</if>
+			<if test="params.specialDevice != null and params.specialDevice != ''">
+				and E.SpecialDevice like concat('%',#{params.specialDevice},'%')
+			</if>
+	    </where>
+		<if test="params.orderBy != null and params.orderBy != '' and params.ascending == true">
+		    order by ${params.orderBy} asc
+		</if>
+		<if test="params.orderBy != null and params.orderBy != '' and params.ascending == false">
+		    order by ${params.orderBy} desc
+		</if>
+		<if test="params.startIndex > -1 and params.pageSize > 0">
+		    LIMIT #{params.startIndex}, #{params.pageSize}
+		</if>
+    </select>
+	
+	<!-- 获取账号列表总数 -->
+	<select id="searchAccountTotalCountByParams" resultType="Long">
+	    SELECT Count(U.Id) 
+	    FROM `User` as U
+	      INNER JOIN `Employee` as E
+	        ON U.EmployeeId = E.Id
+	    <where>
+	        U.IsDeleted = 0
+	        <if test="params.employeeId != null and params.employeeId != ''">
+				and U.EmployeeId like concat('%',#{params.employeeId},'%')
+			</if>
+			<if test="params.employeeName != null and params.employeeName != ''">
+				and E.Name like concat('%',#{params.employeeName},'%')
+			</if>
+			<if test="params.specialDevice != null and params.specialDevice != ''">
+				and E.SpecialDevice like concat('%',#{params.specialDevice},'%')
+			</if>
+	    </where>
+    </select>
+    
+    <!-- 查询当前员工ID的角色和组织机构 -->
+    <select id="searchAccountRoleByParams" resultType="com.dtelec.icmes.account.repository.entity.AccountRoleEntity" >
+    	    SELECT UR.Id as assId, R.Id as RoleId, R.Name as RoleName, URO.OrganizationId, GETFULLPARENTORGANIZATIONSNAME(URO.OrganizationId) as FullOrgName
+    	    FROM `User` as U
+    	      INNER JOIN `User_Role_ASS` as UR ON UR.UserId =  U.Id
+    	        INNER JOIN `Role` as R ON R.Id = UR.RoleId
+    	          INNER JOIN `UserRoleAss_Organization_ASS` as URO ON URO.AssId = UR.Id
+    	    WHERE U.EmployeeId = #{params.employeeId}
+    	<if test="params.orderBy != null and params.orderBy != '' and params.ascending == true">
+		    order by ${params.orderBy} asc
+		</if>
+		<if test="params.orderBy != null and params.orderBy != '' and params.ascending == false">
+		    order by ${params.orderBy} desc
+		</if>
+		<if test="params.startIndex > -1 and params.pageSize > 0">
+		    LIMIT #{params.startIndex}, #{params.pageSize}
+		</if>
+    </select>
+    
+    <!-- 查询当前员工ID的角色和组织机构总数 -->
+    <select id="searchAccountRoleTotalCountByParams" resultType="Long" >
+    	 SELECT Count(URO.AssId)
+    	    FROM `User` as U
+    	      INNER JOIN `User_Role_ASS` as UR ON UR.UserId =  U.Id
+    	        INNER JOIN `Role` as R ON R.Id = UR.RoleId
+    	          INNER JOIN `UserRoleAss_Organization_ASS` as URO ON URO.AssId = UR.Id
+    	    WHERE U.EmployeeId = #{params.employeeId}
+    </select>
+    
+    <!-- 账号权限列表查询 -->
+    <select id="getAccountAllFeatures" parameterType="map" resultType="com.dtelec.icmes.account.repository.entity.FeatureEntity">
+         SELECT distinct F.`Id`, F.`Code`, F.`MenuId`, F.`Name`, F.`Remark` 
+         FROM Feature as F
+	       INNER JOIN Role_Feature_ASS as RF ON RF.FeatureId = F.Id
+	         INNER JOIN User_Role_ASS as UR ON RF.RoleId = UR.RoleId
+	           INNER JOIN User as U ON UR.UserId = U.Id and U.EmployeeId = #{employeeId}
+    </select>
+
+    <!-- 查询当前员工ID的指派代理人 -->
+    <select id="searchAccountConsignProxyByParams" resultType="com.dtelec.icmes.account.repository.entity.AccountConsignProxyEntity" >
+            SELECT distinct UPA.Id, UR.Id as AssId, R.Name as RoleName, R.Id as RoleId, AE.Name as AssignProxyName, AE.Id as AssignProxyId, AU.Id as AssignProxyUserId, UPA.ProxyStartDate, UPA.ProxyEndDate, UPA.PeriodDays, UPA.VersionTag, URO.OrganizationId, GETFULLPARENTORGANIZATIONSNAME(URO.OrganizationId) as FullOrgName
+            FROM `User` as U
+              INNER JOIN `User_Role_ASS` as UR ON UR.UserId = U.Id
+                INNER JOIN `Role` as R ON R.Id = UR.RoleId
+                  INNER JOIN `UserRoleAss_Organization_ASS` as URO ON URO.AssId = UR.Id 
+                    INNER JOIN `User_Proxy_Assignment` as UPA ON UPA.ConsignUserRoleAss = UR.Id
+                      INNER JOIN `User` as AU ON AU.Id = UPA.AssignUserId
+                        INNER JOIN `Employee` as AE ON AE.Id = AU.EmployeeId
+            WHERE U.EmployeeId = #{params.employeeId} 
+    	<if test="params.orderBy != null and params.orderBy != '' and params.ascending == true">
+		    order by ${params.orderBy} asc
+		</if>
+		<if test="params.orderBy != null and params.orderBy != '' and params.ascending == false">
+		    order by ${params.orderBy} desc
+		</if>
+		<if test="params.startIndex > -1 and params.pageSize > 0">
+		    LIMIT #{params.startIndex}, #{params.pageSize}
+		</if>
+    </select>
+    
+    <!-- 查询当前员工ID的指派代理人总数 -->
+    <select id="searchAccountConsignProxyTotalCountByParams" resultType="Long" >
+    	 SELECT count(distinct UPA.Id)
+            FROM `User` as U
+              INNER JOIN `User_Role_ASS` as UR ON UR.UserId = U.Id
+                INNER JOIN `Role` as R ON R.Id = UR.RoleId
+                  INNER JOIN `UserRoleAss_Organization_ASS` as URO ON URO.AssId = UR.Id 
+                    INNER JOIN `User_Proxy_Assignment` as UPA ON UPA.ConsignUserRoleAss = UR.Id
+                      INNER JOIN `User` as AU ON AU.Id = UPA.AssignUserId
+                        INNER JOIN `Employee` as AE ON AE.Id = AU.EmployeeId
+            WHERE U.EmployeeId = #{params.employeeId} 
+    </select>
+    
+    <!-- 查询当前员工ID的接手代理人 -->
+    <select id="searchAccountAssignProxyByParams" resultType="com.dtelec.icmes.account.repository.entity.AccountAssignProxyEntity" >
+    	    SELECT distinct UPA.Id, UR.Id as AssId, R.Name as RoleName, R.Id as RoleId, CE.Name as ConsignProxyName, CE.Id as ConsignProxyId, CU.Id as ConsignProxyUserId, UPA.ProxyStartDate, UPA.ProxyEndDate, UPA.PeriodDays, UPA.VersionTag, URO.OrganizationId, GETFULLPARENTORGANIZATIONSNAME(URO.OrganizationId) as FullOrgName
+    	      FROM `User` as U
+    	        INNER JOIN `User_Proxy_Assignment` as UPA ON UPA.AssignUserId = U.Id
+    	          INNER JOIN `User_Role_ASS` as UR ON UPA.ConsignUserRoleAss = UR.Id
+    	            INNER JOIN `UserRoleAss_Organization_ASS` as URO ON URO.AssId = UR.Id 
+    	              INNER JOIN `Role` as R ON R.Id = UR.RoleId
+    	                INNER JOIN `User` as CU ON CU.Id = UR.UserId
+    	                  INNER JOIN `Employee` as CE ON CE.Id = CU.EmployeeId
+    	     WHERE U.EmployeeId = #{params.employeeId} 
+    	<if test="params.orderBy != null and params.orderBy != '' and params.ascending == true">
+		    order by ${params.orderBy} asc
+		</if>
+		<if test="params.orderBy != null and params.orderBy != '' and params.ascending == false">
+		    order by ${params.orderBy} desc
+		</if>
+		<if test="params.startIndex > -1 and params.pageSize > 0">
+		    LIMIT #{params.startIndex}, #{params.pageSize}
+		</if>
+    </select>
+    
+    <!-- 查询当前员工ID的接手代理人总数 -->
+    <select id="searchAccountAssignProxyTotalCountByParams" resultType="long" >
+    	    SELECT count(distinct UPA.Id)
+    	      FROM `User` as U
+    	        INNER JOIN `User_Proxy_Assignment` as UPA ON UPA.AssignUserId = U.Id
+    	          INNER JOIN `User_Role_ASS` as UR ON UPA.ConsignUserRoleAss = UR.Id
+    	            INNER JOIN `UserRoleAss_Organization_ASS` as URO ON URO.AssId = UR.Id 
+    	              INNER JOIN `Role` as R ON R.Id = UR.RoleId
+    	                INNER JOIN `User` as CU ON CU.Id = UR.UserId
+    	                  INNER JOIN `Employee` as CE ON CE.Id = CU.EmployeeId
+    	     WHERE U.EmployeeId = #{params.employeeId} 
+    </select>
+    
+    <!-- 通过员工号获取user -->
+	<select id="findUserByEmployeeId" parameterType="map" resultType="com.dtelec.icmes.account.repository.entity.UserEntity">
+		SELECT * FROM User WHERE EmployeeId = #{employeeId}
+	</select>
+    
+    <!-- 创建员工信息 -->
+	<insert id="createAccount" parameterType="map">
+		INSERT INTO User (EmployeeId, Password, ChangePassword)
+		VALUES (#{employeeId}, #{password}, 1)
+	</insert>
+	
+	<!-- 通过员工工号获取账号详细信息 -->
+	<select id="findAccountByEmployeeId" resultType="com.dtelec.icmes.account.repository.entity.AccountEntity">
+	    SELECT U.Id, U.EmployeeId, U.IsLocked, U.RetryCount, U.Password, E.Name, E.SpecialDevice, E.VersionTag
+	    FROM `User` as U
+	      INNER JOIN `Employee` as E
+	        ON U.EmployeeId = E.Id
+	    WHERE U.EmployeeId = #{employeeId}
+    </select>
+    
+    <!-- 检测是否和代理表有关联 -->
+    <select id="checkUserRoleAssProxy" parameterType="map" resultType="java.lang.Integer">
+	    select count(1) from `User_Proxy_Assignment`  UP where UP.ConsignUserRoleAss in 
+	    		(
+					SELECT ASS.Id FROM (
+					        SELECT UR.Id
+				                FROM `User_Role_ASS` as UR
+				                    INNER JOIN `User` as U ON UR.UserId = U.Id
+							    WHERE U.employeeId = #{employeeId} and UR.RoleId IN 
+							    <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
+								  #{roleId}
+						        </foreach>
+          			) as ASS 
+          		)
+    </select>
+    
+	<!-- 删除账号下的role -->
+    <delete id="deleteAccountRoleAss" parameterType="map" >
+        DELETE FROM `User_Role_ASS` WHERE Id IN (
+          SELECT ASS.Id FROM (
+	        SELECT UR.Id
+                FROM `User_Role_ASS` as UR
+                    INNER JOIN `User` as U ON UR.UserId = U.Id
+			    WHERE U.employeeId = #{employeeId} and UR.RoleId IN 
+			    <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
+				  #{roleId}
+		        </foreach>
+          ) as ASS
+        )
+    </delete>
+    
+    <!-- 修改密码 -->
+    <update id="changeAccountPassword" parameterType="map">
+        UPDATE `User` SET Password = #{password}, ChangePassword = 0 WHERE EmployeeId = #{employeeId}
+    </update>
+    
+    <!-- 账号锁定或解锁 -->
+    <update id="setAccountLockStatus" parameterType="map">
+        UPDATE `User` SET IsLocked = #{isLocked} WHERE EmployeeId = #{employeeId}
+    </update>
+    
+    <!-- 给账号分配角色和组织机构 -->
+    <update id="setAccountRelationRoleorganization" parameterType="map">
+        INSERT INTO `User_Role_ASS`(UserId, RoleId)
+        SELECT Id, #{roleId}
+        FROM `User` 
+        WHERE EmployeeId = #{employeeId};
+        
+        INSERT INTO `UserRoleAss_Organization_ASS` (AssId, OrganizationId)
+        SELECT LAST_INSERT_ID(), #{orgId};
+    </update>
+	
+    <!-- 删除user -->
+    <delete id="deleteAccountByEmployeeId" parameterType="map" >
+    	DELETE FROM `User` WHERE EmployeeId = #{employeeId}
+    </delete>
+    
+    <update id="updateAccountLoginTimes" parameterType="map">
+	    UPDATE User CUR
+	        INNER JOIN User ORG
+	            ON CUR.Id = ORG.Id And CUR.EmployeeId = ORG.EmployeeId And CUR.EmployeeId = #{employeeId}
+	              SET CUR.RetryCount = ORG.RetryCount + 1;
+	</update>
+    
+     <!-- 查询当前员工ID的角色和组织机构总数 -->
+    <select id="searchAssignProxyCount" resultType="java.lang.Integer" >
+    	SELECT 
+			   count(1)
+			FROM
+			    User_Proxy_Assignment
+			        INNER JOIN
+			    User_Role_ASS ON User_Role_ASS.Id = User_Proxy_Assignment.ConsignUserRoleAss
+			        INNER JOIN
+			    UserRoleAss_Organization_ASS ON UserRoleAss_Organization_ASS.AssId = User_Role_ASS.Id
+			        INNER JOIN
+			    Role ON Role.Id = User_Role_ASS.RoleId
+			WHERE
+			    AssignUserId = (SELECT 
+			            Id
+			        FROM
+			            `User`
+			        WHERE
+			            `EmployeeId` = #{param.id})
+    </select>
+    
+</mapper>
