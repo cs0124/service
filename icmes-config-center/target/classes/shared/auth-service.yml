@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    name: test
+    url: jdbc:mysql://192.168.96.104:3306/icmes_base_dev?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+    username: admin
+    password: Taylor@2009
+   # url: jdbc:mysql://127.0.0.1:3306/my_icmes_base_dev?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+   # username: localmes
+   # password: Local2018 
+    driver-class-name: com.mysql.jdbc.Driver
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    
+mybatis:
+  mapper-locations: classpath:com/dtelec/icmes/auth/repository/dao/*.xml
+ 
+
+server:
+  servlet:
+    context-path: /uaa
+    
+  port: 5000
