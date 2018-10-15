@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModel;
 public class DictDataCollection extends PageableSearchBaseModel<DictDataModel> {
 
 	public void fill(PageableSearchBaseEntity<DictDataFullEntity> entity, int eachPageCount) {
-		if (eachPageCount < 1) eachPageCount = 1;
+		if (eachPageCount < 1) { eachPageCount = 1;}
 		
 		long total = entity.getTotalCount();
 		long pages = (long) Math.ceil((double)total / (double)eachPageCount);

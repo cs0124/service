@@ -7,10 +7,12 @@ import org.springframework.stereotype.Repository;
 
 import com.dtelec.icmes.information.repository.IOrganizationRepository;
 import com.dtelec.icmes.information.repository.dao.IOrganizationDao;
-import com.dtelec.icmes.information.repository.entity.OrganizationAccountEntity;
+import com.dtelec.icmes.information.repository.entity.OrganizationAccountFlatEntity;
+import com.dtelec.icmes.information.repository.entity.OrganizationAccountTreeEntity;
 import com.dtelec.icmes.information.repository.entity.OrganizationEntity;
 import com.dtelec.icmes.information.repository.entity.OrganizationFullNameEntity;
 import com.dtelec.icmes.information.repository.entity.PageableSearchBaseEntity;
+import com.dtelec.icmes.information.repository.param.OrganizationAccountFlatPageableSearchParam;
 import com.dtelec.icmes.information.repository.param.OrganizationPageableSearchParam;
 import com.dtelec.icmes.information.service.model.OrganizationModel;
 
@@ -37,6 +39,15 @@ public class OrganizationRepositoryImpl implements IOrganizationRepository {
 		return entity;
 	}
 	
+	
+	/**
+	 * 检查是否存在
+	 */
+	@Override
+	public int checkOrganization(OrganizationEntity entity) {
+		int count = organizationDao.checkOrganization(entity);
+		return count;
+	}
 	
 	/**
 	 * 创建组织机构
@@ -100,13 +111,27 @@ public class OrganizationRepositoryImpl implements IOrganizationRepository {
 	
 	
 	/**
-	 * 查询机构和用户关联列表
+	 * 查询机构和用户关联树形列表
 	 */
 	@Override
-	public List<OrganizationAccountEntity> getOrganizationAccounts(String name) {
-		List<OrganizationAccountEntity> list = organizationDao.getOrganizationAccounts(name);
+	public List<OrganizationAccountTreeEntity> getOrganizationAccountsTree(String name) {
+		List<OrganizationAccountTreeEntity> list = organizationDao.getOrganizationAccountsTree(name);
 		
 		return list;
+	}
+	
+	/**
+	 * 查询机构和用户关联平行列表
+	 */
+	@Override
+	public PageableSearchBaseEntity<OrganizationAccountFlatEntity> getOrganizationAccountsFlat(OrganizationAccountFlatPageableSearchParam params) {
+		PageableSearchBaseEntity<OrganizationAccountFlatEntity> entity = new PageableSearchBaseEntity<OrganizationAccountFlatEntity>();
+		List<OrganizationAccountFlatEntity> fullNameEmployees = organizationDao.getOrganizationAccountsFlat(params);
+		long totalCount = organizationDao.countOrganizationAccountsFlatTotal(params);
+		//set返回值
+		entity.setTotalCount(totalCount);
+		entity.setItems(fullNameEmployees);
+		return entity;
 	}
 
 }

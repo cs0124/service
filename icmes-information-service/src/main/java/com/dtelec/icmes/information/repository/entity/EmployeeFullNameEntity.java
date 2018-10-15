@@ -20,11 +20,11 @@ public class EmployeeFullNameEntity extends EmployeeEntity {
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
-
+	@Override
 	public String getFullName() {
 		return fullName;
 	}
-	
+	@Override
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}

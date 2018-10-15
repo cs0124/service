@@ -9,11 +9,11 @@ public class EmployeesCollection extends PageableSearchBaseModel<EmployeesFullNa
 	
 	/**
 	 * 员工信息分页集合元素赋值
-	 * @param entity
-	 * @param eachPageCount
+	 * @param entity 员工实体类
+	 * @param eachPageCount 每页显示条数
 	 */
 	public void fill(PageableSearchBaseEntity<EmployeeFullNameEntity> entity, int eachPageCount) {
-		if (eachPageCount < 1) eachPageCount = 1;
+		if (eachPageCount < 1) {eachPageCount = 1;}
 		//返回总记录数
 		long total = entity.getTotalCount();
 		long pages = (long) Math.ceil((double)total / (double)eachPageCount);

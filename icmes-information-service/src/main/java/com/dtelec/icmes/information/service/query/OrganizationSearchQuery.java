@@ -48,11 +48,11 @@ public class OrganizationSearchQuery extends PageableSearchBaseQuery implements 
 	public void setHierarchy(String hierarchy) {
 		this.hierarchy = hierarchy;
 	}
-
+	@Override
 	public String getOrderBy() {
 		return orderBy;
 	}
-
+	@Override
 	public void setOrderBy(String orderBy) {
 		this.orderBy = orderBy;
 	}

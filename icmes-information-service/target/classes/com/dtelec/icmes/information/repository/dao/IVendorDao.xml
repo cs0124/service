@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.dtelec.icmes.information.repository.dao.IVendorDao">
+	<!-- 获取厂商列表 -->
+	<select id="getVendorList" resultType="com.dtelec.icmes.information.repository.entity.VendorEntity">
+		SELECT Id,
+			Code,
+			Name,
+			Address,
+			ContactName1,
+			ContactPhone1,
+			ContactName2,
+			ContactPhone2,
+			ContactName3,
+			ContactPhone3,
+			versionTag,
+			CreateTime,
+			CreateUserId,
+			UpdateTime,
+			UpdateUserId
+		FROM Vendor
+		<where>
+			<if test="params.code != null and params.code != ''">
+				AND Code  LIKE CONCAT('%',#{params.code},'%')
+			</if>
+			<if test="params.name != null and params.name != ''">
+				AND Name LIKE CONCAT('%',#{params.name},'%')
+			</if>
+			<if test="params.globalName != null and params.globalName != ''">
+				AND ( (Code LIKE CONCAT('%',#{params.globalName},'%')) or (Name LIKE CONCAT('%',#{params.globalName},'%'))
+				 or (Address LIKE CONCAT('%',#{params.globalName},'%'))  or (ContactName1 LIKE CONCAT('%',#{params.globalName},'%'))
+		          or (ContactName2 LIKE CONCAT('%',#{params.globalName},'%')) or (ContactName3 LIKE CONCAT('%',#{params.globalName},'%')) )
+			</if>
+		</where>
+	 		<if test="params.orderBy != null and params.orderBy != '' and params.ascending == true">
+		    order by ${params.orderBy} asc
+		</if>
+		<if test="params.orderBy != null and params.orderBy != '' and params.ascending == false">
+		    order by ${params.orderBy} desc
+		</if>
+		<if test="params.startIndex > -1 and params.pageSize > 0">
+		  LIMIT #{params.startIndex}, #{params.pageSize}
+		</if>
+	</select>
+	
+	<!-- 获取厂商总记录数 -->
+	<select id="getVendorCount"  resultType="java.lang.Integer">
+	    select count(v.Id) from Vendor v
+		<where>
+			<if test="params.code != null and params.code != ''">
+				AND Code  LIKE CONCAT('%',#{params.code},'%') 
+			</if>		
+			<if test="params.name != null and params.name != ''">
+				AND Name LIKE CONCAT('%',#{params.name},'%')
+			</if>
+			<if test="params.globalName != null and params.globalName != ''">
+				AND ( (Code LIKE CONCAT('%',#{params.globalName},'%')) or (Name LIKE CONCAT('%',#{params.globalName},'%'))
+				 or (Address LIKE CONCAT('%',#{params.globalName},'%'))  or (ContactName1 LIKE CONCAT('%',#{params.globalName},'%'))
+		          or (ContactName2 LIKE CONCAT('%',#{params.globalName},'%')) or (ContactName3 LIKE CONCAT('%',#{params.globalName},'%')) )
+			</if>
+		</where>
+	</select>
+	
+	<!-- 创建厂商 -->
+	<insert id="addVendor" parameterType="com.dtelec.icmes.information.repository.entity.VendorEntity">
+	   INSERT INTO Vendor(
+	   Code, Name,Address,ContactName1,ContactPhone1,ContactName2,ContactPhone2,ContactName3,ContactPhone3,CreateUserId,UpdateUserId)
+		VALUES(#{entity.code},#{entity.name},#{entity.address},#{entity.contactName1},#{entity.contactPhone1},
+		#{entity.contactName2},#{entity.contactPhone2},#{entity.contactName3},#{entity.contactPhone3},'0','0')
+    </insert>
+	
+	<!-- 编辑厂商 -->
+	<update id="updateVendor" parameterType="com.dtelec.icmes.information.repository.entity.VendorEntity">
+		update  Vendor 
+		<trim prefix="SET" suffixOverrides=",">
+		<if test="entity.code != null and entity.code != ''">Code = #{entity.code},</if>
+		<if test="entity.name != null and entity.name != ''">Name = #{entity.name},</if>
+		<if test="entity.address != null and entity.address != ''">Address = #{entity.address},</if>
+		<if test="entity.contactName1 != null and entity.contactName1 != ''">ContactName1 = #{entity.contactName1},</if>
+		<if test="entity.contactPhone1 != null and entity.contactPhone1 != ''">ContactPhone1 = #{entity.contactPhone1},</if>
+		<if test="entity.contactName2 != null and entity.contactName2 != ''">ContactName2 = #{entity.contactName2},</if>
+		<if test="entity.contactPhone2 != null and entity.contactPhone2 != ''">ContactPhone2 = #{entity.contactPhone2},</if>
+		<if test="entity.contactName3 != null and entity.contactName3 != ''">ContactName3 = #{entity.contactName3},</if>
+		<if test="entity.contactPhone3 != null and entity.contactPhone3 != ''">ContactPhone3 = #{entity.contactPhone3},</if>
+		<if test="entity.versionTag != null and entity.versionTag != ''">VersionTag = #{entity.versionTag},</if>
+		UpdateTime = now()
+		</trim>
+		where Id = #{entity.id}
+	</update>
+	
+	<!-- 删除厂商 -->
+	<delete id="deleteVendor" parameterType="java.lang.Integer">
+		delete from Vendor where Id=#{id}
+	</delete>
+	
+	<!-- 根据厂商id 获取厂商 -->
+	<select id="getVendorById" parameterType="java.lang.Integer" resultType="com.dtelec.icmes.information.repository.entity.VendorEntity">
+		SELECT Id,
+			Code,
+			Name,
+			Address,
+			ContactName1,
+			ContactPhone1,
+			ContactName2,
+			ContactPhone2,
+			ContactName3,
+			ContactPhone3,
+			versionTag,
+			CreateTime,
+			CreateUserId,
+			UpdateTime,
+			UpdateUserId
+			FROM Vendor WHERE Id=#{id}
+	</select>
+	<!-- 根据厂商code 获取厂商 -->
+	<select id="getVendorByCode" parameterType="java.lang.String" resultType="com.dtelec.icmes.information.repository.entity.VendorEntity">
+		SELECT Id,
+			Code,
+			Name,
+			Address,
+			ContactName1,
+			ContactPhone1,
+			ContactName2,
+			ContactPhone2,
+			ContactName3,
+			ContactPhone3,
+			versionTag,
+			CreateTime,
+			CreateUserId,
+			UpdateTime,
+			UpdateUserId
+	     FROM Vendor WHERE Code=#{code}
+	</select>
+          
+</mapper>

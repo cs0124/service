@@ -18,7 +18,7 @@ public class OrganizationModel {
 
 	/**
 	 * 组织全名模型赋值
-	 * @param entity
+	 * @param entity 组织全名实体类
 	 */
 	public void fillModel(OrganizationFullNameEntity entity) {
 		this.id = entity.getId();
@@ -28,7 +28,7 @@ public class OrganizationModel {
 	}
 	/**
 	 * 组织模型复制
-	 * @param entity
+	 * @param entity 组织全名实体类
 	 */
 	public void fillModel(OrganizationEntity entity) {
 		this.id = entity.getId();

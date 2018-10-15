@@ -34,19 +34,6 @@ public class DictDataUpdateCommand implements  ICommand<DictDataBaseModel>{
 	
 	
 	
-	/**
-	 * 构造方法
-	 * @param code
-	 * @param name
-	 * @param typeCode
-	 * @param order
-	 * @param disabled
-	 * @param versionTag
-	 * @param createTime
-	 * @param createUserId
-	 * @param lastUpdateTime
-	 * @param lastUpdateUserId
-	 */
 
 	public DictDataUpdateCommand(String code, String name, String typeCode, Integer order, boolean disabled,
 			String versionTag, Long createTime, Integer createUserId, Long lastUpdateTime, Integer lastUpdateUserId) {
@@ -65,8 +52,7 @@ public class DictDataUpdateCommand implements  ICommand<DictDataBaseModel>{
 	
 	
 	/**
-	 * model to command
-	 * @param dictDataModel
+	 * @param dictDataModel 字典数据模型
 	 */
 	public DictDataUpdateCommand(DictDataBaseModel dictDataModel) {
 		this.code = dictDataModel.getCode();
@@ -185,8 +171,7 @@ public class DictDataUpdateCommand implements  ICommand<DictDataBaseModel>{
 
 
 	/**
-	 * command to entity
-	 * @return
+	 * @return 字典数据实体类
 	 */
 	public DictDataBaseEntity convert() {	
 		DictDataBaseEntity entity = new DictDataBaseEntity();

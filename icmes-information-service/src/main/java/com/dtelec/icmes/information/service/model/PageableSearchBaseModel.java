@@ -35,10 +35,10 @@ public class PageableSearchBaseModel<T> {
 	}
 	
 	public void addItem(T item) {
-		if (item == null) return;
+		if (item == null) { return;}
 		
-		if (this.items == null)
-			this.items = new ArrayList<>();
+		if (this.items == null) {
+			this.items = new ArrayList<>();}
 		
 		this.items.add(item);
 	}

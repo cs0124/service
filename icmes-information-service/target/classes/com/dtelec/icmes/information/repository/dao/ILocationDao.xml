@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dtelec.icmes.information.repository.dao.ILocationDao">
+    <!-- 创建位置信息 -->
+    <insert id="createLocation" parameterType="com.dtelec.icmes.information.repository.entity.LocationEntity">
+		insert into Location 
+			(Code,Name,ParentId,CreateUserId,UpdateUserId) 
+		values 
+			(#{entity.code},#{entity.name},#{entity.parentId},'0','0')
+
+	</insert>
+
+    <!-- 编辑位置信息 -->
+	<update id="updateLocation" parameterType="com.dtelec.icmes.information.repository.entity.LocationEntity">
+		update Location set	Name = #{entity.name},ParentId=#{entity.parentId},VersionTag=#{entity.versionTag},UpdateTime=now()
+		where Id = #{entity.id}
+	</update>
+
+    <!-- 删除位置信息 -->
+	<delete id="deleteLocation" parameterType="com.dtelec.icmes.information.repository.entity.LocationEntity">
+		delete from Location 
+		where Id = #{entity.id}
+	
+	</delete>
+
+	<!--查询传入的位置信息版本号  -->
+	<select id="fetchLocationVersionTag" parameterType="com.dtelec.icmes.information.repository.entity.LocationEntity" resultType="java.lang.String">
+		select VersionTag from Location where Id = #{entity.id}
+	
+	</select>
+
+	<!--查询是否和设备表关联  -->
+	<select id="countLocationDevice" parameterType="com.dtelec.icmes.information.repository.entity.LocationEntity" resultType="java.lang.Integer">
+		select count(1) as count from Device where LocationId = #{entity.id}
+	
+	</select>
+
+	<!--查询是否是叶子  -->
+	<select id="countLocationIfEnd" parameterType="com.dtelec.icmes.information.repository.entity.LocationEntity" resultType="java.lang.Integer">
+		select count(1) as count from Location where ParentId = #{entity.id}
+	
+	</select>
+
+	<!-- 获取位置信息全称 -->
+	<select id="getFullNameLocation" resultType="com.dtelec.icmes.information.repository.entity.LocationFullNameEntity">
+		select Id,
+			   Code, 
+			   Name, 
+			   getFullParentLocationName(Id) as fullName ,
+		       getFullParentLocationName(ParentId) as parentFullName , 
+			   ParentId,
+			   (case when a.parentId != 0 
+						then (
+							select Code 
+							from Location 
+							where Id = a.parentId
+						)
+					 else ""
+				end		   	
+				) as parentCode,
+			   versionTag, 
+			   (case when (select count(1) 
+			    		   from Location 
+						   where parentId = a.Id
+						   )>0 
+					 then true else false end 
+				) hasChild 
+		from Location a
+		<trim prefix="WHERE (" suffix=")" prefixOverrides="AND |OR ">
+        	find_in_set(Id,getFullChildLocationId(#{param.parentId},#{param.hierarchy}))
+			<if test="param.code != null and param.code != ''">
+				and Code like concat('%',#{param.code},'%')
+			</if>
+			<if test="param.name != null and param.name != ''">
+				and Name like concat('%',#{param.name},'%')
+			</if>
+		</trim>
+		<if test="param.orderBy != null and param.orderBy != '' and param.ascending == true">
+		    order by ${param.orderBy} asc
+		</if>
+		<if test="param.orderBy != null and param.orderBy != '' and param.ascending == false">
+		    order by ${param.orderBy} desc
+		</if>
+		<if test="param.startIndex > -1 and param.pageSize > 0">
+		    LIMIT #{param.startIndex}, #{param.pageSize}
+		</if>
+	</select>
+
+	<!-- 获取位置信息全称数量统计 -->
+    <select id="getFullNameLocationCount"  resultType="java.lang.Integer">
+        select  count(1) as count
+        from 	Location 
+        <trim prefix="WHERE (" suffix=")" prefixOverrides="AND |OR ">
+        	find_in_set(Id,getFullChildLocationId(#{param.parentId},#{param.hierarchy}))
+			<if test="param.code != null and param.code != ''">
+				and Code like concat('%',#{param.code},'%')
+			</if>
+			<if test="param.name != null and param.name != ''">
+				and Name like concat('%',#{param.name},'%')
+			</if>
+		</trim>
+    </select>
+
+	<!--获取位置信息详情  -->
+	<select id="getLocationDetail" parameterType="java.lang.Integer" resultType="com.dtelec.icmes.information.repository.entity.LocationEntity">
+		select Id,
+	   		   Code,
+			   Name,
+			   ParentId,
+			   VersionTag,
+			   CreateTime,
+			   UpdateTime 
+	    from Location 
+		where Id = #{id}
+	
+	</select>
+</mapper>

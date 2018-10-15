@@ -13,44 +13,48 @@ import com.dtelec.icmes.information.repository.param.EmployeePageableSearchParam
 public interface IEmployeeDao {
 	/**
 	 * 通过员工工号获取员工信息
-	 * @param id
-	 * @return
+	 * @param employeeId 员工工号
+	 * @return 员工 实体类
 	 */
 	EmployeeEntity findByEmployeeId(@Param("employeeId") String employeeId);
 
 	/**
 	 * 修改员工信息
-	 * @param entity
+	 * @param entity 员工实体类
 	 */
 	void updateEmployee(@Param("entity") EmployeeEntity entity);
 	
 	/**
 	 * 创建员工信息
-	 * @param entity
+	 * @param entity 员工实体类
 	 */
 	void createEmployee(@Param("entity") EmployeeEntity entity);
 	
 	/**
 	 * 获取员工信息
-	 * @param entity
+	 * @param params 查询参数
+	 * @return 员工实体类
 	 */
 	List<EmployeeFullNameEntity> getEmployees(@Param("param") EmployeePageableSearchParam params);
 
 	/**
 	 * 获取员工总记录数
-	 * @param entity
+	 * @param params 查询参数
+	 * @return 总数
 	 */
 	int getEmployeesCount(@Param("param") EmployeePageableSearchParam params);
 	
 	/**
 	 * 删除员工信息
-	 * @param id
+	 * @param id 员工工号
 	 */
 	void deleteEmployee(@Param("id") String id);
 	
 	/**
 	 * 创建账号
-	 * @param entity
+	 * @param id 工号
+	 * @param name 姓名
+	 * @param device 专用设备
 	 */
 	void persistentEmployeeBase(@Param("id") String id, @Param("name") String name, @Param("device") String device);
 }

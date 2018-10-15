@@ -26,17 +26,6 @@ public class DictTypeCreateCommand implements  ICommand<DictTypeModel>{
 	@ApiModelProperty(value = "上次更新人userId")
 	private Integer lastUpdateUserId;
 	
-	/**
-	 * 构造方法
-	 * @param code
-	 * @param name
-	 * @param isBuiltIn
-	 * @param versionTag
-	 * @param createTime
-	 * @param createUserId
-	 * @param lastUpdateTime
-	 * @param lastUpdateUserId
-	 */
 	public DictTypeCreateCommand(String code, String name, String isBuiltIn, String versionTag, Long createTime,
 			Integer createUserId, Long lastUpdateTime, Integer lastUpdateUserId) {
 		super();
@@ -52,8 +41,7 @@ public class DictTypeCreateCommand implements  ICommand<DictTypeModel>{
 	
 	
 	/**
-	 * model to command
-	 * @param dictTypeModel
+	 * @param dictTypeModel 字典类型模型
 	 */
 	public DictTypeCreateCommand(DictTypeModel dictTypeModel) {
 		this.code=dictTypeModel.getCode();
@@ -126,8 +114,7 @@ public class DictTypeCreateCommand implements  ICommand<DictTypeModel>{
 	}
 
 /**
- * command to entity
- * @return
+ * @return 字典类型实体类
  */
 	public DictTypeEntity  convert() {
 		DictTypeEntity entity = new DictTypeEntity();

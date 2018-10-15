@@ -18,7 +18,7 @@ public class ResEmployeesVO<T> {
 	
 	/**
 	 * 模型赋值
-	 * @param coll
+	 * @param coll 员工集合
 	 */
 	public ResEmployeesVO(EmployeesCollection coll) {
 		this.totalCount = coll.getTotalCount();

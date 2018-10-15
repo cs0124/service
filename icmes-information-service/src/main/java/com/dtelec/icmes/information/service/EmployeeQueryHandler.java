@@ -25,8 +25,8 @@ public class EmployeeQueryHandler implements IQueryHandler {
 	
 	/**
 	 * 获取员工详细信息
-	 * @param query
-	 * @return EmployeeModel
+	 * @param query 员工查询
+	 * @return EmployeeModel 员工模型
 	 */
 	@QueryAction
 	public EmployeeModel getEmployeeDetail(EmployeeDetailQuery query) {
@@ -43,9 +43,9 @@ public class EmployeeQueryHandler implements IQueryHandler {
 	
 	/**
 	 * 获取员工信息列表
-	 * @param query
-	 * @return
-	 */
+	 * @param query 员工列表查询
+	 * @return 员工集合
+	 */ 
 	@QueryAction
 	public EmployeesCollection getEmployees(EmployeeSearchQuery query) {
 		//分页初始化

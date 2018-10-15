@@ -6,12 +6,6 @@ public class EmployeePersistentCommand implements ICommand<Void> {
 	private String employeeName;
 	private String specialDevice;
 	
-	/**
-	 * 初始化EmployeePersistentCommand
-	 * @param employeeId
-	 * @param employeeName
-	 * @param specialDevice
-	 */
 	public EmployeePersistentCommand(String employeeId, String employeeName, String specialDevice) {
 		this.employeeId = employeeId;
 		this.employeeName = employeeName;

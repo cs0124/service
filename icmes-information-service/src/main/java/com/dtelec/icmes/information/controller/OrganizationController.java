@@ -1,28 +1,27 @@
 package com.dtelec.icmes.information.controller;
 
 
-
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.dtelec.icmes.common.error.IcmesBusinessException;
 import com.dtelec.icmes.common.error.IcmesErrorTypeEnum;
 import com.dtelec.icmes.common.utility.ConditionUtils;
-import com.dtelec.icmes.information.controller.vo.ResOrganizationAccountVO;
+import com.dtelec.icmes.information.controller.vo.ResOrganizationAccountTreeVO;
 import com.dtelec.icmes.information.controller.vo.ResOrganizationsVO;
 import com.dtelec.icmes.information.service.command.OrganizationCreatetCommand;
 import com.dtelec.icmes.information.service.command.OrganizationDeleteCommand;
 import com.dtelec.icmes.information.service.command.OrganizationUpdateCommand;
-import com.dtelec.icmes.information.service.model.OrganizationAccountCollection;
+import com.dtelec.icmes.information.service.model.OrganizationAccountFlatCollection;
+import com.dtelec.icmes.information.service.model.OrganizationAccountTreeCollection;
 import com.dtelec.icmes.information.service.model.OrganizationModel;
 import com.dtelec.icmes.information.service.model.OrganizationsCollection;
 import com.dtelec.icmes.information.service.model.OrganizationsFullNameModel;
-import com.dtelec.icmes.information.service.query.OrganizationAccountsQuery;
+import com.dtelec.icmes.information.service.query.OrganizationAccountsFlatQuery;
+import com.dtelec.icmes.information.service.query.OrganizationAccountsTreeQuery;
 import com.dtelec.icmes.information.service.query.OrganizationSearchQuery;
-
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +36,9 @@ public class OrganizationController {
 	/**
 	 * 组织机构查询
 	 * @author RHZhang
-	 *
+	 * @return 组织机构
+	 * @throws Exception 抛出异常
+	 * @param condition 查询参数
 	 */
 	@ApiOperation(value="组织机构查询--作者：张瑞晗" )
 	@ApiImplicitParams({
@@ -82,14 +83,13 @@ public class OrganizationController {
 		return resVO;
 	}
 	
-	
 	/**
-	 * 组织机构挂接人员查询
-	 * @param condition
-	 * @return
-	 * @throws Exception
+	 * 组织机构挂接人员查询树形结构
+	 * @param condition 查询条件
+	 * @return 组织机构挂接人员
+	 * @throws Exception 抛出异常
 	 */
-	@ApiOperation(value="组织机构挂接人员查询--作者：张瑞晗" )
+	@ApiOperation(value="组织机构挂接人员查询树形结构--作者：张瑞晗" )
 	@ApiImplicitParams({
 		 @ApiImplicitParam(name = "name", value = "员工名称",  dataType = "string", paramType = "query")
 	})
@@ -98,26 +98,85 @@ public class OrganizationController {
 		@ApiResponse(code = 500, message = "内部程序错误")
 		})
 	@RequestMapping(path = "/account/list/{condition}", method = RequestMethod.GET)
-	public ResOrganizationAccountVO getOrganizationAccounts(@PathVariable String condition) throws Exception {
+	public ResOrganizationAccountTreeVO getOrganizationAccounts(@PathVariable String condition) throws Exception {
+		return this.getOrganizationAccountsWithTree(condition);
+	}
+	
+	
+	/**
+	 * 组织机构挂接人员查询树形结构
+	 * @param condition 查询参数
+	 * @return 组织机构挂接人员
+	 * @throws Exception 抛出异常
+	 */
+	@ApiOperation(value="组织机构挂接人员查询树形结构--作者：张瑞晗" )
+	@ApiImplicitParams({
+		 @ApiImplicitParam(name = "name", value = "员工名称",  dataType = "string", paramType = "query")
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = 200, message = "成功"),
+		@ApiResponse(code = 500, message = "内部程序错误")
+		})
+	@RequestMapping(path = "/account/tree/list/{condition}", method = RequestMethod.GET)
+	public ResOrganizationAccountTreeVO getOrganizationAccountsWithTree(@PathVariable String condition) throws Exception {
 		//初始化参数
 		ConditionUtils util = new ConditionUtils(condition);
 		String name = util.getValueString("name", null);
 		
-		ResOrganizationAccountVO resVO = new ResOrganizationAccountVO();
-		OrganizationAccountsQuery query = new OrganizationAccountsQuery();
+		ResOrganizationAccountTreeVO resVO = new ResOrganizationAccountTreeVO();
+		OrganizationAccountsTreeQuery query = new OrganizationAccountsTreeQuery();
 		//入参赋值
 		query.setName(name);
 		//返回集合
-		OrganizationAccountCollection queryList = query.queryAndWait();
+		OrganizationAccountTreeCollection queryList = query.queryAndWait();
 		resVO.items = queryList.getList();
 		return resVO;
 	}
 	
 	
 	/**
+	 * 组织机构挂接人员查询平行结构
+	 * @param condition 查询条件
+	 * @return 组织机构挂接人员
+	 * @throws Exception 抛出异常
+	 */
+	@ApiOperation(value="组织机构挂接人员查询平行结构--作者：张瑞晗" )
+	@ApiImplicitParams({
+		 @ApiImplicitParam(name = "name", value = "员工名称",  dataType = "string", paramType = "query"),
+		 @ApiImplicitParam(name = "pageNo", value = "当前页码数", dataType = "string", paramType = "query"),
+		 @ApiImplicitParam(name = "pageSize", value = "一页多少条记录 0标识不分页全部显示",  dataType = "string", paramType = "query"),
+		 @ApiImplicitParam(name = "orderBy", value = "排序的字段名",  dataType = "string", paramType = "query"),
+		 @ApiImplicitParam(name = "ascending", value = "是否正序",  dataType = "string", paramType = "query")
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = 200, message = "成功"),
+		@ApiResponse(code = 500, message = "内部程序错误")
+		})
+	@RequestMapping(path = "/account/flat/list/{condition}", method = RequestMethod.GET)
+	public OrganizationAccountFlatCollection getOrganizationAccountsWithFlat(@PathVariable String condition) throws Exception {
+		//初始化参数
+		ConditionUtils util = new ConditionUtils(condition);
+		String search = util.getValueString("search", null);
+		Integer pageNo = util.getValueInteger("pageNo", 1);
+		Integer pageSize = util.getValueInteger("pageSize", 0);
+		String orderBy = util.getValueString("orderBy", null);
+		Boolean ascend = util.getValueBoolean("ascending", true);
+		
+		OrganizationAccountsFlatQuery query = new OrganizationAccountsFlatQuery(search, pageNo, pageSize);
+		query.setOrderBy(orderBy);
+		query.setAscending(ascend);
+		
+		//返回集合
+		OrganizationAccountFlatCollection coll = query.queryAndWait();
+		
+		return coll;
+	}
+	
+	
+	/**
 	 * 查询组织机构（无参接口）
-	 * @return
-	 * @throws Exception
+	 * @return 组织机构
+	 * @throws Exception 抛出异常
 	 */
 	@ApiOperation(value="组织机构查询(无参接口)--作者：张瑞晗" )
 	@ApiResponses({ 
@@ -132,14 +191,15 @@ public class OrganizationController {
 	
 	/**
 	 * 组织机构新增
-	 * @param model
-	 * @return
-	 * @throws Exception
+	 * @param model 组织机构新增模型
+	 * @return 字符串
+	 * @throws Exception 抛出异常
 	 */
 	@ApiOperation(value="组织机构新增--作者：张瑞晗" )
 	@ApiResponses({ 
 		@ApiResponse(code = 200, message = "成功"),
-		@ApiResponse(code = 500, message = "内部程序错误")
+		@ApiResponse(code = 500, message = "内部程序错误"),
+		@ApiResponse(code = 216, message = "不能重复新增！")
 		})
 	@RequestMapping(method = RequestMethod.POST)
 	public String createOrganization(@RequestBody @ApiParam(name = "employeeModel",value ="员工模型")OrganizationModel model ) throws Exception {
@@ -154,10 +214,10 @@ public class OrganizationController {
 	
 	/**
 	 * 组织机构编辑
-	 * @param model
-	 * @param id
-	 * @return
-	 * @throws Exception
+	 * @param model 组织机构模型
+	 * @param id 父Id
+	 * @return 字符串
+	 * @throws Exception 抛出的异常
 	 */
 	@ApiOperation(value="组织机构编辑--作者：张瑞晗" )
 	@ApiResponses({ 
@@ -188,10 +248,9 @@ public class OrganizationController {
 	
 	/**
 	 * 组织机构删除
-	 * @param model
-	 * @param id
-	 * @return
-	 * @throws Exception
+	 * @param id 组织机构id
+	 * @return 字符串
+	 * @throws Exception 抛出的异常
 	 */
 	@ApiOperation(value="组织机构删除--作者：张瑞晗" )
 	@ApiResponses({ 

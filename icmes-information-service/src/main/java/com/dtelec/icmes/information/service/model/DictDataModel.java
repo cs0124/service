@@ -148,8 +148,7 @@ public class DictDataModel {
 
 	
 	/**
-	 * entity to model
-	 * @param entity
+	 * @param entity 字典数据实体类
 	 */
 	public void fill(DictDataFullEntity entity) {
 		if (entity != null) {

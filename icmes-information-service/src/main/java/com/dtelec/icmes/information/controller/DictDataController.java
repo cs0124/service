@@ -1,7 +1,6 @@
 package com.dtelec.icmes.information.controller;
 
 import java.security.Principal;
-import java.util.Date;
 import java.util.UUID;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +14,7 @@ import com.dtelec.icmes.common.error.IcmesBusinessException;
 import com.dtelec.icmes.common.error.IcmesErrorTypeEnum;
 import com.dtelec.icmes.common.utility.ConditionUtils;
 import com.dtelec.icmes.information.controller.vo.ReqDictDataAddVO;
-import com.dtelec.icmes.information.controller.vo.ReqDictDataIOVO;
+import com.dtelec.icmes.information.controller.vo.ReqDictDataVO;
 import com.dtelec.icmes.information.controller.vo.ReqDictDataUpdateVO;
 import com.dtelec.icmes.information.controller.vo.ResDictDataVO;
 import com.dtelec.icmes.information.service.command.DictDataCreateCommand;
@@ -123,8 +122,8 @@ public class DictDataController {
 			}
 			model.setTypeCode(dictDataVO.typeCode);
 			model.setCreateUserId(Integer.valueOf(principal.getName()));
-			model.setCreateTime(new Date().getTime());
-			model.setLastUpdateTime(new Date().getTime());
+			model.setCreateTime(System.currentTimeMillis());
+			model.setLastUpdateTime(System.currentTimeMillis());
 			model.setDisabled(false);
 			UUID uuid  =  UUID.randomUUID();
 			model.setVersionTag(uuid.toString());
@@ -138,7 +137,6 @@ public class DictDataController {
 		else {
 			throw new IcmesBusinessException(IcmesErrorTypeEnum.INFO_DICTDATA_ADDERROR, "该字典数据已存在！");
 		}
-	
 	}
 	
 	
@@ -174,7 +172,7 @@ public class DictDataController {
 			}else {
 				model.setOrder(0);
 			}
-			model.setLastUpdateTime(new Date().getTime());
+			model.setLastUpdateTime(System.currentTimeMillis());
 			model.setLastUpdateUserId(Integer.valueOf(principal.getName()));
 			String ver=model.getVersionTag();
 			//v判断修改前和传进来的VersionTag是否相同
@@ -233,12 +231,11 @@ public class DictDataController {
 	}
 	
 	
-	
 	/**
 	 * 字典删除
-	 * @param code
-	 * @return String
-	 * @throws Exception
+	 * @param code 字典编码
+	 * @return String 字符串
+	 * @throws Exception 抛出异常
 	 */
 	@ApiOperation(value="字典数据删除-作者：何秋菊" )
 	@ApiResponses({ 
@@ -288,7 +285,7 @@ public class DictDataController {
 	
 	@RequestMapping(path="/{code}/enabled", method = RequestMethod.PUT)
 	@ResponseBody
-	String enabledDictData( @PathVariable String code,Principal principal,@RequestBody @ApiParam(name = "dictDataVO",value ="字典数据启用禁用模型") ReqDictDataIOVO dictDataVO) throws Exception{
+	String enabledDictData( @PathVariable String code,Principal principal,@RequestBody @ApiParam(name = "dictDataVO",value ="字典数据启用禁用模型") ReqDictDataVO dictDataVO) throws Exception{
 		DictDataQuery query = new DictDataQuery(code);
 		DictDataBaseModel model = query.queryAndWait();
 		//判断当前数据是否存在
@@ -298,7 +295,7 @@ public class DictDataController {
 		else {	
 			//2禁用
 			model.setDisabled(true);			
-			model.setLastUpdateTime(new Date().getTime());
+			model.setLastUpdateTime(System.currentTimeMillis());
 			model.setLastUpdateUserId(Integer.valueOf(principal.getName()));
 			String ver=model.getVersionTag();
 			//v判断修改前和传进来的VersionTag是否相同
@@ -336,7 +333,7 @@ public class DictDataController {
 		})
 	@RequestMapping(path="/{code}/disabled",method = RequestMethod.PUT)
 	@ResponseBody
-	String disabledDictData( @PathVariable String code,Principal principal,@RequestBody @ApiParam(name = "dictDataVO",value ="字典数据启用禁用模型") ReqDictDataIOVO dictDataVO) throws Exception{
+	String disabledDictData( @PathVariable String code,Principal principal,@RequestBody @ApiParam(name = "dictDataVO",value ="字典数据启用禁用模型") ReqDictDataVO dictDataVO) throws Exception{
 		DictDataQuery query = new DictDataQuery(code);
 		DictDataBaseModel model = query.queryAndWait();
 		//判断当前数据是否存在
@@ -347,7 +344,7 @@ public class DictDataController {
 			
 			//2启用
 			model.setDisabled(false);			
-			model.setLastUpdateTime(new Date().getTime());
+			model.setLastUpdateTime(System.currentTimeMillis());
 			model.setLastUpdateUserId(Integer.valueOf(principal.getName()));
 			String ver=model.getVersionTag();
 			//v判断修改前和传进来的VersionTag是否相同

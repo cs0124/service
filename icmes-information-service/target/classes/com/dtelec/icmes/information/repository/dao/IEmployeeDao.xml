@@ -6,10 +6,36 @@
 <mapper namespace="com.dtelec.icmes.information.repository.dao.IEmployeeDao">
 	<!-- 通过员工工号获取员工信息 -->
     <select id="findByEmployeeId" parameterType="map" resultType="com.dtelec.icmes.information.repository.entity.EmployeeEntity">
-        SELECT Id,SpecialDevice,OrganizationId,OfficePhone,OfficePhoneArea,OfficePhoneExt,JoinDate,Category,WorkType,Avatar,Name,MobilePhone,Gender,Email,BirthDate,IdentityCard,GraduateSchool,Specialty,Qualification,GraduationDate,HighEducation,HighDegree,VersionTag,CreateTime,UpdateTime
-        ,getFullParentOrganizationsName(OrganizationId) as fullName
-        FROM `Employee` 
-        WHERE Id = #{employeeId} 
+        SELECT e.Id,
+            e.SpecialDevice,
+            e.OrganizationId,
+            e.OfficePhone,
+            e.OfficePhoneArea,
+            e.OfficePhoneExt,
+            e.JoinDate,
+            e.Category,
+            e.WorkType,
+            e.Avatar,
+            e.Name,
+            e.MobilePhone,
+            e.Gender,
+            e.Email,
+            e.BirthDate,
+            e.IdentityCard,
+            e.GraduateSchool,
+            e.Specialty,
+            e.Qualification,
+            e.GraduationDate,
+            e.HighEducation,
+            e.HighDegree,
+            e.VersionTag,
+            e.CreateTime,
+            e.UpdateTime,
+            o.Name as OrganizationName,
+            getFullParentOrganizationsName(e.OrganizationId) as fullName
+        FROM `Employee` as e 
+          LEFT JOIN `Organization` as o ON e.OrganizationId = o.Id
+        WHERE e.Id = #{employeeId} 
     </select>
     <!-- 修改员工信息 -->
     <update id="updateEmployee" parameterType="com.dtelec.icmes.information.repository.entity.EmployeeEntity">

@@ -32,7 +32,7 @@ public class EmployeesFullNameModel {
 	
 	/**
 	 * 给模型赋值
-	 * @param entity
+	 * @param entity 员工实体类
 	 */
 	public void fillModel(EmployeeFullNameEntity entity) {
 		this.id = entity.getId();

@@ -2,6 +2,9 @@ package com.dtelec.icmes.information.controller.vo;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.axonframework.commandhandling.CommandExecutionException;
+import org.axonframework.queryhandling.QueryExecutionException;
+
 import com.dtelec.icmes.common.error.IcmesBusinessException;
 import com.dtelec.icmes.common.error.IcmesException;
 import com.dtelec.icmes.common.utility.ReflectionUtils;
@@ -25,17 +28,29 @@ public class GenericResponseErrorVO {
     		InvocationTargetException invocationError = ReflectionUtils.asClassInstance(error, InvocationTargetException.class);
     		if (invocationError != null) {
     			Throwable targetError = invocationError.getTargetException();
-    			if (targetError != null) error = targetError;
-    		}
-    		    		
-    		IcmesException icmesError = ReflectionUtils.asClassInstance(error, IcmesBusinessException.class);
-    		if (icmesError == null) {
-    			icmesError = ReflectionUtils.asClassInstance(error, IcmesException.class);
+    			if (targetError != null) {error = targetError;}
     		}
     		
-    		if (icmesError != null) {
-    			errCode = icmesError.getErrorCode();
-    			errType = icmesError.getErrorType();
+    		CommandExecutionException commandError = ReflectionUtils.asClassInstance(error, CommandExecutionException.class);
+    		if (commandError == null) {
+        		QueryExecutionException queryError = ReflectionUtils.asClassInstance(error, QueryExecutionException.class);
+        		Throwable targetError = null;
+        		if (queryError != null) {targetError = queryError.getCause();}
+    			if (targetError != null) {error = targetError;}
+    		}
+    		else {
+    			Throwable targetError = commandError.getCause();
+    			if (targetError != null) {error = targetError;}
+    		}
+    		
+    		IcmesException oceanusError = ReflectionUtils.asClassInstance(error, IcmesBusinessException.class);
+    		if (oceanusError == null) {
+    			oceanusError = ReflectionUtils.asClassInstance(error, IcmesException.class);
+    		}
+    		
+    		if (oceanusError != null) {
+    			errCode = oceanusError.getErrorCode();
+    			errType = oceanusError.getErrorType();
     		}
     		
     		Throwable superError = error.getCause();

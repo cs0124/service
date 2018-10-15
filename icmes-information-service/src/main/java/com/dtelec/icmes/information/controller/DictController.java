@@ -1,7 +1,6 @@
 package com.dtelec.icmes.information.controller;
 
 import java.security.Principal;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -116,8 +115,8 @@ public class DictController {
 			dictTypeModel.setCode(resDictVO.code);
 			dictTypeModel.setName(resDictVO.name);
 			dictTypeModel.setCreateUserId(Integer.valueOf(principal.getName()));
-			dictTypeModel.setCreateTime(new Date().getTime());
-			dictTypeModel.setLastUpdateTime(new Date().getTime());
+			dictTypeModel.setCreateTime(System.currentTimeMillis());
+			dictTypeModel.setLastUpdateTime(System.currentTimeMillis());
 			UUID uuid  =  UUID.randomUUID();
 			dictTypeModel.setIsBuiltIn("0");
 			dictTypeModel.setVersionTag(uuid.toString());		
@@ -128,9 +127,6 @@ public class DictController {
 			//调用handler
 			command.sendAndWait();	
 		}
-		
-		
-	
 	}
 	
 	
@@ -164,7 +160,7 @@ public class DictController {
 		}else {
 			model.setName(dictTypeVO.name);
 			model.setCode(code);
-			model.setLastUpdateTime(new Date().getTime());
+			model.setLastUpdateTime(System.currentTimeMillis());
 			model.setLastUpdateUserId(Integer.valueOf(principal.getName()));
 			UUID uuid  =  UUID.randomUUID();			
 			
@@ -182,7 +178,7 @@ public class DictController {
 			}
 		}
 		
-	return modelMap;
+	  return modelMap;
 	}
 	
 	
@@ -230,8 +226,8 @@ public class DictController {
 	
 	/**
 	 * 字典类型删除
-	 * @param code
-	 * @throws Exception
+	 * @param code 字典编码
+	 * @throws Exception 抛出异常
 	 */
 	@ApiOperation(value="字典类型-删除-作者：何秋菊" )
 	@ApiResponses({ 

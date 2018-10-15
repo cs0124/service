@@ -3,6 +3,11 @@ package com.dtelec.icmes.information.repository.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 实体类基类
+ *
+ * @param <T> 泛型
+ */
 public class PageableSearchBaseEntity<T> {
 	private long totalCount;
 	private List<T> items;
@@ -24,10 +29,10 @@ public class PageableSearchBaseEntity<T> {
 	}
 	
 	public void addItem(T item) {
-		if (item == null) return;
+		if (item == null) {return;}
 		
-		if (this.items == null)
-			this.items = new ArrayList<>();
+		if (this.items == null) {
+			this.items = new ArrayList<>();}
 		
 		this.items.add(item);
 	}

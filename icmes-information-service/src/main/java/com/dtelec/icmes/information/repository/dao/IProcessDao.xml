@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dtelec.icmes.information.repository.dao.IProcessDao">
+	<!-- 创建工艺信息 -->
+	<insert id="createProcess" parameterType="com.dtelec.icmes.information.repository.entity.ProcessEntity">
+		INSERT INTO Process (Code, Name,CreateUserId,UpdateUserId)
+		VALUES ( #{entity.code}, #{entity.name},'0','0' )
+	</insert>
+	
+	<!-- 通过标识符获取工艺详细信息 -->
+	<select id="getProcessById" parameterType="map" resultType="com.dtelec.icmes.information.repository.entity.ProcessEntity">
+	 	select Id,Code,Name,VersionTag from Process where Id = #{id}
+	</select>
+	
+	<!-- 通过工艺编号获取工艺详细信息 -->
+	<select id="getProcessByCode" parameterType="map" resultType="com.dtelec.icmes.information.repository.entity.ProcessEntity">
+	 	select Id,Code,Name,VersionTag from Process where Code = #{code}
+	</select>
+	
+	<!-- 通过标识符删除工艺信息 -->
+	<delete id="deleteProcess" parameterType="map">
+		delete from Process where Id = #{id}
+	</delete>
+	
+	<!-- 通过标识符编辑工艺信息 -->
+	<update id="updateProcess" parameterType="com.dtelec.icmes.information.repository.entity.ProcessEntity">
+	 	 UPDATE Process 
+    		<trim prefix="SET" suffixOverrides=",">
+	    	  <if test="entity.name != null and entity.name != ''">Name = #{entity.name},</if>
+	          <if test="entity.versionTag != null and entity.versionTag != ''">VersionTag = #{entity.versionTag},</if>
+	          UpdateTime = now()
+          </trim>
+    	where Id = #{entity.id}
+	</update>
+	
+	<!-- 获取工艺list -->
+	<select id="getProcess" resultType="com.dtelec.icmes.information.repository.entity.ProcessEntity">
+		select Id,Code,Name,VersionTag from Process 
+		<where>
+			<if test="param.name != null and param.name != ''">
+				and Name like concat('%',#{param.name},'%')
+			</if>
+			<if test="param.code != null and param.code != ''">
+				and Code like concat('%',#{param.code},'%')
+			</if>
+			<if test="param.globalName != null and param.globalName != ''">
+				or Name like concat('%',#{param.globalName},'%') or Code like concat('%',#{param.globalName},'%')
+			</if>
+		</where>
+		<if test="param.orderBy != null and param.orderBy != '' and param.ascending == true">
+		    order by ${param.orderBy} asc
+		</if>
+		<if test="param.orderBy != null and param.orderBy != '' and param.ascending == false">
+		    order by ${param.orderBy} desc
+		</if>
+		<if test="param.startIndex > -1 and param.pageSize > 0">
+		    LIMIT #{param.startIndex}, #{param.pageSize}
+		</if>
+	</select>
+	
+	<!-- 获取员工总记录数 -->
+	  <select id="getProcessCount"  resultType="java.lang.Integer">
+	    select count(Code) from Process 
+        <where>
+			<if test="param.name != null and param.name != ''">
+				and Name like concat('%',#{param.name},'%')
+			</if>
+			<if test="param.code != null and param.code != ''">
+				and Code like concat('%',#{param.code},'%')
+			</if>
+			<if test="param.globalName != null and param.globalName != ''">
+				or Name like concat('%',#{param.globalName},'%') or Code like concat('%',#{param.globalName},'%')
+			</if>
+		</where>
+    </select>
+</mapper>

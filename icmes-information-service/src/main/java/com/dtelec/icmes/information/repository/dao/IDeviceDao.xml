@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.dtelec.icmes.information.repository.dao.IDeviceDao">
+	<!-- 查询设备列表 -->
+	<select id="searchDeviceColl" parameterType="com.dtelec.icmes.information.repository.param.DevicePageableSearchParam" resultType="com.dtelec.icmes.information.repository.param.DevicePageableSearchResultParam">
+		SELECT 
+		    D.ProcessNo AS processNo,
+		    D.Code AS code,
+		    D.Name AS name,
+		    D.DeviceCategoryId AS deviceCategoryId,
+		    DC.Code AS deviceCategoryCode,
+		    DC.Name AS deviceCategoryName,
+		    D.Model AS model,
+		    D.LocationId AS locationId,
+		    L.Code AS locationCode,
+		    L.Name AS locationName,
+		    D.Status AS status,
+		    D.ParentId AS parentId
+		FROM
+		    `Device` D
+		        LEFT JOIN
+		    `DeviceCategory` DC ON D.DeviceCategoryId = DC.Id
+		        LEFT JOIN
+		    `Location` L ON D.LocationId = L.Id
+		<trim prefix="WHERE (" suffix=")" prefixOverrides="AND |OR ">
+			<if test="param.parentId != null and param.parentId != ''">
+				and D.ParentId = #{param.parentId}
+				and D.IsPrimary = 0
+			</if>
+			<if test="param.parentId == null or param.parentId == ''">
+				and D.IsPrimary = 1
+			</if>
+			<if test="param.categoryList != null">
+				and DC.Code in
+				<foreach collection="param.categoryList" index="categoryIndex" item="categoryId" open="(" close=")" separator=",">
+					  #{categoryId}
+				</foreach>
+			</if>
+			<if test="param.locationList != null">
+				and L.Code in
+				<foreach collection="param.locationList" index="locationIndex" item="locationId" open="(" close=")" separator=",">
+					  #{locationId}
+				</foreach>
+			</if>
+			<if test="param.statusList != null">
+				and D.Status in
+				<foreach collection="param.statusList" index="statusIndex" item="statusId" open="(" close=")" separator=",">
+					  #{statusId}
+				</foreach>
+			</if>
+			<if test="param.globalName != null and param.globalName != ''">
+				and (
+					D.ProcessNo like concat('%',#{param.globalName},'%') OR
+					D.Code like concat('%',#{param.globalName},'%') OR
+					D.Name like concat('%',#{param.globalName},'%') OR
+					D.Model like concat('%',#{param.globalName},'%') OR
+					D.Id in (SELECT DISTINCT
+								    DSA.DeviceId
+								FROM
+								    `Device_SpecModelData_ASS` DSA
+								        INNER JOIN
+								    `SpecModelData` SMD ON DSA.SpecModelDataId = SMD.Id
+								WHERE
+								    SMD.Name LIKE concat('%',#{param.globalName},'%') )
+							)
+			</if>
+		</trim>
+		<if test="param.orderBy != null and param.orderBy != '' and param.ascending == true">
+		    order by D.${param.orderBy} asc
+		</if>
+		<if test="param.orderBy != null and param.orderBy != '' and param.ascending == false">
+		    order by D.${param.orderBy} desc
+		</if>
+		<if test="param.startIndex > -1 and param.pageSize > 0">
+		    LIMIT #{param.startIndex}, #{param.pageSize}
+		</if>
+	
+	</select>
+	
+	<!-- 查询设备列表统计总数 -->
+	<select id="searchDeviceCollCount" parameterType="com.dtelec.icmes.information.repository.param.DevicePageableSearchParam" resultType="java.lang.Integer">
+		SELECT 
+		    COUNT(1) as count
+		FROM
+		    `Device` D
+		        LEFT JOIN
+		    `DeviceCategory` DC ON D.DeviceCategoryId = DC.Id
+		        LEFT JOIN
+		    `Location` L ON D.LocationId = L.Id
+		<trim prefix="WHERE (" suffix=")" prefixOverrides="AND |OR ">
+			<if test="param.parentId != null and param.parentId != ''">
+				and D.ParentId = #{param.parentId}
+				and D.IsPrimary = 0
+			</if>
+			<if test="param.parentId == null or param.parentId == ''">
+				and D.IsPrimary = 1
+			</if>
+			<if test="param.categoryList != null">
+				and DC.Code in
+				<foreach collection="param.categoryList" index="categoryIndex" item="categoryId" open="(" close=")" separator=",">
+					  #{categoryId}
+				</foreach>
+			</if>
+			<if test="param.locationList != null">
+				and  L.Code in
+				<foreach collection="param.locationList" index="locationIndex" item="locationId" open="(" close=")" separator=",">
+					 #{locationId}
+				</foreach>
+			</if>
+			<if test="param.statusList != null">
+				and D.Status in
+				<foreach collection="param.statusList" index="statusIndex" item="statusId" open="(" close=")" separator=",">
+					  #{statusId}
+				</foreach>
+			</if>
+			<if test="param.globalName != null and param.globalName != ''">
+				and (
+					D.ProcessNo like concat('%',#{param.globalName},'%') OR
+					D.Code like concat('%',#{param.globalName},'%') OR
+					D.Name like concat('%',#{param.globalName},'%') OR
+					D.Model like concat('%',#{param.globalName},'%') OR
+					D.Id in (SELECT DISTINCT
+								    DSA.DeviceId
+								FROM
+								    `Device_SpecModelData_ASS` DSA
+								        INNER JOIN
+								    `SpecModelData` SMD ON DSA.SpecModelDataId = SMD.Id
+								WHERE
+								    SMD.Name LIKE concat('%',#{param.globalName},'%') )
+							)
+			</if>
+		</trim>
+
+	</select>
+	
+	<!-- 查询规格列表 -->
+	<select id="searchDeviceSpecDataColl" parameterType="map" resultType="com.dtelec.icmes.information.repository.param.DeviceSpecDataParam">
+			SELECT 
+			    DSA.DeviceId AS deviceId,
+			    DSA.SpecModelDataId AS specDataId,
+			    DSA.Value AS value,
+			    SMD.Name AS name,
+			    SMD.Unit AS unit
+			FROM
+			    `Device_SpecModelData_ASS` DSA
+			        INNER JOIN
+			    `SpecModelData` SMD ON DSA.SpecModelDataId = SMD.Id
+			WHERE DSA.DeviceId in
+				<foreach collection="ids" index="index" item="id" open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+	</select>
+	
+</mapper>

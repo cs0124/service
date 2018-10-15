@@ -17,6 +17,12 @@ import com.dtelec.icmes.information.service.core.ICommandHandler;
 import com.dtelec.icmes.information.service.core.IQueryHandler;
 import com.dtelec.icmes.information.utility.SpringBeanUtils;
 
+/**
+ * 用于读取ICMES 配置文件信息
+ * 
+ * @author hlxu
+ *
+ */
 
 @Configuration
 @ConfigurationProperties(prefix="icmes", ignoreUnknownFields = false)

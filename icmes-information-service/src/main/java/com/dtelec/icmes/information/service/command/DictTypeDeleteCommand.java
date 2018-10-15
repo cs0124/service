@@ -16,8 +16,7 @@ public class DictTypeDeleteCommand implements ICommand<DictTypeModel>{
 	
 	
 	/**
-	 * model to command
-	 * @param model
+	 * @param model 字典类型模型
 	 */
 	public void fill(DictTypeModel model) {
 		this.code = model.getCode();

@@ -10,11 +10,11 @@ import com.dtelec.icmes.information.repository.entity.PageableSearchBaseEntity;
 public class OrganizationsCollection extends PageableSearchBaseModel<OrganizationsFullNameModel> {
 	/**
 	 * 组织机构分页集合元素赋值
-	 * @param entity
-	 * @param eachPageCount
+	 * @param entity 组织全名实体类
+	 * @param eachPageCount 每页显示条数
 	 */
 	public void fill(PageableSearchBaseEntity<OrganizationFullNameEntity> entity, int eachPageCount) {
-		if (eachPageCount < 1) eachPageCount = 1;
+		if (eachPageCount < 1) {eachPageCount = 1;}
 		//分页属性
 		long total = entity.getTotalCount();
 		long pages = (long) Math.ceil((double)total / (double)eachPageCount);

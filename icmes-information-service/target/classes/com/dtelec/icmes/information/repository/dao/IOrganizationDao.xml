@@ -50,6 +50,14 @@
 		</trim>
     </select>
     
+    
+    <!-- 检查组织机构 -->
+	<select id="checkOrganization" parameterType="com.dtelec.icmes.information.repository.entity.OrganizationEntity" resultType="java.lang.Integer">
+		select count(1) from Organization where Id=#{entity.id} and Name=#{entity.name} and ParentId=#{entity.parentId}
+	
+	</select>
+    
+    
 	<!-- 创建组织机构 -->
 	<insert id="createOrganization" parameterType="com.dtelec.icmes.information.repository.entity.OrganizationEntity">
 		insert into Organization 
@@ -99,7 +107,7 @@
 	</delete>
 	
 	<!--查询组织机构和账户关系树  -->
-	<select id="getOrganizationAccounts" parameterType="java.lang.String" resultType="com.dtelec.icmes.information.repository.entity.OrganizationAccountEntity">
+	<select id="getOrganizationAccountsTree" parameterType="java.lang.String" resultType="com.dtelec.icmes.information.repository.entity.OrganizationAccountTreeEntity">
 		SELECT 
 		    IFNULL(a.OrganizationId, '0') AS parentId,
 		    (SELECT 
@@ -158,4 +166,41 @@
 		WHERE
 		    Id = '0'
 	</select>
+	
+	<!--查询组织机构和账户关系平行数据  -->
+	<select id="getOrganizationAccountsFlat" resultType="com.dtelec.icmes.information.repository.entity.OrganizationAccountFlatEntity">
+	    SELECT u.EmployeeId, u.Id as UserId, e.Name, GETFULLPARENTORGANIZATIONSNAME(o.Id) as OrgFullName
+	    FROM Employee e
+		  INNER JOIN User u ON e.Id = u.EmployeeId
+		    LEFT JOIN Organization o ON e.OrganizationId = o.Id
+	    <where>
+	        u.IsDeleted = 0 
+	        <if test="params.search != null and params.search != ''">
+				and ((e.Name like concat('%',#{params.search},'%')) or (o.Name like concat('%',#{params.search},'%')))
+			</if>
+	    </where>
+		<if test="params.orderBy != null and params.orderBy != '' and params.ascending == true">
+		    order by ${params.orderBy} asc
+		</if>
+		<if test="params.orderBy != null and params.orderBy != '' and params.ascending == false">
+		    order by ${params.orderBy} desc
+		</if>
+		<if test="params.startIndex > -1 and params.pageSize > 0">
+		    LIMIT #{params.startIndex}, #{params.pageSize}
+		</if>
+    </select>
+	
+	<!--查询组织机构和账户关系平行数据总数  -->
+	<select id="countOrganizationAccountsFlatTotal" resultType="Long">
+	    SELECT Count(u.Id)
+	    FROM Employee e
+		  INNER JOIN User u ON e.Id = u.EmployeeId
+		    LEFT JOIN Organization o ON e.OrganizationId = o.Id
+	    <where>
+	        u.IsDeleted = 0 
+	        <if test="params.search != null and params.search != ''">
+				and ((e.Name like concat('%',#{params.search},'%')) or (o.Name like concat('%',#{params.search},'%')))
+			</if>
+	    </where>
+    </select>
 </mapper>

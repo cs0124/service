@@ -27,17 +27,6 @@ public class DictTypeUpdateCommand implements  ICommand<DictTypeModel>{
 	private Integer LastUpdateUserId;
 
 	
-	/**
-	 * 构造方法
-	 * @param code
-	 * @param name
-	 * @param isBuiltIn
-	 * @param versionTag
-	 * @param createTime
-	 * @param createUserId
-	 * @param lastUpdateTime
-	 * @param lastUpdateUserId
-	 */
 	public DictTypeUpdateCommand(String code, String name, String isBuiltIn, String versionTag, Long createTime,
 			Integer createUserId, Long lastUpdateTime, Integer lastUpdateUserId) {
 		super();
@@ -53,8 +42,7 @@ public class DictTypeUpdateCommand implements  ICommand<DictTypeModel>{
 	
 	
 	/**
-	 * model to command
-	 * @param dictTypeModel
+	 * @param dictTypeModel 字典类型模型
 	 */
 	public DictTypeUpdateCommand(DictTypeModel dictTypeModel) {
 		this.code=dictTypeModel.getCode();
@@ -126,8 +114,7 @@ public class DictTypeUpdateCommand implements  ICommand<DictTypeModel>{
 
 	
 	/**
-	 * command to entity
-	 * @return
+	 * @return 字典类型实体类
 	 */
 	public DictTypeEntity  convert() {
 		DictTypeEntity entity = new DictTypeEntity();

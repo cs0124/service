@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.dtelec.icmes.information.repository.dao.IDeviceCategoryDao">
+	
+	<!--新建设备类型 -->
+    <insert id="createDeviceCategory" parameterType="com.dtelec.icmes.information.repository.entity.DeviceCategoryBaseEntity" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO DeviceCategory(Code, Name, IsPrimary, CreateUserId, UpdateUserId)
+		VALUES(#{code}, #{name}, #{isPrimary}, '0', '0')
+	</insert>
+	
+	<!-- 为设备类型添加规格数据 -->
+	<insert id="addSpecDataForDeviceCategory" parameterType="map">
+		INSERT IGNORE INTO DeviceCategory_SpecModelData_ASS(DeviceCategoryId, SpecModelDataId)
+		VALUES
+        <foreach collection="specDataIds" index="index" item="specDataId" separator=",">  
+          (#{deviceCategoryId}, #{specDataId})
+        </foreach>
+	</insert>
+	
+	<!-- 通过标识符获取设备信息 -->
+	<select id="getDeviceCategoryById" parameterType="map" resultType="com.dtelec.icmes.information.repository.entity.DeviceCategoryBaseEntity">
+		select Id,Code,Name,IsPrimary,VersionTag from DeviceCategory where Id = #{id}
+	</select>
+	
+	<!-- 编辑设备类型 -->
+	<update id="updateDeviceCategory" parameterType="com.dtelec.icmes.information.repository.entity.DeviceCategoryBaseEntity">
+		 UPDATE DeviceCategory 
+    		<trim prefix="SET" suffixOverrides=",">
+	    	  <if test="entity.name != null and entity.name != ''">Name = #{entity.name},</if>
+	          <if test="entity.versionTag != null and entity.versionTag != ''">VersionTag = #{entity.versionTag},</if>
+	          UpdateTime = now()
+          </trim>
+    	where Id = #{entity.id}
+	</update>
+	
+	<!-- 通过设备类型标识符删除规格数据 -->
+	 <delete id="deleteSpecDataForDeviceCategoryByDeviceCategoryId" parameterType="map">
+		delete from DeviceCategory_SpecModelData_ASS where DeviceCategoryId = #{deviceCategoryId}
+	</delete> 
+	
+	<!-- 删除设备类型 -->
+	<delete id="deleteDeviceCategory" parameterType="map">
+		delete from DeviceCategory where Id = #{id};
+		<!-- 通过设备类型标识符删除规格数据 -->
+		delete from DeviceCategory_SpecModelData_ASS where DeviceCategoryId = #{id}
+	</delete>
+	
+	<!-- 通过标识符获取规格数据 -->
+	<select id="getSpecData" parameterType="map" resultType="com.dtelec.icmes.information.repository.entity.SpecDataEntity">
+		SELECT 
+		    SMD.Id,
+		    SMD.TypeId,
+		    SMD.Name,
+		    SMD.Unit,
+		    SMD.DisplayMode,
+		    SMT.Name typeName
+		FROM
+		    SpecModelData SMD
+		        INNER JOIN
+		    DeviceCategory_SpecModelData_ASS ASS ON SMD.Id = ASS.SpecModelDataId
+		        INNER JOIN
+		    SpecModelType SMT ON SMD.TypeId = SMT.Id
+		WHERE
+		    DeviceCategoryId = #{id}
+	</select> 
+	
+	<!-- 设备类型列表 -->
+	<select id="getDeviceCategorys" resultType="com.dtelec.icmes.information.repository.entity.DeviceCategoryBaseEntity">
+		select Id,Code,Name,VersionTag,IsPrimary from DeviceCategory 
+		<where>
+			<if test="param.isPrimary != null and param.isPrimary != ''">
+				and IsPrimary = #{param.isPrimary}
+			</if>
+			<if test="param.globalName != null and param.globalName != ''">
+				or Name like concat('%',#{param.globalName},'%') or Code like concat('%',#{param.globalName},'%')
+			</if>
+		</where>
+		<if test="param.orderBy != null and param.orderBy != '' and param.ascending == true">
+		    order by ${param.orderBy} asc
+		</if>
+		<if test="param.orderBy != null and param.orderBy != '' and param.ascending == false">
+		    order by ${param.orderBy} desc
+		</if>
+		<if test="param.startIndex > -1 and param.pageSize > 0">
+		    LIMIT #{param.startIndex}, #{param.pageSize}
+		</if>
+	</select>
+	
+	<!-- 获取设备类型总数 -->
+	<select id="getDeviceCategoryCount" resultType="java.lang.Integer">
+		select count(Code) from DeviceCategory
+		<where>
+			<if test="param.isPrimary != null and param.isPrimary != ''">
+				and IsPrimary = #{param.isPrimary}
+			</if>
+			<if test="param.globalName != null and param.globalName != ''">
+				or Name like concat('%',#{param.globalName},'%') or Code like concat('%',#{param.globalName},'%')
+			</if>
+		</where>
+	</select>
+	
+	<!-- 通过设备类型标识符数组获取规格数据 -->
+	<select id="getSpecDataListByDeviceCategroyIds" parameterType="map" resultType="com.dtelec.icmes.information.repository.entity.DeviceCategorySpecDataEntity">
+		SELECT 
+		    ASS.DeviceCategoryId,
+		    SMD.Id,
+		    SMD.TypeId,
+		    SMT.Name as TypeName,
+		    SMD.Name,
+		    SMD.Unit,
+		    SMD.DisplayMode as IsExtraDisplayMode
+		FROM
+		    SpecModelData as SMD 
+		      INNER JOIN SpecModelType as SMT ON SMD.TypeId = SMT.Id
+		        INNER JOIN DeviceCategory_SpecModelData_ASS as ASS ON SMD.Id = ASS.SpecModelDataId
+		    <where>
+		    	ASS.DeviceCategoryId In
+		    	 <foreach collection="deviceCategoryIds" index="index" item="deviceCategoryId" open="(" close=")" separator=",">  
+		           #{deviceCategoryId}
+		         </foreach>
+		    </where>
+	</select>
+	
+	<!-- 获取所有规格类型和数据模版 -->
+	<select id="getAllSpecData" resultType="com.dtelec.icmes.information.repository.entity.SpecDataEntity">
+		SELECT 
+		    SMD.Id,
+		    SMD.TypeId,
+		    SMD.DisplayMode AS isExtraDisplayMode,
+		    SMD.Name,
+		    SMD.Unit,
+		    SMD.IsDeleted,
+		    SMT.Name AS typeName
+		FROM
+		    SpecModelData SMD INNER JOIN SpecModelType SMT ON SMD.TypeId = SMT.Id
+		WHERE
+		    SMD.IsDeleted = 0
+	</select>
+</mapper>

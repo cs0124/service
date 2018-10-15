@@ -14,6 +14,8 @@ public class EmployeeModel {
 	private String specialDevice;
 	@ApiModelProperty(value = "员工所属组织机构编号")
 	private String organizationId;
+	@ApiModelProperty(value = "员工所属组织机构名称")
+	private String organizationName;
 	@ApiModelProperty(value = "员工办公室电话")
 	private String officePhone;
 	@ApiModelProperty(value = "员工办公室电话区号")
@@ -85,6 +87,14 @@ public class EmployeeModel {
 		this.organizationId = organizationId;
 	}
 	
+	public String getOrganizationName() {
+		return organizationName;
+	}
+
+	public void setOrganizationName(String organizationName) {
+		this.organizationName = organizationName;
+	}
+
 	public String getOfficePhone() {
 		return officePhone;
 	}
@@ -271,13 +281,14 @@ public class EmployeeModel {
 
 	/**
 	 * 给model模型赋值
-	 * @param entity
+	 * @param entity 员工实体类
 	 */
 	public void fill(EmployeeEntity entity) {
 		if (entity != null) {
 			this.id = entity.getId();
 			this.specialDevice = entity.getSpecialDevice();
 			this.organizationId = entity.getOrganizationId();
+			this.organizationName = entity.getOrganizationName();
 			this.officePhone = entity.getOfficePhone();
 			this.officePhoneArea = entity.getOfficePhoneArea();
 			this.officePhoneExt = entity.getOfficePhoneExt();
@@ -311,13 +322,14 @@ public class EmployeeModel {
 	
 	/**
 	 * 给entity模型赋值
-	 * @return
+	 * @return 员工实体类
 	 */
 	public EmployeeEntity covert() {
 		EmployeeEntity entity = new EmployeeEntity();
 		entity.setId(this.id);
 		entity.setSpecialDevice(this.specialDevice);
 		entity.setOrganizationId(this.organizationId);
+		entity.setOrganizationName(this.organizationName);
 		entity.setOfficePhone(this.officePhone);
 		entity.setOfficePhoneArea(this.officePhoneArea);
 		entity.setOfficePhoneExt(this.officePhoneExt);

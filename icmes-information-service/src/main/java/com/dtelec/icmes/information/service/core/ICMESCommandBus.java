@@ -20,9 +20,9 @@ import java.util.concurrent.TimeUnit;
  * the AsynchronousCommandBus uses a Cached Thread Pool (see
  * {@link java.util.concurrent.Executors#newCachedThreadPool()}). It will reuse threads while possible, and shut them
  * down after 60 seconds of inactivity.
- * <p/>
+ * 
  * Each Command is dispatched in a separate task, which is processed by the Executor.
- * <p/>
+ *
  * Note that you should call {@link #shutdown()} to stop any threads waiting for new tasks. Failure to do so may cause
  * the JVM to hang for up to 60 seconds on JVM shutdown.
  *

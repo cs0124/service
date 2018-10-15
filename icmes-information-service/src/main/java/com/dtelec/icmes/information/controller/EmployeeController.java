@@ -1,7 +1,6 @@
 package com.dtelec.icmes.information.controller;
 
 import javax.validation.Valid;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.dtelec.icmes.common.utility.ConditionUtils;
 import com.dtelec.icmes.information.controller.vo.ReqCreateEmployeeVO;
 import com.dtelec.icmes.information.controller.vo.ReqPersistentEmployeeVO;
@@ -24,7 +22,6 @@ import com.dtelec.icmes.information.service.model.EmployeesCollection;
 import com.dtelec.icmes.information.service.model.EmployeesFullNameModel;
 import com.dtelec.icmes.information.service.query.EmployeeDetailQuery;
 import com.dtelec.icmes.information.service.query.EmployeeSearchQuery;
-
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -40,7 +37,7 @@ public class EmployeeController {
 	 * 获取员工信息
 	 * @param id 员工工号
 	 * @return  员工模型
-	 * @throws Exception
+	 * @throws Exception 抛出异常
 	 */
 	@ApiOperation(value="获取员工信息-作者：迟山", notes="根据url的id来获取员工详细信息")
 	@ApiResponses({ 
@@ -64,7 +61,8 @@ public class EmployeeController {
 	/**
 	 * 修改员工信息
 	 * @param id 员工工号
-	 * @throws Exception
+	 * @throws Exception 抛出异常
+	 * @param reqVo 编辑员工模型
 	 */
 	@ApiOperation(value="修改员工信息-作者：迟山", notes="根据url的id来修改员工信息")
 	@ApiResponses({ 
@@ -77,7 +75,15 @@ public class EmployeeController {
 		@ApiImplicitParam(name= "id",value = "员工工号")
 	})
 	@RequestMapping(path = "/{id}", method = RequestMethod.PUT)
-	public void updateEmployeeDetail(@PathVariable @ApiParam(name = "id", value = "员工工号") String id, @Valid @RequestBody @ApiParam(name = "employeeModel", value ="员工模型")ReqUpdateEmployeeVO reqVo) throws Exception {
+	public void updateEmployeeDetail(
+			@PathVariable 
+			@ApiParam(name = "id", value = "员工工号") 
+			String id, 
+			@Valid 
+			@RequestBody 
+			@ApiParam(name = "employeeModel", value ="员工模型")
+			ReqUpdateEmployeeVO reqVo
+			) throws Exception {
 		EmployeeModel model = new EmployeeModel();
 		model.setId(id);
 		model.setSpecialDevice(reqVo.specialDevice);
@@ -112,7 +118,7 @@ public class EmployeeController {
 	/**
 	 *删除员工信息
 	 * @param id 员工工号
-	 * @throws Exception
+	 * @throws Exception 抛出异常
 	 */
 	@ApiOperation(value="删除员工信息-作者：迟山", notes="根据url的id来删除员工信息")
 	@ApiResponses({ 
@@ -135,8 +141,8 @@ public class EmployeeController {
 	
 	/**
 	 * 创建员工信息
-	 * @param reqVo
-	 * @throws Exception
+	 * @param reqVo 新建员工模型
+	 * @throws Exception 抛出异常
 	 */
 	@ApiOperation(value="创建员工-作者：迟山", notes="id和name是必填项")
 	@ApiResponses({ 
@@ -183,7 +189,7 @@ public class EmployeeController {
 	 * 获取员工列表
 	 * @param condition 查询条件
 	 * @return 员工信息模型
-	 * @throws Exception
+	 * @throws Exception 抛出异常
 	 */
 	@ApiOperation(value="获取员工列表-作者：迟山", notes="condition是查询条件")
 	@ApiResponses({ 
@@ -247,7 +253,7 @@ public class EmployeeController {
 	
 	/**
 	 * 创建账号
-	 * @param reqVo
+	 * @param reqVo 新建账号模型
 	 */
 	@PreAuthorize("#oauth2.hasScope('server')")
 	@RequestMapping(path = "/persistent", method = RequestMethod.POST)

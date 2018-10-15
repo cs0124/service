@@ -9,6 +9,8 @@ public class EmployeeEntity {
 	private String specialDevice;
 	//员工所属组织机构编号
 	private String organizationId;
+	//员工所属组织机构编号
+	private String organizationName;
 	//员工办公室电话
 	private String officePhone;
 	//员工办公室电话区号
@@ -80,6 +82,14 @@ public class EmployeeEntity {
 		this.organizationId = organizationId;
 	}
 	
+	public String getOrganizationName() {
+		return organizationName;
+	}
+
+	public void setOrganizationName(String organizationName) {
+		this.organizationName = organizationName;
+	}
+
 	public String getOfficePhone() {
 		return officePhone;
 	}

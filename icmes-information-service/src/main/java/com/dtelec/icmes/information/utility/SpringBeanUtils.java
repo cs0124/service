@@ -12,7 +12,7 @@ public class SpringBeanUtils implements ApplicationContextAware {
     protected final static Log logger = LogFactory.getLog(SpringBeanUtils.class);  
   
     private static ApplicationContext ctx = null; 
-  
+    @Override
     public void setApplicationContext(ApplicationContext ctx)  
             throws BeansException {  
     	SpringBeanUtils.ctx = ctx;  

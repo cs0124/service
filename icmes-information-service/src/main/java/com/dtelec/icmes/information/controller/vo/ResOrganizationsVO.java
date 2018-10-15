@@ -18,7 +18,7 @@ public class ResOrganizationsVO<T> {
 	public List<OrganizationsFullNameModel> items;
 	/**
 	 * 模型赋值
-	 * @param coll
+	 * @param coll 组织机构集合
 	 */
 	public ResOrganizationsVO(OrganizationsCollection coll) {
 		this.totalCount = coll.getTotalCount();

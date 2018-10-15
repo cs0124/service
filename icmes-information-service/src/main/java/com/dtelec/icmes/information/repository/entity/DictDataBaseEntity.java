@@ -2,43 +2,31 @@ package com.dtelec.icmes.information.repository.entity;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.Length;
-
 /**
  * 系统字典基础entity
  * @author dell
  *
  */
 public class DictDataBaseEntity {
-	@NotNull
-	@Length( max = 30)	
+
 	private String code;
-	@NotNull
-	@Length( max = 30)
+
 	private String typeCode;
-	@NotNull
-	@Length( max = 200)
+
 	private String name;
-	@NotNull
-	@Length( max = 3)
+
 	private Integer order;	
-	@NotNull
-	@Length( max = 36)
+
 	private String versionTag;
-	@NotNull	
+
 	private Date lastUpdateTime;
-	@NotNull
-	@Length( max = 20)
+
 	private Integer lastUpdateUserId;
-	@NotNull	
+	
 	private Date createTime;	
-	@NotNull
-	@Length( max = 20)
+
 	private Integer createUserId;	
-	@NotNull
-	@Length( max = 36)
+
 	private boolean disabled;
 	
 	

@@ -20,9 +20,8 @@ public class MenuController {
 
 	/**
 	 * 获取菜单列表
-	 * @param 
 	 * @return 菜单列表
-	 * @throws Exception
+	 * @throws Exception 抛出异常
 	 */
 	@ApiOperation(value="获取系统菜单列表", notes="菜单列表是二维表结构")
 	@ApiResponses({ 

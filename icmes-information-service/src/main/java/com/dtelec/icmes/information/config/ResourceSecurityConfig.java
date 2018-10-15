@@ -22,7 +22,12 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 import com.dtelec.icmes.information.config.security.AdvanceUserInfoTokenServices;
 
-
+/**
+ * 用于资源客户端安全访问的配置
+ * 
+ * @author hlxu
+ *
+ */
 @Configuration
 @EnableResourceServer
 public class ResourceSecurityConfig extends ResourceServerConfigurerAdapter {
@@ -34,11 +39,19 @@ public class ResourceSecurityConfig extends ResourceServerConfigurerAdapter {
         this.sso = sso;
     }
     
+    /**
+     * 注入当前 token 存储对象
+     * @return token 存储对象
+     */
     @Bean
     public TokenStore tokenStore() {
         return new JwtTokenStore(accessTokenConverter());
     }
 
+    /**
+     * 注入当前Token的产生转换器
+     * @return JwtAccessTokenConverter 当前Token 的产生转换器 
+     */
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
@@ -46,17 +59,29 @@ public class ResourceSecurityConfig extends ResourceServerConfigurerAdapter {
         return converter;
     }
 
+    /**
+     * 注入服务之间验证的资源对象的配置
+     * @return ClientCredentialsResourceDetails 服务之间的验证资源对象
+     */
     @Bean
     @ConfigurationProperties(prefix = "security.oauth2.client")
     public ClientCredentialsResourceDetails clientCredentialsResourceDetails() {
         return new ClientCredentialsResourceDetails();
     }
 
+    /**
+     * 注入 Feign 的拦截器截获对象，用户扩展更多内容到当前登录用户的Principal对象 
+     * @return RequestInterceptor Feign的拦截器截获对象
+     */
     @Bean
     public RequestInterceptor oauth2FeignRequestInterceptor(){
         return new OAuth2FeignRequestInterceptor(new DefaultOAuth2ClientContext(), clientCredentialsResourceDetails());
     }
 
+    /**
+     * 注入 RestTemplate 的 OAuth2RestTemplate 类型对象
+     * @return OAuth2RestTemplate 带有验证的RestTemplate 对象
+     */
     @Bean
     public OAuth2RestTemplate clientCredentialsRestTemplate() {
         return new OAuth2RestTemplate(clientCredentialsResourceDetails());
@@ -68,10 +93,15 @@ public class ResourceSecurityConfig extends ResourceServerConfigurerAdapter {
         return new AdvanceUserInfoTokenServices(sso.getUserInfoUri(), sso.getClientId(), tokenStore());
     }
 
+    /**
+     * 用于资源客户端的安全验证的匹配，此处用于过滤一些不需要验证的URL。
+     * @param http 当前的 HttpSecurity 对象
+     * 
+     */
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/v2/api-docs", "/configs/*","/**").permitAll()
+                .antMatchers("/v2/api-docs", "/configs/*").permitAll()
                 .anyRequest().authenticated();
     }
     

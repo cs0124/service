@@ -41,9 +41,9 @@ public class DictQueryHandler  implements IQueryHandler  {
 	
 	/**
 	 * 字典类型列表
-	 * @param query
-	 * @return
-	 * @throws Exception
+	 * @param query 字典查询
+	 * @return 字典集合
+	 * @throws Exception 抛出的异常
 	 */
 	@QueryAction
 	public DictTypeCollection getDictTypeList(DictDetailQuery query) throws Exception {
@@ -76,9 +76,9 @@ public class DictQueryHandler  implements IQueryHandler  {
 	
 	/**
 	 * 根据字典类型code 获取字典类型
-	 * @param query
-	 * @return
-	 * @throws Exception
+	 * @param query 字典类型查询
+	 * @return 字典类型模型
+	 * @throws Exception 抛出的异常
 	 */
 	@QueryAction
 	public DictTypeModel getDictTypeByCode(DictTypeQuery query) throws Exception {
@@ -107,9 +107,9 @@ public class DictQueryHandler  implements IQueryHandler  {
 	
 	/**
 	 * 字典数据列表
-	 * @param query
-	 * @return
-	 * @throws Exception
+	 * @param query 字典数据查询
+	 * @return 字典数据集合
+	 * @throws Exception 抛出的异常
 	 */
 	@QueryAction
 	public DictDataCollection getDictDataList(DictDataDetailQuery query) throws Exception {
@@ -141,10 +141,10 @@ public class DictQueryHandler  implements IQueryHandler  {
 	
 	/**
 	 * 根据字典编码获取字典数据
-	 * @param query
-	 * @return
-	 * @throws Exception
-	 */
+	 * @param query 字典数据查询
+	 * @return 字典数据模型
+	 * @throws Exception 抛出的异常
+	 */ 
 	@QueryAction
 	public DictDataBaseModel getDictDatayCode(DictDataQuery query) throws Exception {
 		//调用持久层

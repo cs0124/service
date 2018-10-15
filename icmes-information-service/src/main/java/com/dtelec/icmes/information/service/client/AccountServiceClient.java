@@ -16,15 +16,15 @@ public interface AccountServiceClient {
 	
 	/**
 	 * 获取功能树
-	 * @return
+	 * @return 功能树
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/account/features/tree", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	List<FeatureTreeModel> getFeaturesTree();
 	
 	/**
 	 * 获取账号信息
-	 * @param id
-	 * @return
+	 * @param id 员工号
+	 * @return 账号模型
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/account/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	AccountBaseModel getAccountInfo(@PathVariable String id);

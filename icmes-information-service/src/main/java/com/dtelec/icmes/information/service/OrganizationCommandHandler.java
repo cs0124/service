@@ -25,26 +25,32 @@ public class OrganizationCommandHandler implements ICommandHandler {
 	
 	/**
 	 * 组织结构新增
-	 * @param command
+	 * @param command 新建组织机构
+	 * @throws IcmesBusinessException 抛出的异常
 	 */
 	@CommandAction
-	public void createOrganizationDetail(OrganizationCreatetCommand command) {
+	public void createOrganizationDetail(OrganizationCreatetCommand command) throws IcmesBusinessException {
 		//给entity赋值
 		OrganizationEntity entity = new OrganizationEntity();
 		entity.setId(command.getId());
 		entity.setName(command.getName());
 		entity.setParentId(command.getParentId());
 		entity.setVersionTag(UUID.randomUUID().toString());
-		//调用持久层
-		orgaRepo.createOrganization(entity);
-
+		
+		int count = orgaRepo.checkOrganization(entity);
+		if(count > 0) {
+			throw new IcmesBusinessException(IcmesErrorTypeEnum.INFO_ORGANIZATION_REINSERT_ERROR, "不能重复新增！");
+		}else {
+			//调用持久层
+			orgaRepo.createOrganization(entity);
+		}
 	}
 	
 	
 	/**
 	 * 组织机构修改
-	 * @param command
-	 * @throws IcmesBusinessException
+	 * @param command 组织机构修改
+	 * @throws IcmesBusinessException 抛出的异常
 	 */
 	@CommandAction
 	public void updateOrganizationDetail(OrganizationUpdateCommand command) throws IcmesBusinessException {
@@ -75,8 +81,8 @@ public class OrganizationCommandHandler implements ICommandHandler {
 	
 	/**
 	 * 组织结构删除
-	 * @param command
-	 * @throws IcmesBusinessException
+	 * @param command 删除command
+	 * @throws IcmesBusinessException 抛出的异常
 	 */
 	@CommandAction
 	public void deleteOrganizationDetail(OrganizationDeleteCommand command) throws IcmesBusinessException {

@@ -31,8 +31,8 @@ public class EmployeeCommandHandler implements ICommandHandler {
 	
 	/**
 	 * 修改员工信息
-	 * @param command
-	 * @throws IcmesBusinessException
+	 * @param command 员工编辑
+	 * @throws IcmesBusinessException 抛出的异常
 	 */
 	@CommandAction
 	public void updateEmployeeDetail(EmployeeUpdateCommand command ) throws IcmesBusinessException {
@@ -59,8 +59,8 @@ public class EmployeeCommandHandler implements ICommandHandler {
 	
 	/**
 	 * 创建员工信息
-	 * @param command
-	 * @throws IcmesBusinessException
+	 * @param command 员工新建
+	 * @throws IcmesBusinessException 抛出的异常
 	 */
 	@CommandAction
 	public void createEmployee(EmployeeCreatetCommand command ) throws IcmesBusinessException {
@@ -78,8 +78,8 @@ public class EmployeeCommandHandler implements ICommandHandler {
 	
 	/**
 	 * 删除员工信息
-	 * @param command
-	 * @throws IcmesBusinessException
+	 * @param command 员工删除
+	 * @throws IcmesBusinessException 抛出的异常
 	 */
 	@CommandAction
 	public void deleteEmployee(EmployeeDeleteCommand command ) throws IcmesBusinessException {
@@ -89,7 +89,8 @@ public class EmployeeCommandHandler implements ICommandHandler {
 		}
 		//通过员工工号查询数据库里是否存在此员工
 		AccountBaseModel account = accountClient.getAccountInfo(id);
-		if (account != null) {
+		boolean hasChild = account.getHasAccount();
+		if (hasChild) {
 			String employeeId = account.getEmployeeId();
 			if (id.equalsIgnoreCase(employeeId)) {
 				throw new IcmesBusinessException(IcmesErrorTypeEnum.INFO_EMPLOYEE_DONT_DELETE_WITH_ACCOUNT, "不能删除带账号的员工");	
@@ -104,8 +105,7 @@ public class EmployeeCommandHandler implements ICommandHandler {
 	
 	/**
 	 * 创建账号
-	 * @param command
-	 * @throws IcmesBusinessException
+	 * @param command 创建账号
 	 */
 	@CommandAction
 	public void persistentEmployee(EmployeePersistentCommand command) {
