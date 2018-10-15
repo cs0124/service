@@ -6,16 +6,34 @@ import com.dtelec.icmes.account.config.SystemSettingConfig;
 import com.dtelec.icmes.common.error.IcmesBusinessException;
 import com.dtelec.icmes.common.error.IcmesException;
 import com.dtelec.icmes.common.utility.ReflectionUtils;
-
+/**
+ * 错误返回
+ * @author zturnking
+ *
+ */
 public class GenericResponseErrorVO {
+	/**
+	 * 错误代码
+	 */
     public int errorCode;
+    /**
+     * 错误描述
+     */
     public String errorDescription;
+    /**
+     * 错误类型
+     */
     public int errorType;     // 0 - server unexpected error   1 - business error    
-    
+    /**
+     * 构造
+     */
     public GenericResponseErrorVO() {
     	// do nothing
     }
-    
+    /**
+     * 有参数构造
+     * @param error
+     */
     public GenericResponseErrorVO(Throwable error) {
     	if (error != null) {
     		int errCode = 500;
@@ -25,7 +43,7 @@ public class GenericResponseErrorVO {
     		InvocationTargetException invocationError = ReflectionUtils.asClassInstance(error, InvocationTargetException.class);
     		if (invocationError != null) {
     			Throwable targetError = invocationError.getTargetException();
-    			if (targetError != null) error = targetError;
+    			if (targetError != null) {error = targetError;}
     		}
     		    		
     		IcmesException icmesError = ReflectionUtils.asClassInstance(error, IcmesBusinessException.class);

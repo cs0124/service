@@ -9,7 +9,9 @@ import com.dtelec.icmes.account.service.model.RoleCreateModel;
 import com.dtelec.icmes.account.service.param.AccountOrgPageableSearchParam;
 import com.dtelec.icmes.account.service.param.RolePageableSearchParam;
 import com.dtelec.icmes.common.error.IcmesBusinessException;
-
+/**
+ * 角色service接口
+ */
 public interface IRoleService {
 	/**
 	 * 查询是否有角色

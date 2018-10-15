@@ -8,19 +8,61 @@ import java.util.Date;
  */
 
 public class UserProxyAssignmentFullEntity {
-	
+	/**
+	 * id
+	 */
 	private Integer id;
+	/**
+	 * 用户关系id
+	 */
 	private Integer assignUserId;
+	/**
+	 * 委托人employee Id
+	 * **/
+	private String assignEmployeeId;
+	/**
+	 * 委托人角色关系id
+	 */
 	private Integer consignUserRoleAss;
+	/**
+	 * 持续时间
+	 */
 	private String periodDays;
+	/**
+	 * 代理开始时间
+	 */
 	private Date proxyStartDate;
+	/**
+	 * 代理结束时间
+	 */
 	private Date proxyEndDate;
+	/**
+	 * 创建用户id
+	 */
 	private Integer createUserId;
+	/**
+	 * 版本控制
+	 */
 	private String versionTag;
+	/**
+	 * 创建时间
+	 */
 	private Date createTime;
+	/**
+	 * 修改时间
+	 */
 	private Date updateTime;
+	/**
+	 * 组织机构名称
+	 */
 	private String organizationName;
+	/**
+	 * 角色名称
+	 */
 	private String roleName;
+	/**
+	 * 名称
+	 */
 	private String name;
 	 
 	
@@ -31,7 +73,7 @@ public class UserProxyAssignmentFullEntity {
 
 	public UserProxyAssignmentFullEntity(Integer id, Integer assignUserId, Integer consignUserRoleAss,
 			String periodDays, Date proxyStartDate, Date proxyEndDate, Integer createUserId, String versionTag,
-			Date createTime, Date updateTime, String organizationName, String roleName, String name) {
+			Date createTime, Date updateTime, String organizationName, String roleName, String name, String assignEmployeeId) {
 		super();
 		this.id = id;
 		this.assignUserId = assignUserId;
@@ -46,6 +88,7 @@ public class UserProxyAssignmentFullEntity {
 		this.organizationName = organizationName;
 		this.roleName = roleName;
 		this.name = name;
+		this.assignEmployeeId = assignEmployeeId;
 	}
 
 
@@ -176,6 +219,16 @@ public class UserProxyAssignmentFullEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+
+	public String getAssignEmployeeId() {
+		return assignEmployeeId;
+	}
+
+
+	public void setAssignEmployeeId(String assignEmployeeId) {
+		this.assignEmployeeId = assignEmployeeId;
 	}
 	
 	

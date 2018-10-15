@@ -4,7 +4,11 @@ import java.util.List;
 
 import com.dtelec.icmes.account.repository.entity.PageableQueryBaseEntity;
 import com.dtelec.icmes.account.repository.entity.RoleEntity;
-
+/**
+ * 角色集合
+ * @author zturnking
+ *
+ */
 public class RoleCollection extends PageableSearchBaseModel<RoleModel>{
 	/**
 	 * 模型填充
@@ -12,7 +16,7 @@ public class RoleCollection extends PageableSearchBaseModel<RoleModel>{
 	 * @param eachPageCount
 	 */
 	public void fill(PageableQueryBaseEntity<RoleEntity> entity, int eachPageCount) {
-		if (eachPageCount < 1) eachPageCount = 1;
+		if (eachPageCount < 1) {eachPageCount = 1;}
 		//分页初始化
 		long total = entity.getTotalCount();
 		long pages = (long) Math.ceil((double)total / (double)eachPageCount);

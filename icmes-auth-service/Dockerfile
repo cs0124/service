@@ -4,4 +4,4 @@ MAINTAINER dtelec developer
 ADD ./target/icmes-auth-service.jar /app/
 CMD ["java", "-Xmx200m", "-jar", "/app/icmes-auth-service.jar"]
 
-EXPOSE 5000
+EXPOSE 5500

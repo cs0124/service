@@ -1,7 +1,6 @@
 package com.dtelec.icmes.account.controller;
 
 import java.security.Principal;
-import java.util.Date;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
@@ -26,10 +25,16 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+
+/**
+ * 代理功能相关
+ * @author zturnking
+ *
+ */
 @RestController
 @RequestMapping("/proxies")
 public class ProxyController {
-	
+	//注入servicce
 	@Autowired
 	private IProxyService service;
 	
@@ -110,7 +115,7 @@ public class ProxyController {
 				else {
 				//实体类初始化
 				model.setId(id);
-				model.setUpdateTime(new Date().getTime());
+				model.setUpdateTime(System.currentTimeMillis());
 				model.setVersionTag(UUID.randomUUID().toString());
 				model.setAssignUserId(userProxyVO.assignUserId);
 				model.setConsignUserRoleAss(userProxyVO.consignUserRoleAss);
@@ -129,7 +134,6 @@ public class ProxyController {
 		}
 	}
 	
-	////////////////////
 	/**
 	 * 指派代理详细
 	 * @param id
@@ -161,7 +165,12 @@ public class ProxyController {
 			vo.startTime = model.getProxyStartDate();
 			vo.endTime = model.getProxyEndDate();
 			vo.cycle = model.getPeriodDays();
-			
+			vo.versionTag = model.getVersionTag();
+		    vo.assignUserId = model.getAssignUserId();
+			vo.consignUserRoleAss = model.getConsignUserRoleAss();
+			vo.roleName = model.getRoleName();
+			vo.assignEmployeeId = model.getAssignEmployeeId();
+			vo.organizationName = model.getOrganizationName(); 
 			return vo;
 		}
 	}	
@@ -181,8 +190,6 @@ public class ProxyController {
 		@ApiResponse(code = 401, message = "验证失败"), 		
 		@ApiResponse(code = 404, message = "未找到"),
 		@ApiResponse(code = 500, message = "内部程序错误"),
-		
-		
 	})
 	@RequestMapping(path = "/{id}",method = RequestMethod.DELETE)
 	@ResponseBody

@@ -1,7 +1,11 @@
 package com.dtelec.icmes.account.repository.param;
 
 import java.util.List;
-
+/**
+ * 创建角色参数
+ * @author zturnking
+ *
+ */
 public class RoleCreateParam {
 	/**
 	 * 角色id

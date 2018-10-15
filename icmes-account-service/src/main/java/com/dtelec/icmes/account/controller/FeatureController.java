@@ -16,17 +16,31 @@ import com.dtelec.icmes.account.service.model.MenuModel;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
+/**
+ * 权限功能相关
+ * @author zturnking
+ *
+ */
 @RestController
 @RequestMapping("/features")
 public class FeatureController {
 	
+	/**
+	 * 注入info服务
+	 */
 	@Autowired
 	private InfoServiceClient infoClient;
 	
+	/**
+	 * 注入权限特征service
+	 */
 	@Autowired
 	private IFeatureService featureSev;
-
+	
+	/**
+	 * 获取全功能列表树
+	 * @return
+	 */
 	@ApiOperation(value = "获取全功能列表树")
 	@ApiResponses({ 
 			@ApiResponse(code = 200, message = "成功"), 
@@ -35,8 +49,11 @@ public class FeatureController {
 			@ApiResponse(code = 404, message = "未找到") })
 	@RequestMapping(path = "/tree", method = RequestMethod.GET)
 	public List<ResFeatureTreeVO> getFeatureTree() {
+		// 读取全部菜单列表
 		List<MenuModel> menuList = infoClient.getMenuList();
+		// 读取当前全部功能列表
 		FeatureCollection featureList = featureSev.getAllFeatures();
+		// 合并菜单和功能的关系
 		List<ResFeatureTreeVO> resVo = ResFeatureTreeVO.convertFeatureTree(menuList, featureList);
 		
 		return resVo;

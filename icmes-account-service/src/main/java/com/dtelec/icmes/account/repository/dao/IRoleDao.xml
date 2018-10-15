@@ -51,8 +51,6 @@
 		</where>
     </select>
 
-
-
 	<!-- 检查role是否有关联User的数据 -->
     <select id="checkRoleCount" parameterType="java.lang.String"  resultType="java.lang.Integer">
     	select count(1) from User_Role_ASS where RoleId=#{id}
@@ -122,11 +120,10 @@
 			<if test="params.startIndex > -1 and params.pageSize > 0">
 			    LIMIT #{params.startIndex}, #{params.pageSize}
 			</if>
-   
-   
     </select>
+    
      <!-- 查询roleAccountOrg条数 -->
-    <select id="searchAccountOrgByParamsCount" parameterType="map"  resultType="java.lang.Integer">
+    <select id="searchAccountOrgByParamsCount" parameterType="map"  resultType="long">
    
   		    SELECT 
 			    count(1) as count

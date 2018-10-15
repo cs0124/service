@@ -4,15 +4,19 @@ import java.util.List;
 
 import com.dtelec.icmes.account.repository.entity.AccountRoleEntity;
 import com.dtelec.icmes.account.repository.entity.PageableQueryBaseEntity;
-
+/**
+ * 账户角色集合
+ * @author zturnking
+ *
+ */
 public class AccountRoleCollection extends PageableSearchBaseModel<AccountRoleModel>{
 	/**
-	 * 角色列表
+	 * 填充角色列表
 	 * @param entity
 	 * @param eachPageCount
 	 */
 	public void fill(PageableQueryBaseEntity<AccountRoleEntity> entity, int eachPageCount) {
-		if (eachPageCount < 1) eachPageCount = 1;
+		if (eachPageCount < 1) {eachPageCount = 1;}
 		//分页初始化
 		long total = entity.getTotalCount();
 		long pages = (long) Math.ceil((double)total / (double)eachPageCount);

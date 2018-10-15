@@ -1,15 +1,42 @@
 package com.dtelec.icmes.account.repository.entity;
 
-
+/**
+ * 账号实体类
+ * @author zturnking
+ *
+ */
 public class AccountEntity {
-
+	/**
+	 * 账号id
+	 */
 	private int id;
+	/**
+	 * 员工id
+	 */
 	private String employeeId;
+	/**
+	 * 密码
+	 */
 	private String password;
+	/**
+	 * 是否被锁定
+	 */
 	private boolean isLocked;
+	/**
+	 * 重试次数
+	 */
 	private int retryCount;
+	/**
+	 * 姓名
+	 */
 	private String name;
+	/**
+	 * 设备号
+	 */
 	private String specialDevice;
+	/**
+	 * 版本控制
+	 */
 	private String versionTag;
 	
 	

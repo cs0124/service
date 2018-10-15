@@ -8,10 +8,16 @@ import org.springframework.stereotype.Repository;
 import com.dtelec.icmes.account.repository.IFeatureRepository;
 import com.dtelec.icmes.account.repository.dao.IFeatureDao;
 import com.dtelec.icmes.account.repository.entity.FeatureEntity;
-
+/**
+ * 权限持久层实现类
+ * @author zturnking
+ *
+ */
 @Repository
 public class FeatureRepositoryImpl implements IFeatureRepository {
-
+	/**
+	 * 注入权限dao
+	 */
 	@Autowired
 	private IFeatureDao featureDao;
 	

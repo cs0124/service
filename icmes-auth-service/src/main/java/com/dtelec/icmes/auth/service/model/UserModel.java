@@ -40,7 +40,7 @@ public class UserModel implements UserDetails {
 	public void setId(int id) {
 		this.id = id;
 	}
-
+	@Override
 	public String getUsername() {
 		return username;
 	}
@@ -48,7 +48,7 @@ public class UserModel implements UserDetails {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-
+	@Override
 	public String getPassword() {
 		return password;
 	}

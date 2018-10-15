@@ -3,6 +3,7 @@ package com.dtelec.icmes.account.repository.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import com.dtelec.icmes.account.repository.IUserRepository;
 import com.dtelec.icmes.account.repository.dao.IUserDao;
@@ -17,10 +18,18 @@ import com.dtelec.icmes.account.repository.param.AccountAssignProxyPageableQuery
 import com.dtelec.icmes.account.repository.param.AccountConsignProxyPageableQueryParam;
 import com.dtelec.icmes.account.repository.param.AccountPageableQueryParam;
 import com.dtelec.icmes.account.repository.param.AccountRolePageableQueryParam;
-
+/**
+ * 账户持久层实现类
+ * @author zturnking
+ *
+ */
 @Repository
 public class UserRepositoryImpl implements IUserRepository {
-
+	
+	//private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+	/**
+	 * 注入账户dao
+	 */
 	@Autowired
 	private IUserDao dao;
 
@@ -97,6 +106,7 @@ public class UserRepositoryImpl implements IUserRepository {
 	 */
 	@Override
 	public void createAccount(String employeeId, String password) {
+		//password = encoder.encode(password);  // 暂时注销掉密码加密，等前后端联调成功后再次打开
 		dao.createAccount(employeeId, password);
 	}
 	
@@ -128,8 +138,9 @@ public class UserRepositoryImpl implements IUserRepository {
 	 * 修改密码
 	 */
 	@Override
-	public void changeAccountPassword(String employeeId, String password) {
-		dao.changeAccountPassword(employeeId, password);
+	public void changeAccountPassword(String employeeId, String password, boolean changePassword) {
+		int needChangePassword = (changePassword == true) ? 1 : 0;
+		dao.changeAccountPassword(employeeId, password, needChangePassword);
 	}
 	
 	/**
@@ -148,6 +159,14 @@ public class UserRepositoryImpl implements IUserRepository {
 		dao.deleteAccountByEmployeeId(employeeId);
 	}
 
+	/**
+	 * 给账号分配角色和组织机构
+	 */
+	@Override
+	public int checkAccountRelationRoleorganization(String employeeId, String roleId, String orgId) {
+		return dao.checkAccountRelationRoleorganization(employeeId, roleId, orgId);
+	}
+	
 	/**
 	 * 给账号分配角色和组织机构
 	 */

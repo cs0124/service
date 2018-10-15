@@ -8,13 +8,26 @@ import com.dtelec.icmes.account.service.model.UserProxyAssignmentModel;
  *
  */
 public interface IProxyService {
-	//新增指派代理	
+	/**
+	 * 新增指派代理	
+	 */
 	public void addUserProxyAssignment( UserProxyAssignmentModel model)  throws Exception;
-	//修改指派代理
+	/**
+	 *修改指派代理 
+	 */  
 	public void updateUserProxyAssignment( UserProxyAssignmentModel model)  throws Exception;	
-	//根据指派代理编号获取指派代理
+	/**
+	 * 根据指派代理编号获取指派代理
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
 	public UserProxyAssignmentModel getUserProxyAssignmentById( int id) throws Exception;
-	//根据指派代理id删除指派代理
+	/**
+	 * 根据指派代理id删除指派代理
+	 * @param id
+	 * @throws Exception
+	 */
 	public void delUserProxyAssignmentById(int id) throws Exception;
 
 }

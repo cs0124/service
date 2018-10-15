@@ -4,7 +4,11 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
+/**
+ * 用户模型
+ * @author zturnking
+ *
+ */
 @ApiModel
 public class UserModel {
 	@ApiModelProperty(value = "登录账号流水号")

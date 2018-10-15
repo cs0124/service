@@ -15,8 +15,9 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import com.dtelec.icmes.auth.service.IUserService;
 
 /**
- * @author NL
+ * @author hlxu
  */
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -37,7 +38,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {    	
     	auth.userDetailsService(userDetailsService)
-                .passwordEncoder(NoOpPasswordEncoder.getInstance());
+    	        .passwordEncoder(NoOpPasswordEncoder.getInstance());
+                // .passwordEncoder(new BCryptPasswordEncoder()); // 暂时注销掉密码加密，等前后端联调成功后再次打开
     }
 
     @Override
@@ -46,9 +48,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
     
-    @SuppressWarnings("deprecation")
-	@Bean
+    @Bean
     public static NoOpPasswordEncoder passwordEncoder() {
         return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
     }
+    
+	/*
+	 * // 暂时注销掉密码加密，等前后端联调成功后再次打开
+    public static BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+    */
 }

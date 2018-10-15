@@ -174,7 +174,7 @@
 	
 	<!-- 通过员工工号获取账号详细信息 -->
 	<select id="findAccountByEmployeeId" resultType="com.dtelec.icmes.account.repository.entity.AccountEntity">
-	    SELECT U.Id, U.EmployeeId, U.IsLocked, U.RetryCount, U.Password, E.Name, E.SpecialDevice, E.VersionTag
+	    SELECT U.Id, U.EmployeeId, U.Password, U.IsLocked, U.RetryCount, U.Password, E.Name, E.SpecialDevice, E.VersionTag
 	    FROM `User` as U
 	      INNER JOIN `Employee` as E
 	        ON U.EmployeeId = E.Id
@@ -214,13 +214,22 @@
     
     <!-- 修改密码 -->
     <update id="changeAccountPassword" parameterType="map">
-        UPDATE `User` SET Password = #{password}, ChangePassword = 0 WHERE EmployeeId = #{employeeId}
+        UPDATE `User` SET Password = #{password}, ChangePassword = #{changePassword} WHERE EmployeeId = #{employeeId}
     </update>
     
     <!-- 账号锁定或解锁 -->
     <update id="setAccountLockStatus" parameterType="map">
-        UPDATE `User` SET IsLocked = #{isLocked} WHERE EmployeeId = #{employeeId}
+        UPDATE `User` SET IsLocked = #{isLocked}, RetryCount = 0 WHERE EmployeeId = #{employeeId}
     </update>
+    
+    <!-- 检测账号分配角色和组织机构是否重复 -->
+    <select id="checkAccountRelationRoleorganization" parameterType="map" resultType="java.lang.Integer" >
+    	select count(1) from `UserRoleAss_Organization_ASS` 
+    	where  UserRoleAss_Organization_ASS.OrganizationId = #{orgId} 
+    	and    UserRoleAss_Organization_ASS.AssId in (select User_Role_ASS.Id from User_Role_ASS 
+							    					  where  User_Role_ASS.UserId = (select User.Id from `User` where User.EmployeeId = #{employeeId}) 
+							    					  and    User_Role_ASS.RoleId = #{roleId})
+    </select>
     
     <!-- 给账号分配角色和组织机构 -->
     <update id="setAccountRelationRoleorganization" parameterType="map">
@@ -238,6 +247,7 @@
     	DELETE FROM `User` WHERE EmployeeId = #{employeeId}
     </delete>
     
+    <!-- 更新错误密码登录次数 -->
     <update id="updateAccountLoginTimes" parameterType="map">
 	    UPDATE User CUR
 	        INNER JOIN User ORG

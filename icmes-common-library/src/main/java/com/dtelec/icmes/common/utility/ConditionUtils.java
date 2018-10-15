@@ -7,9 +7,17 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+/**
+ * 
+ * ConditionUtils 用于分析 URL 查询字符
+ * @author HLXu
+ * @version 1.0
+ */
 public class ConditionUtils {
 
+	/**
+	 * URL 查询的正则表达式
+	 */
 	private static Pattern regex_params = Pattern.compile("[\\&]{0,1}\\s*([^\\=]+)\\s*\\=\\s*([^\\=\\&]*)", Pattern.CASE_INSENSITIVE & Pattern.MULTILINE);
 	private Map<String, List<String>> paramMapping;	
 	

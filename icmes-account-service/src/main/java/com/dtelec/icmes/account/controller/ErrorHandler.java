@@ -10,11 +10,20 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.alibaba.fastjson.JSON;
 import com.dtelec.icmes.account.controller.vo.GenericResponseErrorVO;
 
-
+/**
+ * 错误处理
+ * @author hlxu
+ *
+ */
 @ControllerAdvice
 public class ErrorHandler {
 
-	
+	/**
+	 * 系统错误统一捕获处理
+	 * 并统一成标准的Json格式给前端使用
+	 * @param ex
+	 * @return
+	 */
 	@ExceptionHandler(Throwable.class)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

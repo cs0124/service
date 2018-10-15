@@ -92,7 +92,7 @@ public interface IUserRepository {
 	 * @param employeeId
 	 * @param password
 	 */
-	void changeAccountPassword(String employeeId, String password);
+	void changeAccountPassword(String employeeId, String password, boolean changePassword);
 	
 	/**
 	 * 账号锁定或解锁
@@ -106,6 +106,11 @@ public interface IUserRepository {
 	 * @param employeeId
 	 */
 	void deleteAccountByEmployeeId(String employeeId);
+	
+	/**
+	 * 给账号分配角色和组织机构
+	 */
+    int checkAccountRelationRoleorganization(String employeeId, String roleId, String orgId);
 	
 	/**
 	 * 给账号分配角色和组织机构

@@ -7,6 +7,12 @@ import org.apache.ibatis.annotations.Param;
 
 import com.dtelec.icmes.account.repository.entity.FeatureEntity;
 
+/**
+ * 用于Feature相关的Dao接口
+ * 
+ * @author hlxu
+ *
+ */
 
 @Mapper
 public interface IFeatureDao {

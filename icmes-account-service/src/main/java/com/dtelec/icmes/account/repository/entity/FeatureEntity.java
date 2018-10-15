@@ -1,10 +1,29 @@
 package com.dtelec.icmes.account.repository.entity;
-
+/**
+ * 权限实体类
+ * @author zturnking
+ *
+ */
 public class FeatureEntity {
+	/**
+	 * 权限id
+	 */
 	private int id;
+	/**
+	 * 权限编码
+	 */
 	private String code;
+	/**
+	 * 菜单id
+	 */
 	private int menuId;
+	/**
+	 * 名字
+	 */
 	private String name;
+	/**
+	 * 描述
+	 */
 	private String remark;
 	
 	

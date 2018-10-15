@@ -15,11 +15,21 @@ import com.dtelec.icmes.account.repository.param.AccountOrgPageableQueryParam;
 import com.dtelec.icmes.account.repository.param.AccountOrgPageableReturnParam;
 import com.dtelec.icmes.account.repository.param.RoleCreateParam;
 import com.dtelec.icmes.account.repository.param.RolePageableQueryParam;
-
+/**
+ * 角色持久层实现类
+ * @author zturnking
+ *
+ */
 @Repository
 public class RoleRepositoryImpl implements IRoleRepository {
+	/**
+	 * 注入角色dao
+	 */
 	@Autowired
 	private IRoleDao dao;
+	/**
+	 * 注入权限dao
+	 */
 	@Autowired
 	private IFeatureDao featureDao;
 
@@ -99,14 +109,13 @@ public class RoleRepositoryImpl implements IRoleRepository {
 	@Override
 	public PageableQueryBaseEntity<AccountOrgPageableReturnParam> searchAccountOrgByParams(
 			AccountOrgPageableQueryParam params) {
-		//返回list
-		List<AccountOrgPageableReturnParam> returnList = dao.searchAccountOrgByParams(params);
-		PageableQueryBaseEntity<AccountOrgPageableReturnParam> pageableQueryBaseEntity = new PageableQueryBaseEntity<AccountOrgPageableReturnParam>();
-		//给分页list赋值
-		for(int i=0;i<returnList.size();i++) {
-			pageableQueryBaseEntity.addItem(returnList.get(i));
-		}
-		return  pageableQueryBaseEntity;
+		PageableQueryBaseEntity<AccountOrgPageableReturnParam> entity = new PageableQueryBaseEntity<AccountOrgPageableReturnParam>();
+		List<AccountOrgPageableReturnParam> entities = dao.searchAccountOrgByParams(params);
+		//统计条数
+		long totalCount = dao.searchAccountOrgByParamsCount(params);
+		entity.setTotalCount(totalCount);
+		entity.setItems(entities);
+		return entity;
 	}
 	
 	/**

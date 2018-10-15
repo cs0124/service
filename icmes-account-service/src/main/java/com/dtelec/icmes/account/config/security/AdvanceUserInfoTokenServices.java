@@ -25,6 +25,9 @@ import java.util.*;
  *
  * By default, it designed to return only user details. This class provides {@link #getRequest(Map)} method, which
  * returns clientId and scope of calling service. This information used in controller's security checks.
+ * 
+ * @author hlxu
+ * 
  */
 
 public class AdvanceUserInfoTokenServices extends DefaultTokenServices {
@@ -44,6 +47,12 @@ public class AdvanceUserInfoTokenServices extends DefaultTokenServices {
 
 	private AuthoritiesExtractor authoritiesExtractor = new FixedAuthoritiesExtractor();
 
+	/**
+	 * 构造器
+	 * @param userInfoEndpointUrl 获取当前登录用户的认证微服务的地址
+	 * @param clientId  当前认证的客户端
+	 * @param store     认证存储
+	 */
 	public AdvanceUserInfoTokenServices(String userInfoEndpointUrl, String clientId, TokenStore store) {
 		this.userInfoEndpointUrl = userInfoEndpointUrl;
 		this.clientId = clientId;
@@ -63,6 +72,11 @@ public class AdvanceUserInfoTokenServices extends DefaultTokenServices {
 		this.authoritiesExtractor = authoritiesExtractor;
 	}
 
+	/**
+	 * 通过当前有效JWT token 获取当前的认证对象
+	 * @param accessToken JWT token
+	 * @return OAuth2Authentication 当前用户的认证对象
+	 */
 	@Override
 	public OAuth2Authentication loadAuthentication(String accessToken)
 			throws AuthenticationException, InvalidTokenException {

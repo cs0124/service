@@ -3,20 +3,59 @@ package com.dtelec.icmes.account.service.model;
 import java.util.Date;
 
 import com.dtelec.icmes.account.repository.entity.AccountConsignProxyEntity;
-
+/**
+ * 账号委托代理模型
+ * @author zturnking
+ *
+ */
 public class AccountConsignProxyModel {
-
+	/**
+	 * id
+	 */
 	private int id;
+	/**
+	 * 关系id
+	 */
 	private int assId;
+	/**
+	 * 机构全称
+	 */
 	private String fullOrgName;
+	/**
+	 * 角色名称
+	 */
 	private String roleName;
+	/**
+	 * 接手代理姓名
+	 */
 	private String assignProxyName;
+	/**
+	 * 代理开始时间
+	 */
 	private long proxyStartDate;
+	/**
+	 * 代理结束时间
+	 */
 	private long proxyEndDate;
+	/**
+	 * 代理天数
+	 */
 	private String periodDays;
+	/**
+	 * 接手代理id
+	 */
 	private String assignProxyId;
+	/**
+	 * 接受代理人id
+	 */
 	private int assignProxyUserId;
+	/**
+	 * 角色id
+	 */
 	private String roleId;
+	/**
+	 * 版本控制
+	 */
 	private String versionTag;
 
 	public int getId() {

@@ -40,15 +40,27 @@ import com.dtelec.icmes.account.utility.RestTemplateUtils;
 import com.dtelec.icmes.common.error.IcmesBusinessException;
 import com.dtelec.icmes.common.error.IcmesErrorTypeEnum;
 
+/**
+ * 账户相关服务操作类封装
+ * @author hlxu
+ *
+ */
+
 @Service
 public class AccountServiceImpl implements IAccountService {
-
+	/**
+	 * 注入权限
+	 */
 	@Autowired
 	private IFeatureRepository featureRepo;
-	
+	/**
+	 * 注入账户
+	 */
 	@Autowired
 	private IUserRepository userRepo;
-	
+	/**
+	 * 注入信息
+	 */
 	@Autowired
 	private InfoServiceClient infoClientSev;
 
@@ -172,7 +184,7 @@ public class AccountServiceImpl implements IAccountService {
 		int pageSize = params.getCount();
 		pageSize = (pageSize < 0) ? 1 : pageSize;
 		int startIndex = (pageNo - 1) * pageSize;
-		
+		//查询赋值
 		AccountConsignProxyPageableQueryParam query = new AccountConsignProxyPageableQueryParam();
 		query.setEmployeeId(params.getEmployeeId());
 		query.setOrderBy(query.getOrderBy());
@@ -198,7 +210,7 @@ public class AccountServiceImpl implements IAccountService {
 		int pageSize = params.getCount();
 		pageSize = (pageSize < 0) ? 1 : pageSize;
 		int startIndex = (pageNo - 1) * pageSize;
-		
+		//代理查询赋值
 		AccountAssignProxyPageableQueryParam query = new AccountAssignProxyPageableQueryParam();
 		query.setEmployeeId(params.getEmployeeId());
 		query.setOrderBy(query.getOrderBy());
@@ -224,7 +236,7 @@ public class AccountServiceImpl implements IAccountService {
 		}
 		
 		userRepo.createAccount(model.getEmployeeId(), password);
-		infoClientSev.PersistentEmployeeBase(model);
+		infoClientSev.persistentEmployeeBase(model);
 	}
 	
 	/**
@@ -237,7 +249,7 @@ public class AccountServiceImpl implements IAccountService {
 			throw new IcmesBusinessException(IcmesErrorTypeEnum.INFO_EMPLOYEE_CREATEEMPLOYEE_ISNOTNULL, "员工已经存在");
 		}
 		
-		infoClientSev.PersistentEmployeeBase(model);
+		infoClientSev.persistentEmployeeBase(model);
 	}
 	
 	/**
@@ -261,8 +273,8 @@ public class AccountServiceImpl implements IAccountService {
 	 * 修改密码
 	 */
 	@Override
-	public void changeAccountPassword(String employeeId, String password) {
-		userRepo.changeAccountPassword(employeeId, password);
+	public void changeAccountPassword(String employeeId, String password  ,boolean changePassword) {
+		userRepo.changeAccountPassword(employeeId, password,changePassword);
 	}
 	
 	/**
@@ -283,17 +295,26 @@ public class AccountServiceImpl implements IAccountService {
 
 	/**
 	 * 给账号分配角色和组织机构
+	 * @param employeeId 员工工号
+	 * @param roleId 角色编码
+	 * @param orgId 组织结构编码
+	 * @throws IcmesBusinessException 分配组织机构的关系的逻辑异常
 	 */
 	@Override
-	public void setAccountRelationRoleorganization(String employeeId, String roleId, String orgId) {
-		userRepo.setAccountRelationRoleorganization(employeeId, roleId, orgId);
+	public void setAccountRelationRoleorganization(String employeeId, String roleId, String orgId) throws IcmesBusinessException {
+		int count = userRepo.checkAccountRelationRoleorganization(employeeId, roleId, orgId);
+		if(count>0) {
+			throw new IcmesBusinessException(IcmesErrorTypeEnum.ACCOUNT_ROLE_ORG_HAS_EXIST, "重复分配！分配失败！");
+		}else {
+			userRepo.setAccountRelationRoleorganization(employeeId, roleId, orgId);
+		}
 	}
 
 	/**
 	 * 通过员工工号 获取账号详情
 	 */
 	@Override
-	public EmployeeBaseModel fetchAccountDetailByEmployeeId(String employeeId) {
+	public EmployeeBaseModel fetchAccountDetailWithEmployee(String employeeId) {
 		EmployeeBaseModel model = null;
 		EmployeeModel employee = null;
 		try {
@@ -302,7 +323,7 @@ public class AccountServiceImpl implements IAccountService {
 		catch(Exception ex) {
 			// do nothing
 		}
-		
+		//不为空赋值
 		if (employee != null) {
 			model = new EmployeeBaseModel();
 			model.setEmployeeId(employee.getId());

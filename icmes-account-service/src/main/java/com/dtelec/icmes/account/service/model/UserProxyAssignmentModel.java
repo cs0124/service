@@ -7,6 +7,11 @@ import com.dtelec.icmes.account.repository.entity.UserProxyAssignmentBaseEntity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+/**
+ * 账户接手代理模型
+ * @author zturnking
+ *
+ */
 @ApiModel
 public class UserProxyAssignmentModel {
 	@ApiModelProperty(value = "代理Id")
@@ -35,6 +40,8 @@ public class UserProxyAssignmentModel {
 	private String roleName;
 	@ApiModelProperty(value = "接手人")
 	private String name;
+	@ApiModelProperty(value = "指派人employeeId")
+	public String assignEmployeeId;
 	
 	
 	public UserProxyAssignmentModel() {
@@ -44,7 +51,7 @@ public class UserProxyAssignmentModel {
 	
 	public UserProxyAssignmentModel(Integer id, Integer assignUserId, Integer consignUserRoleAss, String periodDays,
 			Long proxyStartDate, Long proxyEndDate, Integer createUserId, String versionTag, Long createTime,
-			Long updateTime) {
+			Long updateTime, String assignEmployeeId) {
 		super();
 		this.id = id;
 		this.assignUserId = assignUserId;
@@ -56,6 +63,7 @@ public class UserProxyAssignmentModel {
 		this.versionTag = versionTag;
 		this.createTime = createTime;
 		this.updateTime = updateTime;
+		this.assignEmployeeId = assignEmployeeId;
 	}
 
 
@@ -187,6 +195,15 @@ public class UserProxyAssignmentModel {
 	public void setProxyEndDate(Long proxyEndDate) {
 		this.proxyEndDate = proxyEndDate;
 	}
+	
+	public String getAssignEmployeeId() {
+		return assignEmployeeId;
+	}
+
+
+	public void setAssignEmployeeId(String assignEmployeeId) {
+		this.assignEmployeeId = assignEmployeeId;
+	}
 
 
 	public UserProxyAssignmentBaseEntity convert() {
@@ -235,6 +252,10 @@ public class UserProxyAssignmentModel {
 			this.proxyEndDate = (proxyEndDate == null) ? 0 : proxyEndDate.getTime();
 			Date updateTime = entity.getUpdateTime();
 			this.updateTime = (updateTime == null) ? 0 : updateTime.getTime();
+			this.assignEmployeeId = entity.getAssignEmployeeId();
+			this.name = entity.getName();
+			this.organizationName = entity.getFullOrgName();
+			this.roleName = entity.getRoleName();
 		}
 	}
 	

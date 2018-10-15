@@ -30,13 +30,23 @@
     </delete>
      <!-- 根据id 获取指派代理 -->
     <select id="getUserProxyAssignmentById" parameterType="Integer" resultType="com.dtelec.icmes.account.repository.entity.UserProxyAssignmentBaseEntity" >
-  		  select * from User_Proxy_Assignment
-    	 WHERE Id = #{id}
+  		  SELECT  
+ UPA.Id, AE.Name as Name, 
+ UPA.ProxyStartDate, UPA.ProxyEndDate,
+ UPA.PeriodDays, UPA.VersionTag, 
+ AU.Id as AssignUserId, AU.EmployeeId as AssignEmployeeId,
+ UPA.ConsignUserRoleAss as ConsignUserRoleAss, UPA.CreateUserId,
+ R.Name as RoleName, UPA.CreateTime, UPA.UpdateTime,
+ GETFULLPARENTORGANIZATIONSNAME(URO.OrganizationId) as FullOrgName
+            FROM `User` as U
+              INNER JOIN `User_Role_ASS` as UR ON UR.UserId = U.Id
+                INNER JOIN `Role` as R ON R.Id = UR.RoleId
+                  INNER JOIN `UserRoleAss_Organization_ASS` as URO ON URO.AssId = UR.Id 
+                    INNER JOIN `User_Proxy_Assignment` as UPA ON UPA.ConsignUserRoleAss = UR.Id
+                      INNER JOIN `User` as AU ON AU.Id = UPA.AssignUserId
+                        INNER JOIN `Employee` as AE ON AE.Id = AU.EmployeeId
+    	 WHERE UPA.Id = #{id}
     
     </select>
-    
-  
-    
-    
-    
+
 </mapper>

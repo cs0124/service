@@ -19,6 +19,11 @@ import com.spring4all.swagger.EnableSwagger2Doc;
 import springfox.documentation.swagger.web.SwaggerResource;
 import springfox.documentation.swagger.web.SwaggerResourcesProvider;
 
+/**
+ * API 网关的微服务入口
+ * @author hlxu
+ *
+ */
 @EnableSwagger2Doc
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -29,6 +34,10 @@ public class GatewayApplication {
 		SpringApplication.run(GatewayApplication.class, args);
 	}
 	
+	/**
+	 * 注入 CORS 跨域 过滤器
+	 * @return 返回要应用的过滤器
+	 */
 	@Bean
     public CorsFilter corsFilter() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -47,7 +56,11 @@ public class GatewayApplication {
         return new CorsFilter(source);
     }
 	
-	
+	/**
+	 * 提供Swagger的资源提供器
+	 * @author hlxu
+	 *
+	 */
 	@Component
     @Primary
     class DocumentationConfig implements SwaggerResourcesProvider {
@@ -55,15 +68,22 @@ public class GatewayApplication {
 		@Override
         public List<SwaggerResource> get() {
         	List<SwaggerResource> resources = new ArrayList<>();
-
-            resources.add(swaggerResource("ICMES-授权子系统", "/uaa/v2/api-docs", "2.0"));
+            //resources.add(swaggerResource("ICMES-授权子系统", "/uaa/v2/api-docs", "2.0"));
             resources.add(swaggerResource("ICMES-账户子系统", "/account/v2/api-docs", "2.0"));
             resources.add(swaggerResource("ICMES-信息子系统", "/info/v2/api-docs", "2.0"));
+            resources.add(swaggerResource("ICMES-停电子系统", "/power/v2/api-docs", "2.0"));
+            resources.add(swaggerResource("ICMES-工作流子系统", "/flow/v2/api-docs", "2.0"));
 
             return resources;
         }
 
-		
+		/**
+		 * 
+		 * @param name  微服务子系统的名称
+		 * @param location 获取子系统的Swagger 的子系统接口
+		 * @param version 当前使用版本
+		 * @return  返回对应的Swagger 资源
+		 */
         private SwaggerResource swaggerResource(String name, String location, String version) {
             SwaggerResource swaggerResource = new SwaggerResource();
             swaggerResource.setName(name);

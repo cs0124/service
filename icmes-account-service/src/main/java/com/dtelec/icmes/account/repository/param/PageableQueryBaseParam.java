@@ -1,5 +1,9 @@
 package com.dtelec.icmes.account.repository.param;
-
+/**
+ * 分页参数基类
+ * @author zturnking
+ *
+ */
 public class PageableQueryBaseParam {
 
 	private String orderBy;

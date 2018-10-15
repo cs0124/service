@@ -17,21 +17,25 @@
     {
       "sourceType": "com.dtelec.icmes.account.config.SystemSettingConfig",
       "name": "icmes.debug-work-mode",
+      "description": "系统运行模式，是否是debug 模式",
       "type": "java.lang.Boolean"
     },
     {
       "sourceType": "com.dtelec.icmes.account.config.SystemSettingConfig",
       "name": "icmes.init-password",
+      "description": "系统当前的初始密码",
       "type": "java.lang.String"
     },
     {
       "sourceType": "com.dtelec.icmes.account.config.SystemSettingConfig",
       "name": "icmes.login-retry-count",
+      "description": "配置错误密码几次锁的阈值",
       "type": "java.lang.Integer"
     },
     {
       "sourceType": "com.dtelec.icmes.account.config.SystemSettingConfig",
       "name": "icmes.version",
+      "description": "版本号",
       "type": "java.lang.String"
     },
     {

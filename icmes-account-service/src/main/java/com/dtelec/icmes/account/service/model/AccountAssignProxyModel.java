@@ -3,20 +3,63 @@ package com.dtelec.icmes.account.service.model;
 import java.util.Date;
 
 import com.dtelec.icmes.account.repository.entity.AccountAssignProxyEntity;
-
+/**
+ * 账号代理关系模型
+ * @author zturnking
+ *
+ */
 public class AccountAssignProxyModel {
+	/**
+	 * id
+	 */
 	private int id;
+	/**
+	 * 关系id
+	 */
 	private int assId;
+	/**
+	 * 组织机构全称
+	 */
 	private String fullOrgName;
+	/**
+	 * 角色名称
+	 */
 	private String roleName;
+	/**
+	 * 组织机构id
+	 */
 	private String organizationId;
+	/**
+	 * 委托代理名称
+	 */
 	private String consignProxyName;
+	/**
+	 * 代理开始时间
+	 */
 	private long proxyStartDate;
+	/**
+	 * 代理结束时间
+	 */
 	private long proxyEndDate;
+	/**
+	 * 持续时间
+	 */
 	private String periodDays;
+	/**
+	 * 委托代理id
+	 */
 	private String consignProxyId;
+	/**
+	 * 委托人id
+	 */
 	private int consignProxyUserId;
-	private int roleId;
+	/**
+	 * 角色id
+	 */
+	private String roleId;
+	/**
+	 * 版本控制
+	 */
 	private String versionTag;
 
 	
@@ -108,11 +151,11 @@ public class AccountAssignProxyModel {
 		this.versionTag = versionTag;
 	}
 
-	public int getRoleId() {
+	public String getRoleId() {
 		return roleId;
 	}
 
-	public void setRoleId(int roleId) {
+	public void setRoleId(String roleId) {
 		this.roleId = roleId;
 	}
 	

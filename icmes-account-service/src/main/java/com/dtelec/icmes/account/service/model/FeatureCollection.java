@@ -6,15 +6,24 @@ import java.util.List;
 import java.util.Map;
 
 import com.dtelec.icmes.account.repository.entity.FeatureEntity;
-
+/**
+ * 权限集合
+ * @author zturnking
+ *
+ */
 public class FeatureCollection {
-
+	/**
+	 * 权限列表
+	 */
 	private List<FeatureModel> list;
 		
 	public FeatureCollection() {
 		list = new ArrayList<>();
 	}
-	
+	/**
+	 * 新增实体
+	 * @param entities
+	 */
 	public void add(List<FeatureEntity> entities) {
 		if (entities != null) {
 			for (FeatureEntity entity : entities) {

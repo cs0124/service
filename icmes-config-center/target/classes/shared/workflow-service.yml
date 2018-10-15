@@ -1,0 +1,35 @@
+security:
+  oauth2:
+    client:
+      clientId: workflow-service
+      clientSecret: 701f7ec3-9123-4965-b317-46a0d88832c0
+      accessTokenUri: http://auth-service:5500/uaa/oauth/token
+      grant-type: client_credentials
+      scope: server
+
+
+spring:
+  datasource:
+    name: test
+    url: jdbc:mysql://192.168.96.104:3306/icmes_flow_dev?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+    username: admin
+    password: Taylor@2009
+    driver-class-name: com.mysql.jdbc.Driver
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+  activiti: 
+    check-process-definitions: false
+    
+mybatis:
+  mapper-locations: classpath:com/dtelec/icmes/workflow/repository/dao/*.xml
+
+icmes:
+  version: 1.0
+  debugWorkMode: true
+
+server:
+  servlet:
+    context-path: /flow
+  port: 7800

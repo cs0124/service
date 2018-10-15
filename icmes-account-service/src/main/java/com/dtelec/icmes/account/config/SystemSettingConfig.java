@@ -4,13 +4,31 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * 用于读取ICMES 配置文件信息
+ * 
+ * @author hlxu
+ *
+ */
 
 @Configuration
 @ConfigurationProperties(prefix="icmes", ignoreUnknownFields = false)
 public class SystemSettingConfig {
+	/**
+	 * 版本号
+	 */
     private String version;
+    /**
+     * 系统运行模式，是否是debug 模式
+     */
     private boolean debugWorkMode;
+    /**
+     * 系统当前的初始密码
+     */
     private String initPassword;
+    /**
+     * 配置错误密码几次锁的阈值
+     */
     private int loginRetryCount;
     
     private static SystemSettingConfig staticConfig;

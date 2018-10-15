@@ -37,13 +37,26 @@ zuul:
         sensitiveHeaders:
         add-proxy-headers: true
 
+    power-service:
+        path: /power/**
+        serviceId: power-service
+        stripPrefix: false
+        sensitiveHeaders:
+        add-proxy-headers: true
+
     notification-service:
         path: /notice/**
         serviceId: notification-service
         stripPrefix: false
         sensitiveHeaders:
         add-proxy-headers: true
-        
+
+    workflow-service:
+        path: /flow/**
+        serviceId: workflow-service
+        stripPrefix: false
+        sensitiveHeaders:
+        add-proxy-headers: true
 
 server:
   port: 4000

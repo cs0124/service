@@ -23,6 +23,11 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
+/**
+ * ReflectionUtils 用于反射操作的工具
+ * @author HLXu
+ * @version 1.0
+ */
 public class ReflectionUtils {
     
 	private static Pattern pattern = Pattern.compile("\\.([^\\.]+)$", Pattern.CASE_INSENSITIVE);
@@ -106,9 +111,9 @@ public class ReflectionUtils {
 				types = new Type[] {Object.class};
 			}
 		}
-		if (types == null)
+		if (types == null) {
 			types = new Type[0];
-		
+		}
 		return types;
 	}
 	

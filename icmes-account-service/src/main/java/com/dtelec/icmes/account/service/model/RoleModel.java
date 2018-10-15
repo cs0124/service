@@ -2,7 +2,11 @@ package com.dtelec.icmes.account.service.model;
 
 import com.dtelec.icmes.account.repository.entity.RoleEntity;
 
-
+/**
+ * 角色模型
+ * @author zturnking
+ *
+ */
 public class RoleModel {
 	/**
 	 * 角色id

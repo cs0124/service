@@ -1,11 +1,29 @@
 package com.dtelec.icmes.account.repository.entity;
-
+/**
+ * 账号角色实体类
+ * @author zturnking
+ *
+ */
 public class AccountRoleEntity {
-
+	/**
+	 * 组织机构全称
+	 */
 	private String fullOrgName;
+	/**
+	 * 角色名称
+	 */
 	private String roleName;
+	/**
+	 * 角色id
+	 */
 	private String roleId;
+	/**
+	 * 组织机构id
+	 */
 	private String organizationId;
+	/**
+	 * 关系id
+	 */
 	private int assId;
 	
 	public String getFullOrgName() {

@@ -2,11 +2,24 @@ package com.dtelec.icmes.account.service.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * 分页查询模型基类
+ * @author zturnking
+ *
+ * @param <T>
+ */
 public class PageableSearchBaseModel<T> {
-
+	/**
+	 * 总数
+	 */
 	private long totalCount;
+	/**
+	 * 总页数
+	 */
 	private long totalPages;
+	/**
+	 * 列表
+	 */
 	private List<T> items;
 	
 	
@@ -35,10 +48,10 @@ public class PageableSearchBaseModel<T> {
 	}
 	
 	public void addItem(T item) {
-		if (item == null) return;
+		if (item == null) { return;}
 		
-		if (this.items == null)
-			this.items = new ArrayList<>();
+		if (this.items == null) {
+			this.items = new ArrayList<>();}
 		
 		this.items.add(item);
 	}

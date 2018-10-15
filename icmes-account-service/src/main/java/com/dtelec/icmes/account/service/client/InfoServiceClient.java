@@ -13,6 +13,12 @@ import com.dtelec.icmes.account.service.model.EmployeeBaseModel;
 import com.dtelec.icmes.account.service.model.EmployeeModel;
 import com.dtelec.icmes.account.service.model.MenuModel;
 
+/**
+ * 用于访问信息服务的Sub接口
+ * @author hlxu
+ *
+ */
+
 @FeignClient(name = "information-service")
 public interface InfoServiceClient {
 	
@@ -24,7 +30,10 @@ public interface InfoServiceClient {
 	@RequestMapping(method = RequestMethod.GET, value = "/info/employees/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	EmployeeModel getEmployeeDetail(@PathVariable String id);
 	
-	
+	/**
+	 * 获取系统全部菜单项信息
+	 * @return
+	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/info/menus/list", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	List<MenuModel> getMenuList();
 	
@@ -33,6 +42,6 @@ public interface InfoServiceClient {
 	 * @param model
 	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/info/employees/persistent", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	void PersistentEmployeeBase(@RequestBody EmployeeBaseModel model);
+	void persistentEmployeeBase(@RequestBody EmployeeBaseModel model);
 	
 }

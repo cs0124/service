@@ -2,9 +2,20 @@ package com.dtelec.icmes.account.repository.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * 分页查询实体基类
+ * @author zturnking
+ *
+ * @param <T>
+ */
 public class PageableQueryBaseEntity<T> {
+	/**
+	 * 总数
+	 */
 	private long totalCount;
+	/**
+	 * 实体列表
+	 */
 	private List<T> items;
 	
 	public long getTotalCount() {
@@ -24,10 +35,10 @@ public class PageableQueryBaseEntity<T> {
 	}
 	
 	public void addItem(T item) {
-		if (item == null) return;
+		if (item == null) {return;}
 		
-		if (this.items == null)
-			this.items = new ArrayList<>();
+		if (this.items == null) {
+			this.items = new ArrayList<>();}
 		
 		this.items.add(item);
 	}

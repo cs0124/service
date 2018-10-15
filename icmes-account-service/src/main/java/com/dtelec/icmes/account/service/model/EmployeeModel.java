@@ -2,7 +2,11 @@ package com.dtelec.icmes.account.service.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
+/**
+ * 员工模型
+ * @author zturnking
+ *
+ */
 @ApiModel
 public class EmployeeModel {
 	@ApiModelProperty(value = "员工ID")
@@ -11,6 +15,8 @@ public class EmployeeModel {
 	private String specialDevice;
 	@ApiModelProperty(value = "员工所属组织机构编号")
 	private String organizationId;
+	@ApiModelProperty(value = "员工所属组织机构名称")
+	private String organizationName;
 	@ApiModelProperty(value = "员工办公室电话")
 	private String officePhone;
 	@ApiModelProperty(value = "员工办公室电话区号")
@@ -80,6 +86,14 @@ public class EmployeeModel {
 		this.organizationId = organizationId;
 	}
 	
+	public String getOrganizationName() {
+		return organizationName;
+	}
+
+	public void setOrganizationName(String organizationName) {
+		this.organizationName = organizationName;
+	}
+
 	public String getOfficePhone() {
 		return officePhone;
 	}

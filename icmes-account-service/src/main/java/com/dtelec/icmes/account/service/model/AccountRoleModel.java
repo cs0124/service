@@ -1,7 +1,11 @@
 package com.dtelec.icmes.account.service.model;
 
 import com.dtelec.icmes.account.repository.entity.AccountRoleEntity;
-
+/**
+ * 账户角色模型
+ * @author zturnking
+ *
+ */
 public class AccountRoleModel {
 	/**
 	 * 组织机构全称

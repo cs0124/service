@@ -9,6 +9,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 
 import com.spring4all.swagger.EnableSwagger2Doc;
 
+/**
+ * 验证微服务的入口
+ * @author hlxu
+ *
+ */
 @EnableSwagger2Doc
 @SpringBootApplication
 @EnableResourceServer

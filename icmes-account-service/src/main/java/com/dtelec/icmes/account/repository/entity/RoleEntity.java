@@ -1,5 +1,9 @@
 package com.dtelec.icmes.account.repository.entity;
-
+/**
+ * 角色实体类
+ * @author zturnking
+ *
+ */
 public class RoleEntity {
 	/**
 	 * 角色Id

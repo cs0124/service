@@ -1,17 +1,47 @@
 package com.dtelec.icmes.account.repository.entity;
 
 import java.util.Date;
-
+/**
+ * 用户实体类
+ * @author zturnking
+ *
+ */
 public class UserEntity {
-
+	/**
+	 * 账户id
+	 */
 	private int id;
+	/**
+	 * 员工id
+	 */
 	private String employeeId;
+	/**
+	 * 改变密码
+	 */
 	private boolean changePassword;
+	/**
+	 * 是否锁定
+	 */
 	private boolean isLocked;
+	/**
+	 * 是否删除
+	 */
 	private boolean isDeleted;
+	/**
+	 * 重复次数
+	 */
 	private int retryCount;
+	/**
+	 * 版本控制
+	 */
 	private String versionTag;
+	/**
+	 * 创建时间
+	 */
 	private Date createTime;
+	/**
+	 * 修改时间
+	 */
 	private Date updateTime;
 	
 	

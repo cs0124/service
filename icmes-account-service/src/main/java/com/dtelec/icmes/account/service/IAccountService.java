@@ -19,6 +19,11 @@ import com.dtelec.icmes.account.service.model.EmployeeModel;
 import com.dtelec.icmes.account.service.model.FeatureCollection;
 import com.dtelec.icmes.account.service.model.RoleModel;
 
+
+/**
+ * 账户service接口
+ * @author hlxu
+ */
 public interface IAccountService {
 	
 	/**
@@ -109,7 +114,7 @@ public interface IAccountService {
 	 * @param employeeId
 	 * @param password
 	 */
-	void changeAccountPassword(String employeeId, String password);
+	void changeAccountPassword(String employeeId, String password,boolean changePassword);
 	
 	/**
 	 * 账号锁定或解锁
@@ -129,15 +134,16 @@ public interface IAccountService {
 	 * @param employeeId
 	 * @return
 	 */
-	EmployeeBaseModel fetchAccountDetailByEmployeeId(String employeeId);
+	EmployeeBaseModel fetchAccountDetailWithEmployee(String employeeId);
 	
 	/**
 	 * 给账号分配角色和组织机构
 	 * @param employeeId
 	 * @param roleId
 	 * @param orgId
+	 * @throws IcmesBusinessException 
 	 */
-    void setAccountRelationRoleorganization(String employeeId, String roleId, String orgId);
+    void setAccountRelationRoleorganization(String employeeId, String roleId, String orgId) throws IcmesBusinessException;
     
     /**
      * 通过员工工号获取账号详细信息

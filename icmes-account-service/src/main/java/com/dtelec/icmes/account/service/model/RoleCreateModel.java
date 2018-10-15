@@ -1,7 +1,11 @@
 package com.dtelec.icmes.account.service.model;
 
 import java.util.List;
-
+/**
+ * 创建角色模型
+ * @author zturnking
+ *
+ */
 public class RoleCreateModel extends RoleModel {
 	/**
 	 * 角色描述
@@ -15,19 +19,19 @@ public class RoleCreateModel extends RoleModel {
 	 * 权限列表
 	 */
 	private List<String> features;
-
+	@Override
 	public String getRemark() {
 		return remark;
 	}
-
+	@Override
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-
+	@Override
 	public String getVersionTag() {
 		return versionTag;
 	}
-
+	@Override
 	public void setVersionTag(String versionTag) {
 		this.versionTag = versionTag;
 	}

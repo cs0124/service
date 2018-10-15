@@ -12,8 +12,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.web.client.RestTemplate;
 
-import com.dtelec.icmes.account.controller.context.annotation.EnableUserInfoTransmitter;
 import com.spring4all.swagger.EnableSwagger2Doc;
+
+/**
+ * 账号微服务主应用入口类
+ * @author hlxu
+ *
+ */
 
 @EnableSwagger2Doc
 @SpringBootApplication
@@ -23,7 +28,6 @@ import com.spring4all.swagger.EnableSwagger2Doc;
 @EnableFeignClients
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @MapperScan("com.detelec.icmes.account.repository.dao")
-@EnableUserInfoTransmitter
 public class AccountApplication {
 
 	public static void main(String[] args) {

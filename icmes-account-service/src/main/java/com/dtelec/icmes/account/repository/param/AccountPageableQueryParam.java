@@ -1,9 +1,21 @@
 package com.dtelec.icmes.account.repository.param;
-
+/**
+ * 账户分页参数
+ * @author zturnking
+ *
+ */
 public class AccountPageableQueryParam extends PageableQueryBaseParam {
-
+	/**
+	 * 员工id
+	 */
 	private String employeeId;
+	/**
+	 * 员工名称
+	 */
 	private String employeeName;
+	/**
+	 * 设备
+	 */
 	private String specialDevice;
 	
 	public String getEmployeeId() {

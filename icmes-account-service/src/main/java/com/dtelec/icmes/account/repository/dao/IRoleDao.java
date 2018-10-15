@@ -11,6 +11,12 @@ import com.dtelec.icmes.account.repository.param.AccountOrgPageableReturnParam;
 import com.dtelec.icmes.account.repository.param.RoleCreateParam;
 import com.dtelec.icmes.account.repository.param.RolePageableQueryParam;
 
+/**
+ * 用于Role的角色 Dao层接口
+ * @author hlxu
+ *
+ */
+
 @Mapper
 public interface IRoleDao {
 	
@@ -72,7 +78,7 @@ public interface IRoleDao {
 	 * @param params
 	 * @return
 	 */
-	int searchAccountOrgByParamsCount(@Param("params") AccountOrgPageableQueryParam params);
+	long searchAccountOrgByParamsCount(@Param("params") AccountOrgPageableQueryParam params);
 	
 	/**
 	 * 查询角色是否存在

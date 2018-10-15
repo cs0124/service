@@ -1,6 +1,10 @@
 package com.dtelec.icmes.account.repository.param;
 
-
+/**
+ * 角色分页查询参数
+ * @author zturnking
+ *
+ */
 public class RolePageableQueryParam extends PageableQueryBaseParam {
 	/**
 	 * 角色id

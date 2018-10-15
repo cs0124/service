@@ -1,10 +1,25 @@
 package com.dtelec.icmes.account.service.model;
-
+/**
+ * 菜单模型
+ * @author zturnking
+ *
+ */
 public class MenuModel {
-	
+	/**
+	 * id
+	 */
 	private int id;
+	/**
+	 * 名称
+	 */
 	private String name;
+	/**
+	 * 显示菜单
+	 */
 	private int displayOrder;
+	/**
+	 * 父类id
+	 */
 	private int parentId;
 	
 	

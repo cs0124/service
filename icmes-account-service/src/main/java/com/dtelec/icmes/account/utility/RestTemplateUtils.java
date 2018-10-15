@@ -11,6 +11,11 @@ import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.fastjson.JSON;
 
+/**
+ * RestTemplate 的工具封装类
+ * @author hlxu
+ *
+ */
 @Component
 public class RestTemplateUtils {  
 
@@ -21,6 +26,15 @@ public class RestTemplateUtils {
 		RestTemplateUtils.restTemplate = restTemplate;
 	}
 	
+	/**
+	 * 用于访问其他服务的工具方法
+	 * 主要用于权限验证部分
+	 * 
+	 * @param url  用于访问的URL 地址
+	 * @param auth  用于报文头传递的验证信息
+	 * @param type  用于反串行化远程返回的数据结构的类型
+	 * @return 进行反串行化后的返回对象
+	 */
 	public static <T> T getRestResponse(String url, String auth, Class<T> type) {
 		HttpHeaders requestHeaders = new HttpHeaders();
 	    requestHeaders.add("Content-Type", "application/json");

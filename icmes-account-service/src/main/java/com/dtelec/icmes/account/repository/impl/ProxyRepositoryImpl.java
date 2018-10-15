@@ -7,9 +7,16 @@ import org.springframework.stereotype.Repository;
 import com.dtelec.icmes.account.repository.IProxyRepository;
 import com.dtelec.icmes.account.repository.dao.IProxyDao;
 import com.dtelec.icmes.account.repository.entity.UserProxyAssignmentBaseEntity;
-
+/**
+ * 代理持久层实现类
+ * @author zturnking
+ *
+ */
 @Repository
 public class ProxyRepositoryImpl implements IProxyRepository{
+	/**
+	 * 注入代理dao
+	 */
 	@Autowired
 	IProxyDao dao;
 

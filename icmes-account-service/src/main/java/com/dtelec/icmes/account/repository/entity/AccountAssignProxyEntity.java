@@ -1,21 +1,63 @@
 package com.dtelec.icmes.account.repository.entity;
 
 import java.util.Date;
-
+/**
+ * 账号委托代理实体类
+ * @author zturnking
+ *
+ */
 public class AccountAssignProxyEntity {
-
+	/**
+	 * id
+	 */
 	private int id;
+	/**
+	 * 关系id
+	 */
 	private int assId;
+	/**
+	 * 组织机构全称
+	 */
 	private String fullOrgName;
+	/**
+	 * 角色名字
+	 */
 	private String roleName;
+	/**
+	 * 组织机构id
+	 */
 	private String organizationId;
+	/**
+	 * 委托人姓名
+	 */
 	private String consignProxyName;
+	/**
+	 * 代理开始日期
+	 */
 	private Date proxyStartDate;
+	/**
+	 * 代理结束日期
+	 */
 	private Date proxyEndDate;
+	/**
+	 * 持续时间
+	 */
 	private String periodDays;
+	/**
+	 * 委托人id
+	 */
 	private String consignProxyId;
+	/**
+	 * 委托代理id
+	 */
 	private int consignProxyUserId;
-	private int roleId;
+	/**
+	 * 角色id
+	 */
+	private String roleId;
+	/**
+	 * 版本控制
+	 */
 	private String versionTag;
 
 	
@@ -99,11 +141,11 @@ public class AccountAssignProxyEntity {
 		this.consignProxyId = consignProxyId;
 	}
 
-	public int getRoleId() {
+	public String getRoleId() {
 		return roleId;
 	}
 
-	public void setRoleId(int roleId) {
+	public void setRoleId(String roleId) {
 		this.roleId = roleId;
 	}
 

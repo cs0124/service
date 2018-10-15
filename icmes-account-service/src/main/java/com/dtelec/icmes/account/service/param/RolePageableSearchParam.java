@@ -1,5 +1,9 @@
 package com.dtelec.icmes.account.service.param;
-
+/**
+ * 角色分页查询参数
+ * @author zturnking
+ *
+ */
 public class RolePageableSearchParam extends PageableSearchBaseParam {
 
 	/**

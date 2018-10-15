@@ -29,11 +29,15 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
+/**
+ * 角色功能相关
+ * @author zturnking
+ *
+ */
 @RestController
 @RequestMapping("/roles")
 public class RoleController {
-
+	//注入service
 	@Autowired
 	private IRoleService service;
 	
@@ -232,10 +236,5 @@ public class RoleController {
 			throw new IcmesBusinessException(IcmesErrorTypeEnum.ACCOUNT_ROLE_UPDATE_VERSION_ERROR, "当前数据不是最新版本，请刷新后再操作！");
 		}
 	}
-	
-	
-	
-
-	
 	
 }

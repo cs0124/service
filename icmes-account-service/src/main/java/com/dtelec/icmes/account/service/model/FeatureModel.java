@@ -4,7 +4,11 @@ import com.dtelec.icmes.account.repository.entity.FeatureEntity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
+/**
+ * 权限模型
+ * @author zturnking
+ *
+ */
 @ApiModel
 public class FeatureModel {
 	@ApiModelProperty(value = "功能唯一标识符")

@@ -5,8 +5,10 @@ import com.dtelec.icmes.account.controller.vo.ReqAccountLoginVO;
 import com.dtelec.icmes.account.controller.vo.ReqCreateAccountVO;
 import com.dtelec.icmes.account.controller.vo.ReqPasswordInitializeVO;
 import com.dtelec.icmes.account.controller.vo.ReqRelationRoleOrganizationVO;
+import com.dtelec.icmes.account.controller.vo.ReqUpdateAccountVO;
 import com.dtelec.icmes.account.controller.vo.ReqChangePasswordVO;
 import com.dtelec.icmes.account.controller.vo.ResAccountLoginVO;
+import com.dtelec.icmes.account.controller.vo.ResProfileAvatarVO;
 import com.dtelec.icmes.account.service.IAccountService;
 import com.dtelec.icmes.account.service.model.UserModel;
 import com.dtelec.icmes.account.service.model.AccountAssignProxyCollection;
@@ -40,24 +42,31 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-
+/**
+ * 账户功能
+ * @author zturnking
+ *
+ */
 @RestController
 public class AccountController {
 
+	//private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+	
 	@Autowired
 	private IAccountService accSev;
 
 	/**
 	 * 系统登录
-	 * @param reqVo
-	 * @return ResAccountLoginVO
+	 * @param reqVo 登录的用户名和密码的封装对象
+	 * @return ResAccountLoginVO  登录后的用户基本信息和JWT token
+	 * @throws IcmesBusinessException 用户登录逻辑判断性异常（错误密码登录次数过多/用户被锁无法登录）
 	 */
 	@ApiOperation(value = "系统登录--作者：徐宏亮")
 	@ApiResponses({ 
@@ -78,6 +87,7 @@ public class AccountController {
 		//获取登录失败次数
 		int retryCount = SystemSettingConfig.getAllConfig().getLoginRetryCount();
 		if (model.getRetryCount() > retryCount) {
+			accSev.setAccountLockStatus(reqVo.employeeId, true);
 			throw new IcmesBusinessException(IcmesErrorTypeEnum.ACCOUNT_LOGIN_RETRYCOUNT_ERROR, "login retry count times");
 		}
 		if (!StringUtils.trimToEmpty(model.getPassword()).equals(reqVo.password)) {
@@ -93,6 +103,8 @@ public class AccountController {
 		ResAccountLoginVO resVo = new ResAccountLoginVO();
 		resVo.accessToken = account.getAccessToken();
 		resVo.employeeId = employee.getId();
+		resVo.organization = employee.getOrganizationName();
+		resVo.specialDevice = employee.getSpecialDevice();
 		resVo.name = employee.getName();
 		//员工头像路径
 		resVo.avatar = employee.getAvatar();
@@ -104,7 +116,8 @@ public class AccountController {
 
 	/**
 	 * 系统登出
-	 * @return boolean
+	 * @param principal 登录用户的基本信息和权限信息
+	 * @return boolean 退出成功标志
 	 */
 	@ApiOperation(value = "系统登出--作者：徐宏亮")
 	@ApiResponses({ 
@@ -115,20 +128,15 @@ public class AccountController {
 			})
 	@RequestMapping(path = "/exit", method = RequestMethod.GET)
 	public boolean logoutAccount(Principal principal) {
-		if (principal instanceof DefaultOAuth2AccessToken) {
-			DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) principal;
-			
-		}
-		
-		System.out.print("aaaaaa");
+        // To Do 
 		return true;
 	}
 	
 	/**
 	 * 修改密码
-	 * @param principal
-	 * @param reqVo
-	 * @return boolean
+	 * @param principal 登录用户的基本信息和权限信息
+	 * @param reqVo 用户原始密码和新密码的封装对象
+	 * @return boolean 修改密码成功标志
 	 */
 	@ApiOperation(value = "修改密码--作者：徐宏亮")
 	@ApiResponses({ 
@@ -138,16 +146,48 @@ public class AccountController {
 		@ApiResponse(code = 500, message = "内部系统错误")
 		})
 	@RequestMapping(path = "/password/", method = RequestMethod.PUT)
-	public boolean changeAccountPassword(Principal principal, @RequestBody ReqChangePasswordVO reqVo) {
-		accSev.changeAccountPassword(principal.getName(), reqVo.confirmPassword);
+	public boolean changeAccountPassword(Principal principal, @RequestBody ReqChangePasswordVO reqVo) throws IcmesException {
+		
+		String orgPassword = StringUtils.trimToNull(reqVo.orgPassword);
+		String confirmPassword = StringUtils.trimToNull(reqVo.confirmPassword);
+		String newPassword = StringUtils.trimToNull(reqVo.password);
+		
+		if (orgPassword == null) {
+			throw new IcmesBusinessException(IcmesErrorTypeEnum.ACCOUNT_PASSWORD_ORGINAL_PASSWORD_EMPTY_ERROR);
+		}
+		
+		if (confirmPassword == null) {
+			throw new IcmesBusinessException(IcmesErrorTypeEnum.ACCOUNT_PASSWORD_CONFIRM_PASSWORD_EMPTY_ERROR);
+		}
+		
+		if (newPassword == null) {
+			throw new IcmesBusinessException(IcmesErrorTypeEnum.ACCOUNT_PASSWORD_NEW_PASSWORD_EMPTY_ERROR);
+		}
+		
+		if (!confirmPassword.equals(newPassword)) {
+			throw new IcmesBusinessException(IcmesErrorTypeEnum.ACCOUNT_PASSWORD_TWICES_ERROR);
+		}
+		
+		String employeeId = principal.getName();
+		AccountModel account = accSev.fetchAccountDetail(employeeId);
+		// 登录密码加密验证 等待前端联调时打开
+		//if (!encoder.matches(reqVo.orgPassword, account.getPassword())) {
+		//    throw new IcmesBusinessException(IcmesErrorTypeEnum.ACCOUNT_PASSWORD_ORGINAL_PASSWORD_ERROR);
+		//}
+		
+		if (!orgPassword.equals(account.getPassword())) {
+			throw new IcmesBusinessException(IcmesErrorTypeEnum.ACCOUNT_PASSWORD_ORGINAL_PASSWORD_ERROR);
+		}
+		
+		accSev.changeAccountPassword(employeeId, reqVo.confirmPassword, false);
         return true;
 	}
 	
 	/**
 	 * 初始化密码
-	 * @param principal
-	 * @param reqVo
-	 * @return boolean
+	 * @param principal 登录用户的基本信息和权限信息
+	 * @param reqVo 初始密码封装
+	 * @return boolean  初始密码修改成功标示
 	 */
 	@ApiOperation(value = "初始化密码--作者：徐宏亮")
 	@ApiResponses({ 
@@ -157,8 +197,23 @@ public class AccountController {
 		@ApiResponse(code = 500, message = "内部系统错误")
 			})
 	@RequestMapping(path = "/password/initialize", method = RequestMethod.PUT)
-	public boolean initAccountPassword(Principal principal, @RequestBody ReqPasswordInitializeVO reqVo) {
-        accSev.changeAccountPassword(principal.getName(), reqVo.confirmPassword);
+	public boolean initAccountPassword(Principal principal, @RequestBody ReqPasswordInitializeVO reqVo) throws IcmesException {
+
+		String confirmPassword = StringUtils.trimToNull(reqVo.confirmPassword);
+		String newPassword = StringUtils.trimToNull(reqVo.password);
+		
+		if (confirmPassword == null) {
+			throw new IcmesBusinessException(IcmesErrorTypeEnum.ACCOUNT_PASSWORD_CONFIRM_PASSWORD_EMPTY_ERROR);
+		}
+		
+		if (newPassword == null) {
+			throw new IcmesBusinessException(IcmesErrorTypeEnum.ACCOUNT_PASSWORD_NEW_PASSWORD_EMPTY_ERROR);
+		}
+		
+		if (!confirmPassword.equals(newPassword)) {
+			throw new IcmesBusinessException(IcmesErrorTypeEnum.ACCOUNT_PASSWORD_TWICES_ERROR);
+		}
+        accSev.changeAccountPassword(principal.getName(), reqVo.confirmPassword, false);
         return true;
 	}
 	
@@ -173,16 +228,16 @@ public class AccountController {
 		@ApiResponse(code = 500, message = "内部系统错误")
 			})
 	@RequestMapping(path = "/profile/avatar", method = RequestMethod.POST)
-	public void uploadProfileAvatar() {
-        // To Do
+	public ResProfileAvatarVO uploadProfileAvatar() throws Exception {
+        return null;
 	}
 	
 	
 	/**
 	 * 账号角色列表查询
-	 * @param id
-	 * @param condition
-	 * @return AccountRoleCollection
+	 * @param id  员工工号
+	 * @param condition  获取角色列表的的条件集合
+	 * @return AccountRoleCollection  返回分页的角色列表对象
 	 */
 	@ApiOperation(value = "账号角色列表查询--作者：张瑞晗")
 	@ApiImplicitParams({
@@ -216,9 +271,9 @@ public class AccountController {
 	
 	/**
 	 * 账号指派代理人列表查询
-	 * @param id
-	 * @param condition
-	 * @return AccountConsignProxyCollection
+	 * @param id 员工工号
+	 * @param condition 账号指派代理列表的条件集合
+	 * @return AccountConsignProxyCollection  指派代理分页及列表信息
 	 */
 	@ApiOperation(value = "账号指派代理人列表查询--作者：徐宏亮")
 	@ApiImplicitParams({
@@ -252,9 +307,9 @@ public class AccountController {
 	
 	/**
 	 * 账号接手代理人查询
-	 * @param id
-	 * @param condition
-	 * @return AccountAssignProxyCollection
+	 * @param id 员工工号
+	 * @param condition 用于接手代理人查询条件封装
+	 * @return AccountAssignProxyCollection 接手代理人分页和列表信息
 	 */
 	@ApiOperation(value = "账号接手代理人查询--作者：张瑞晗")
 	@ApiImplicitParams({
@@ -276,7 +331,7 @@ public class AccountController {
 		boolean ascending = util.getValueBoolean("ascending", false);
 		int pageNo = util.getValueInteger("pageNo", 1);
 		int pageSize = util.getValueInteger("pageSize", 0);
-		
+		//参数赋值
 		AccountAssignProxyPageableSearchParam params = new AccountAssignProxyPageableSearchParam(id, pageNo, pageSize);
 		params.setOrderBy(orderBy);
 		params.setAscending(ascending);
@@ -288,8 +343,8 @@ public class AccountController {
 	
 	/**
 	 * 获取账号列表
-	 * @param condition
-	 * @return AccountCollection
+	 * @param condition 账号列表条件集合
+	 * @return AccountCollection  账号分页和列表信息
 	 */
 	@ApiOperation(value = "获取账号列表--作者：徐宏亮")
 	@ApiImplicitParams({
@@ -318,7 +373,7 @@ public class AccountController {
 		boolean ascending = util.getValueBoolean("ascending", false);
 		int pageNo = util.getValueInteger("pageNo", 1);
 		int pageSize = util.getValueInteger("pageSize", 0);
-		
+		//参数赋值
 		AccountPageableSearchParam params = new AccountPageableSearchParam(id, name, specialDevice, pageNo, pageSize);
 		params.setOrderBy(orderBy);
 		params.setAscending(ascending);
@@ -329,8 +384,8 @@ public class AccountController {
 	
 	/**
 	 * 账号权限列表查询
-	 * @param id
-	 * @return List<FeatureModel>
+	 * @param id  员工工号
+	 * @return List<FeatureModel> 返回指定员工工号的权限列表
 	 */
 	@ApiOperation(value = "账号权限列表查询--作者：徐宏亮")
 	@ApiResponses({ 
@@ -348,9 +403,8 @@ public class AccountController {
 	
 	/**
 	 * 获取账号详情
-	 * @param id
-	 * @return EmployeeBaseModel
-	 * @throws IcmesBusinessException
+	 * @param id 员工工号
+	 * @return EmployeeBaseModel 返回员工基本信息
 	 */
 	@ApiOperation(value = "获取账号详情--作者：徐宏亮")
 	@ApiResponses({ 
@@ -360,8 +414,8 @@ public class AccountController {
 		@ApiResponse(code = 500, message = "内部系统错误")
 			})
 	@RequestMapping(path = "/{id}", method = RequestMethod.GET)
-	public EmployeeBaseModel fetchAccount(@PathVariable @ApiParam(name = "id", value = "员工账号") String id) throws IcmesBusinessException {
-		return accSev.fetchAccountDetailByEmployeeId(id);
+	public EmployeeBaseModel fetchAccount(@PathVariable @ApiParam(name = "id", value = "员工账号") String id) {
+		return accSev.fetchAccountDetailWithEmployee(id);
 	}
 	
 	/**
@@ -422,12 +476,12 @@ public class AccountController {
 		@ApiResponse(code = 500, message = "内部系统错误")
 			})
 	@RequestMapping(path = "/{id}", method = RequestMethod.PUT)
-	public boolean updateAccount(@PathVariable @ApiParam(name = "id", value = "员工账号") String id, @RequestBody @ApiParam(name = "ReqCreateAccountVO", value = "传入模型") ReqCreateAccountVO reqVO) throws IcmesBusinessException {
+	public boolean updateAccount(@PathVariable @ApiParam(name = "id", value = "员工账号") String id, @RequestBody @ApiParam(name = "ReqUpdateAccountVO", value = "传入模型") ReqUpdateAccountVO reqVO) throws IcmesBusinessException {
 		EmployeeBaseModel model = new EmployeeBaseModel();
 		model.setEmployeeId(id);
 		model.setEmployeeName(reqVO.name);
 		model.setSpecialDevice(reqVO.specialDevice);
-		
+		//编辑账号
 		accSev.updateAccount(model);
 		return true;
 	}	
@@ -438,16 +492,16 @@ public class AccountController {
 	 * @param id
 	 * @param reqVo
 	 * @return boolean
+	 * @throws IcmesBusinessException 
 	 */
 	@ApiOperation(value = "用户角色编辑(分配角色)--作者：徐宏亮")
 	@ApiResponses({ 
 		@ApiResponse(code = 200, message = "成功"), 
-		@ApiResponse(code = 401, message = "验证失败"), 
-		@ApiResponse(code = 404, message = "未找到"),
-		@ApiResponse(code = 500, message = "内部系统错误")
-			})
+		@ApiResponse(code = 500, message = "内部系统错误"),
+		@ApiResponse(code = 115, message = "重复分配！分配失败！")
+	})
 	@RequestMapping(path = "/{id}/relation/role-organization", method = RequestMethod.POST)
-	public boolean createRoleOrgAss(@PathVariable String id, @RequestBody @ApiParam(name = "ReqRelationRoleOrganizationVO", value = "员工模型") ReqRelationRoleOrganizationVO reqVo) {
+	public boolean createRoleOrgAss(@PathVariable String id, @RequestBody @ApiParam(name = "ReqRelationRoleOrganizationVO", value = "员工模型") ReqRelationRoleOrganizationVO reqVo) throws IcmesBusinessException {
 		accSev.setAccountRelationRoleorganization(id, reqVo.roleId, reqVo.orgId);
 		return true;
 	}
@@ -528,7 +582,7 @@ public class AccountController {
 	@RequestMapping(path = "/{id}/password/reset", method = RequestMethod.PUT)
 	public boolean initAccountPassword(@PathVariable @ApiParam(name = "id", value = "员工账号ID") String id) {
 		String password = SystemSettingConfig.getAllConfig().getInitPassword();
-        accSev.changeAccountPassword(id, password);
+        accSev.changeAccountPassword(id, password, true);
         return true;
 	}
 	

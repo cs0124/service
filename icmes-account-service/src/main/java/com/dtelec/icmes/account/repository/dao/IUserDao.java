@@ -16,6 +16,12 @@ import com.dtelec.icmes.account.repository.param.AccountConsignProxyPageableQuer
 import com.dtelec.icmes.account.repository.param.AccountPageableQueryParam;
 import com.dtelec.icmes.account.repository.param.AccountRolePageableQueryParam;
 
+/**
+ * 用于User相关的Dao接口
+ * @author hlxu
+ *
+ */
+
 @Mapper
 public interface IUserDao {
 
@@ -100,7 +106,12 @@ public interface IUserDao {
 	 * 通过员工工号获取账号详细信息
 	 */
 	AccountEntity findAccountByEmployeeId(@Param("employeeId") String employeeId);
-	
+	/**
+	 * 检测角色权限代理
+	 * @param employeeId
+	 * @param roleIds
+	 * @return
+	 */
 	int checkUserRoleAssProxy(@Param("employeeId")String employeeId, @Param("roleIds")List<String> roleIds);
 	
 	/**
@@ -115,7 +126,7 @@ public interface IUserDao {
 	 * @param employeeId
 	 * @param password
 	 */
-	void changeAccountPassword(@Param("employeeId")String employeeId, @Param("password") String password);
+	void changeAccountPassword(@Param("employeeId")String employeeId, @Param("password") String password,@Param("changePassword") int changePassword);
 	
 	/**
 	 * 账号锁定或解锁
@@ -129,6 +140,14 @@ public interface IUserDao {
 	 * @param employeeId
 	 */
 	void deleteAccountByEmployeeId(@Param("employeeId")String employeeId);
+	
+	/**
+	 * 检测账号分配角色和组织机构是否重复
+	 * @param employeeId
+	 * @param roleId
+	 * @param orgId
+	 */
+	int checkAccountRelationRoleorganization(@Param("employeeId") String employeeId, @Param("roleId")String roleId, @Param("orgId")String orgId);
 	
 	/**
 	 * 给账号分配角色和组织机构
