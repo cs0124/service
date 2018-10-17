@@ -1,8 +1,10 @@
 package com.dtelec.icmes.information.repository.param;
 
 import java.util.List;
+
 /**
  * 设备分页查询参数实体
+ * 
  * @author 张瑞晗
  *
  */
@@ -10,11 +12,16 @@ public class DevicePageableSearchParam extends PageableSearchBaseParam {
 	/**
 	 * 父设备id
 	 */
-	private String parentId;
+	private int parentId;
+	/**
+	 * 迭代层级
+	 */
+	private int hierarchy;
 	/**
 	 * 全局模糊查询参数
 	 */
 	private String globalName;
+	private Boolean isPrimary;
 	/**
 	 * 设备类型列表
 	 */
@@ -28,25 +35,22 @@ public class DevicePageableSearchParam extends PageableSearchBaseParam {
 	 */
 	private List<String> statusList;
 
-	
-
-
-	public DevicePageableSearchParam(String parentId, String globalName, List<Integer> categoryList,
-			List<Integer> locationList, List<String> statusList) {
+	public DevicePageableSearchParam(Boolean isPrimary, int parentId, int hierarchy, String globalName,
+			List<Integer> categoryList, List<Integer> locationList, List<String> statusList) {
 		super();
 		this.parentId = parentId;
+		this.hierarchy = hierarchy;
 		this.globalName = globalName;
-		this.categoryList = categoryList;
-		this.locationList = locationList;
-		this.statusList = statusList;
-	}
-	
-	public String getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(String parentId) {
-		this.parentId = parentId;
+		if (categoryList != null && categoryList.size() > 0) {
+			this.categoryList = categoryList;
+		}
+		if (locationList !=null && locationList.size() > 0) {
+			this.locationList = locationList;
+		}
+		if (statusList !=null && statusList.size() > 0) {
+			this.statusList = statusList;
+		}
+		this.isPrimary = isPrimary;
 	}
 
 	public String getGlobalName() {
@@ -79,5 +83,29 @@ public class DevicePageableSearchParam extends PageableSearchBaseParam {
 
 	public void setStatusList(List<String> statusList) {
 		this.statusList = statusList;
+	}
+
+	public int getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(int parentId) {
+		this.parentId = parentId;
+	}
+
+	public int getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(int hierarchy) {
+		this.hierarchy = hierarchy;
+	}
+
+	public Boolean getIsPrimary() {
+		return isPrimary;
+	}
+
+	public void setIsPrimary(Boolean isPrimary) {
+		this.isPrimary = isPrimary;
 	}
 }

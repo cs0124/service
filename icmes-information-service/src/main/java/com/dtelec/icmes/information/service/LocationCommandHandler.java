@@ -1,5 +1,6 @@
 package com.dtelec.icmes.information.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.dtelec.icmes.common.error.IcmesBusinessException;
 import com.dtelec.icmes.common.error.IcmesErrorTypeEnum;
+import com.dtelec.icmes.information.repository.IDeviceRepository;
 import com.dtelec.icmes.information.repository.ILocationRepository;
+import com.dtelec.icmes.information.repository.entity.DeviceBaseEntity;
 import com.dtelec.icmes.information.repository.entity.LocationEntity;
 import com.dtelec.icmes.information.service.annotation.CommandAction;
 import com.dtelec.icmes.information.service.command.LocationCreateCommand;
@@ -17,6 +20,7 @@ import com.dtelec.icmes.information.service.command.LocationDeleteCommand;
 import com.dtelec.icmes.information.service.command.LocationUpdateCommand;
 import com.dtelec.icmes.information.service.core.ICommandHandler;
 import com.dtelec.icmes.information.service.model.LocationModel;
+import com.netflix.discovery.converters.Auto;
 
 /**
  * Location Command Handler
@@ -25,7 +29,10 @@ import com.dtelec.icmes.information.service.model.LocationModel;
 @Service
 public class LocationCommandHandler implements ICommandHandler {
     @Autowired
-    ILocationRepository locationRepo;
+	ILocationRepository locationRepo;
+
+	@Autowired
+	IDeviceRepository deviceRepo;
 	
 
     /**
@@ -107,20 +114,21 @@ public class LocationCommandHandler implements ICommandHandler {
 		if(model != null) {
 			LocationEntity entity = new LocationEntity();
 			entity.setId(model.getId());
-			//TODO 等待迟山更新设备相关之后进行check变更
+			//查询是否为子叶，如果为子叶返回数值为0
 			int count = locationRepo.countLocationDevice(entity);
+			//查询是否与之关联的设备数量
+			List<DeviceBaseEntity>  devices = deviceRepo.findDevicesByLocationId(entity.getId());
+
 			// 如果返回的是0则可以删除，即为叶子而且无用户关联
-			if (count == 0) {
+			if (count == 0 && devices.isEmpty()) {
 				locationRepo.deleteLocation(entity);
 			} 
 			else {
-				throw new IcmesBusinessException(IcmesErrorTypeEnum.INFO_LOCATION_DELETELOCATION_HASCHILD,
-						"当前位置信息存在子位置信息或关联其他用户，不能删除");
+				throw new IcmesBusinessException(IcmesErrorTypeEnum.INFO_LOCATION_DELETELOCATION_HASCHILD);
 			}
 		}
 		else {
-			throw new IcmesBusinessException(IcmesErrorTypeEnum.INFO_LOCATION_DELETELOCATION_NOFOUND_ID,
-						"无法找到该位置信息，不能删除");
+			throw new IcmesBusinessException(IcmesErrorTypeEnum.INFO_LOCATION_DELETELOCATION_NOFOUND_ID);
 		}
 		
 

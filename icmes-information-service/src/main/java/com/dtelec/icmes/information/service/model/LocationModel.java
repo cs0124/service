@@ -17,6 +17,8 @@ public class LocationModel {
 	private String name;
 	@ApiModelProperty(value = "父层级关系")
 	private int parentId;
+	@ApiModelProperty(value = "父级全名")
+	private String parentFullName;
 	@ApiModelProperty(value = "用于高并发的数据版本控制")
 	private String versionTag;
 	@ApiModelProperty(value = "创建时间")
@@ -34,6 +36,7 @@ public class LocationModel {
 		this.code = entity.getCode();
 		this.name = entity.getName();
 		this.parentId = entity.getParentId();
+		this.parentFullName = entity.getParentFullName();
 		this.versionTag = entity.getVersionTag();
 		Date createTime = entity.getCreateTime();
 		this.createTime = (createTime == null) ? 0 : createTime.getTime();
@@ -72,6 +75,14 @@ public class LocationModel {
 	
 	public void setParentId(int parentId) {
 		this.parentId = parentId;
+	}
+
+	public String getParentFullName() {
+		return parentFullName;
+	}
+
+	public void setParentFullName(String parentFullName) {
+		this.parentFullName = parentFullName;
 	}
 	
 	public String getVersionTag() {

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dtelec.icmes.power.repository.dao.IPowerSupplyDao">
+
+	<!-- 获取当天最大申请单号 -->
+	<select id="getMaxcutFormId" parameterType="string" resultType="string">
+		select max(id) from `PowerSupplyForm`
+		where  CreateTime like concat('',#{nowTime},'%')
+	</select>
+	
+	<!-- 新增送电申请单 -->
+	<insert id="createPowerSupplyFrom" parameterType="com.dtelec.icmes.power.repository.entity.PowerSupplyFormBaseEntity">
+		INSERT INTO `PowerSupplyForm`
+		(Id,PowerCutFormId,Status,CreateUserId,UpdateUserId)
+		VALUES
+		(#{id},#{powerCutFormId},#{status},'0','0')
+	</insert>
+	
+	<!-- 通过送电申请单标识获取送电申请单详细信息 -->
+	<select id="getPowerSupplyFormById" parameterType="map" resultType="com.dtelec.icmes.power.repository.entity.PowerSupplyFormFullEntity">
+		SELECT 
+		    PSF.*,
+		    D.code AS mainDeviceCode,
+		    D.name AS mainDeviceName,
+		    PCF.MainDeviceId
+		FROM
+		    icmes_power_dev.PowerSupplyForm PSF
+		        INNER JOIN
+		    icmes_power_dev.PowerCutForm PCF ON PSF.PowerCutFormId = PCF.Id
+		        INNER JOIN
+		    icmes_base_dev.Device D ON PCF.MainDeviceId = D.Id
+		WHERE
+		    PSF.Id = #{id}
+	</select>
+</mapper>

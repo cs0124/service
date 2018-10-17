@@ -30,7 +30,7 @@ public class VendorQueryHandler implements IQueryHandler {
 		//通过厂商自增Id查询数据库里是否存在此厂商
 		VendorEntity entity = vendorRepo.geVendorById(query.getId());
 		if (entity != null) {
-		    model = new VendorModel();	
+		    model = new VendorModel();
 			model.fillModel(entity);
 		}
 		

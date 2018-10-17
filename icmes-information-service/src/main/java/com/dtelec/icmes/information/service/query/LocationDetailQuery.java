@@ -22,7 +22,7 @@ public class LocationDetailQuery implements IQuery<LocationModel> {
 	}
 	
 
-	public void setCode(int Id) {
+	public void setId(int Id) {
 		this.Id = Id;
 	}
 

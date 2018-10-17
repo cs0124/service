@@ -52,11 +52,11 @@
 			   getFullParentLocationName(Id) as fullName ,
 		       getFullParentLocationName(ParentId) as parentFullName , 
 			   ParentId,
-			   (case when a.parentId != 0 
+			   (case when childLocation.parentId != 0 
 						then (
 							select Code 
 							from Location 
-							where Id = a.parentId
+							where Id = childLocation.parentId
 						)
 					 else ""
 				end		   	
@@ -64,11 +64,11 @@
 			   versionTag, 
 			   (case when (select count(1) 
 			    		   from Location 
-						   where parentId = a.Id
+						   where parentId = childLocation.Id
 						   )>0 
 					 then true else false end 
 				) hasChild 
-		from Location a
+		from Location childLocation
 		<trim prefix="WHERE (" suffix=")" prefixOverrides="AND |OR ">
         	find_in_set(Id,getFullChildLocationId(#{param.parentId},#{param.hierarchy}))
 			<if test="param.code != null and param.code != ''">
@@ -109,11 +109,22 @@
 		select Id,
 	   		   Code,
 			   Name,
+			   getFullParentLocationName(Id) as fullName ,
 			   ParentId,
+			   (case when childLocation.parentId != 0 
+					then (
+							select Code 
+							from Location 
+							where Id = childLocation.parentId
+						)
+					else ""
+				end		   	
+			   ) as parentCode,
+			   getFullParentLocationName(ParentId) as parentFullName , 
 			   VersionTag,
 			   CreateTime,
 			   UpdateTime 
-	    from Location 
+	    from Location childLocation
 		where Id = #{id}
 	
 	</select>

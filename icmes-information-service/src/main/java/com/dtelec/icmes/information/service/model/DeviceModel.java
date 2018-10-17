@@ -1,7 +1,9 @@
 package com.dtelec.icmes.information.service.model;
 
+import java.util.Date;
 import java.util.List;
 
+import com.dtelec.icmes.information.repository.entity.DeviceBaseEntity;
 import com.dtelec.icmes.information.repository.param.DevicePageableSearchResultParam;
 
 import io.swagger.annotations.ApiModel;
@@ -10,11 +12,16 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * 设备模型
  * 
- * @author RHZhang 张瑞晗
+ * @author RHZhang 张瑞晗 戴常怡
  *
  */
 @ApiModel
 public class DeviceModel {
+	/**
+	 * 父设备id
+	 */
+	@ApiModelProperty(value = "父设备标识符")
+	private int parentId;
 	/**
 	 * 设备id
 	 */
@@ -185,6 +192,11 @@ public class DeviceModel {
 	 */
 	@ApiModelProperty(value = "更新时间")
 	private long updateTime;
+	/**
+	 * 附属设备数量
+	 */
+	@ApiModelProperty(value = "附属设备数量")
+	private int appurtenanceCount;
 
 	public int getId() {
 		return id;
@@ -426,6 +438,14 @@ public class DeviceModel {
 		this.updateTime = updateTime;
 	}
 
+	public int getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(int parentId) {
+		this.parentId = parentId;
+	}
+
 	/**
 	 * 填充模型
 	 * 
@@ -434,6 +454,7 @@ public class DeviceModel {
 	public void fill(DevicePageableSearchResultParam entity) {
 		this.id = entity.getId();
 		this.processNo = entity.getProcessNo();
+		this.parentId = entity.getParentId();
 		this.code = entity.getCode();
 		this.name = entity.getName();
 		this.categoryId = entity.getDeviceCategoryId();
@@ -444,13 +465,14 @@ public class DeviceModel {
 		this.locationName = entity.getLocationName();
 		this.locationCode = entity.getLocationCode();
 		this.status = entity.getStatus();
-		if(entity.getCreateTime()!=null) {
+		if (entity.getCreateTime() != null) {
 			this.createTime = entity.getCreateTime().getTime();
 		}
 		this.isPrimary = entity.getIsPrimary();
 		this.locationId = entity.getLocationId();
 		this.manufacturerId = entity.getManufacturerId();
-		
+		this.appurtenanceCount = entity.getAppurtenanceCount();
+
 	}
 
 	public String getSpecDataFullName() {
@@ -485,4 +507,99 @@ public class DeviceModel {
 		this.categoryCode = categoryCode;
 	}
 
+	public void fillModel(DeviceBaseEntity entity, List<DevicePhotoModel> photoModels,
+			List<DeviceSpecDataModel> specModel) {
+		this.id = entity.getId();
+		this.isPrimary = entity.getIsPrimary();
+		this.processNo = entity.getProcessNo();
+		this.code = entity.getCode();
+		this.name = entity.getName();
+		this.model = entity.getModel();
+		Date purchaseDate = entity.getPurchaseDate();
+		this.purchaseDate = (purchaseDate == null) ? 0 : purchaseDate.getTime();
+		this.purchasePrice = entity.getPurchasePrice();
+		Date manufacturingDate = entity.getManufacturingDate();
+		this.manufacturingDate = (manufacturingDate == null) ? 0 : manufacturingDate.getTime();
+		this.manufacturingPlace = entity.getManufacturingPlace();
+		Date setupDate = entity.getSetupDate();
+		this.setupDate = (setupDate == null) ? 0 : setupDate.getTime();
+		this.memo = entity.getMemo();
+		this.status = entity.getStatus();
+		this.photoList = photoModels;
+		this.specDataList = specModel;
+
+		this.locationId = entity.getLocationId();
+		this.locationName = entity.getLocationName();
+		this.locationFullName = entity.getLocationFullName();
+
+		this.organizationId = entity.getOrganizationId();
+		this.organizationFullName = entity.getOrganizationFullName();
+
+		this.processId = entity.getProcessId();
+		this.processName = entity.getProcessName();
+
+		this.categoryId = entity.getDeviceCategoryId();
+		this.categoryName = entity.getDeviceCategoryName();
+
+		this.vendorId = entity.getVendorId();
+		this.vendorName = entity.getVendorName();
+		this.manufacturerId = entity.getManufacturerId();
+		this.manufacturerName = entity.getManufacturerName();
+		this.versionTag = entity.getVersionTag();
+		Date createTime = entity.getCreateTime();
+		this.createTime = (createTime == null) ? 0 : createTime.getTime();
+		Date updateTime = entity.getUpdateTime();
+		this.updateTime = (updateTime == null) ? 0 : updateTime.getTime();
+	}
+
+	
+	/**
+	 * 设备model转entity
+	 * @return 设备实体类
+	 */
+	public DeviceBaseEntity convert() {
+		DeviceBaseEntity entity = new DeviceBaseEntity();
+		entity.setId(this.id);
+		entity.setIsPrimary(this.isPrimary);
+		entity.setCode(this.code);
+		entity.setName(this.name);
+		entity.setProcessNo(this.processNo);
+		entity.setProcessId(this.processId);
+		if (this.purchaseDate > 0) {
+			entity.setPurchaseDate(new Date(this.purchaseDate));
+			;
+		} else {
+			entity.setPurchaseDate(null);
+			;
+		}
+		entity.setPurchasePrice(this.purchasePrice);
+		if (this.setupDate > 0) {
+			entity.setSetupDate(new Date(this.setupDate));
+		} else {
+			entity.setSetupDate(null);
+		}
+		entity.setManufacturingPlace(this.manufacturingPlace);
+		entity.setManufacturerId(this.manufacturerId);
+		entity.setModel(this.model);
+		entity.setMemo(this.memo);
+		if (this.manufacturingDate > 0) {
+			entity.setManufacturingDate(new Date(this.manufacturingDate));
+		} else {
+			entity.setManufacturingDate(null);
+		}
+		entity.setStatus(this.status);
+		entity.setOrganizationId(this.organizationId);
+		entity.setVendorId(this.vendorId);
+		entity.setVersionTag(this.versionTag);
+		entity.setDeviceCategoryId(this.categoryId);
+		return entity;
+	}
+
+	public int getAppurtenanceCount() {
+		return appurtenanceCount;
+	}
+
+	public void setAppurtenanceCount(int appurtenanceCount) {
+		this.appurtenanceCount = appurtenanceCount;
+	}
 }

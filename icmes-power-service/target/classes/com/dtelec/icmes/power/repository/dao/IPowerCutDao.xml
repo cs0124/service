@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dtelec.icmes.power.repository.dao.IPowerCutDao">
+
+    <!-- 获取停电申请表列表 -->
+	<select id="searchPowerCutByParams" resultType="com.dtelec.icmes.power.repository.entity.PowerCutFormBaseEntity">
+	    SELECT Id, Status, Type, Reason, ScheduledCutOffTime, ScheduledSupplyTime, ActualCutOffTime, MainDeviceId, Measures, VersionTag, CreateTime, CreateUserId, UpdateTime, UpdateUserId
+	    FROM `PowerCutForm` 
+	    <where>
+	        <if test="params.statusList != null">
+				and Status in
+				<foreach collection="params.statusList" index="statusIndex" item="status" open="(" close=")" separator=",">
+					  #{status}
+				</foreach>
+			</if>
+			<if test="params.device > 0">
+				and MainDeviceId = #{params.device}
+			</if>
+			<if test="params.number != null and params.number != ''">
+				and Id = #{params.number}
+			</if>
+			<if test="params.globalName != null and params.globalName != ''">
+				and ( Id like concat('%',#{params.globalName},'%') or MainDeviceId like concat('%',#{params.globalName},'%') )
+			</if>	
+	    </where>
+		<if test="params.orderBy != null and params.orderBy != '' and params.ascending == true">
+		    order by ${params.orderBy} asc
+		</if>
+		<if test="params.orderBy != null and params.orderBy != '' and params.ascending == false">
+		    order by ${params.orderBy} desc
+		</if>
+		<if test="params.startIndex > -1 and params.pageSize > 0">
+		    LIMIT #{params.startIndex}, #{params.pageSize}
+		</if>
+    </select>
+	
+	<!-- 获取停电申请表列表总数 -->
+	<select id="searchPowerCutTotalCountByParams" resultType="Long">
+	    SELECT Count(*) 
+	    FROM `PowerCutForm` 
+	    <where>
+	        <if test="params.statusList != null">
+				and Status in
+				<foreach collection="params.statusList" index="statusIndex" item="status" open="(" close=")" separator=",">
+					  #{status}
+				</foreach>
+			</if>
+			<if test="params.device > 0">
+				and MainDeviceId = #{params.device}
+			</if>
+			<if test="params.number != null and params.number != ''">
+				and Id = #{params.number}
+			</if>
+			<if test="params.globalName != null and params.globalName != ''">
+				and ( Id like concat('%',#{params.globalName},'%') or MainDeviceId like concat('%',#{params.globalName},'%') )
+			</if>	
+	    </where>
+    </select>
+
+	<!-- 根据申请单标识获取停电申请单 -->
+
+
+	 <select resultType="com.dtelec.icmes.power.repository.entity.PowerCutFormFullEntity" id="getPowerCutFormById" parameterType="string">
+		SELECT a.*,b.code mainDeviceCode,b.name  mainDeviceName 
+		FROM icmes_power_dev.PowerCutForm a
+		LEFT JOIN icmes_base_dev.Device b 
+		ON a.MainDeviceId = b.Id 
+		WHERE a.ID=#{id}
+	</select> 
+
+
+	<!-- 新增停电申请单 -->
+	<insert id="createPowerCutForm" parameterType="com.dtelec.icmes.power.repository.entity.PowerCutFormBaseEntity">
+		INSERT INTO 
+		`PowerCutForm`
+		(Id,Status,Type,Reason,ScheduledSupplyTime,ScheduledCutOffTime,ActualCutOffTime,MainDeviceId,Measures,CreateUserId,UpdateUserId)
+		VALUES
+		(#{id},#{status},#{type},#{reason}, #{scheduledSupplyTime}, #{scheduledCutOffTime},#{actualCutOffTime},#{mainDeviceId},#{measures},'0','0')
+	</insert>
+
+
+	<!-- 修改停电申请单 -->
+	<update id="updatePowerCutForm" parameterType="com.dtelec.icmes.power.repository.entity.PowerCutFormBaseEntity">
+		UPDATE 'PowerCutForm`
+		SET 
+		Id=#{id},Status=#{status},Reason=#{reason},ScheduledSupplyTime=#{scheduledSupplyTime},
+		ActualCutOffTime=#{actualCutOffTime},MainDeviceId=#{mainDeviceId},Measures=#{measures},
+		VersionTag=#{versionTag},UpdateTime=now(), UpdateUserId='0'
+		WHERE Id = #{id} 
+	</update>
+	
+	
+	<!--新增申请单关联设备  -->
+	<insert id="createPowerCutFormAssociatedDevice" parameterType="map">
+		INSERT IGNORE INTO PowerCutFormAssociatedDevice(PowerCutFormId, DeviceId)
+		VALUES
+        <foreach collection="assDeviceIds" index="index" item="assDeviceId" separator=",">  
+          (#{cutFormId}, #{assDeviceId})
+        </foreach>
+	</insert>
+	
+	
+	<!--新增申请单工作票  -->
+	<insert id="createPowerCutFormWorkTicketPhoto" parameterType="map">
+		INSERT IGNORE INTO PowerCutFormWorkTicketPhoto(PowerCutFormId, Photo)
+		VALUES
+        <foreach collection="ticketPhotos" index="index" item="ticketPhoto" separator=",">  
+          (#{cutFormId}, #{ticketPhoto})
+        </foreach>
+	</insert>
+	
+	
+	<!-- 获取当天最大申请单号 -->
+	<select id="getMaxCutFormId" parameterType="string" resultType="string">
+	select max(id) from `PowerCutForm`
+	where  CreateTime like concat('',#{nowTime},'%')
+	
+	</select>
+	
+	
+	<!--  根据申请单标识获取工作票-->
+	<select  id="getWorkTicketPhotosById" parameterType="string"  resultType="string">
+	SELECT Photo 
+	FROM `PowerCutFormWorkTicketPhoto`
+	WHERE PowerCutFormId =#{id}
+	</select>
+
+
+	<!--  根据申请单标识获取关联设备-->
+	<select  id="getAssociatedDevicesById" parameterType="string"  resultType="com.dtelec.icmes.power.repository.entity.DeviceBaseEntity">
+		
+	SELECT a.DeviceId  id,b.code code,b.Name name FROM 
+	icmes_power_dev.PowerCutFormAssociatedDevice a
+	LEFT JOIN icmes_base_dev.Device b ON a.DeviceId = b.id
+	where a.PowerCutFormId=#{id}
+	
+	</select>
+	
+	
+	<!-- 根据主设备申请单标识获取关联设备申请单 -->	
+	<select id="getAssDeviceCutFormsById"   resultType="com.dtelec.icmes.power.repository.entity.PowerCutFormFullEntity">
+	SELECT a.*,b.code mainDeviceCode,b.name  mainDeviceName 
+	FROM icmes_power_dev.PowerCutForm a
+	LEFT JOIN icmes_base_dev.Device b 
+		ON a.MainDeviceId = b.Id 
+	WHERE MainDeviceId in(SELECT DeviceId from icmes_power_dev.PowerCutFormAssociatedDevice
+						WHERE PowerCutFormId=#{param.id})
+  	 <![CDATA[ and((#{param.scheduledCutOffTime}<=ScheduledCutOffTime  AND ScheduledCutOffTime <=#{param.scheduledSupplyTime})]]>
+     <![CDATA[  OR (#{param.scheduledCutOffTime}<=ScheduledSupplyTime AND ScheduledSupplyTime<=#{param.scheduledSupplyTime}))]]>
+   
+	
+	</select>
+    
+</mapper>

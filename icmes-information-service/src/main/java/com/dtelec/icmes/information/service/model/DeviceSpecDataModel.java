@@ -1,5 +1,6 @@
 package com.dtelec.icmes.information.service.model;
 
+import com.dtelec.icmes.information.repository.entity.DeviceSpecDataEntity;
 import com.dtelec.icmes.information.repository.param.DeviceSpecDataParam;
 
 import io.swagger.annotations.ApiModel;
@@ -41,17 +42,6 @@ public class DeviceSpecDataModel {
      */
 	@ApiModelProperty(value="是否额外显示")
     private boolean isExtraDisplayMode;
-    
-    public void fill(DeviceSpecDataParam entity) {
-    	this.deviceId = entity.getDeviceId();
-    	this.specDataId = entity.getSpecDataId();
-    	this.name = entity.getName();
-    	this.unit = entity.getUnit();
-    	this.value = entity.getValue();
-    	this.isExtraDisplayMode = entity.isExtraDisplayMode();
-    	
-    }
-    
 
 	public int getDeviceId() {
 		return deviceId;
@@ -100,5 +90,28 @@ public class DeviceSpecDataModel {
 	public void setExtraDisplayMode(boolean isExtraDisplayMode) {
 		this.isExtraDisplayMode = isExtraDisplayMode;
 	}
+	
+	public DeviceSpecDataEntity convert() {
+		DeviceSpecDataEntity entity = new DeviceSpecDataEntity();
+		
+		entity.setDeviceId(this.deviceId);
+		entity.setSpecDataId(this.specDataId);
+		entity.setName(this.name);
+		entity.setUnit(this.unit);
+		entity.setValue(this.value);
+		entity.setExtraDisplayMode(this.isExtraDisplayMode);
+		
+		return entity;
+	}
+	
+    public void fill(DeviceSpecDataParam entity) {
+    	this.deviceId = entity.getDeviceId();
+    	this.specDataId = entity.getSpecDataId();
+    	this.name = entity.getName();
+    	this.unit = entity.getUnit();
+    	this.value = entity.getValue();
+    	this.isExtraDisplayMode = entity.isExtraDisplayMode();	
+    }
+    
 	
 }

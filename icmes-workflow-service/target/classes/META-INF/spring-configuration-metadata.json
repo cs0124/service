@@ -1,0 +1,75 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.dtelec.icmes.workflow.config.SystemSettingConfig",
+      "name": "icmes",
+      "type": "com.dtelec.icmes.workflow.config.SystemSettingConfig"
+    },
+    {
+      "sourceType": "com.dtelec.icmes.workflow.config.ResourceSecurityConfig",
+      "name": "security.oauth2.client",
+      "sourceMethod": "public org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails clientCredentialsResourceDetails() ",
+      "type": "org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.dtelec.icmes.workflow.config.SystemSettingConfig",
+      "name": "icmes.debug-work-mode",
+      "description": "系统运行模式，是否是debug 模式",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "sourceType": "com.dtelec.icmes.workflow.config.SystemSettingConfig",
+      "name": "icmes.version",
+      "description": "版本号",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails",
+      "name": "security.oauth2.client.access-token-uri",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails",
+      "name": "security.oauth2.client.authentication-scheme",
+      "type": "org.springframework.security.oauth2.common.AuthenticationScheme"
+    },
+    {
+      "sourceType": "org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails",
+      "name": "security.oauth2.client.client-authentication-scheme",
+      "type": "org.springframework.security.oauth2.common.AuthenticationScheme"
+    },
+    {
+      "sourceType": "org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails",
+      "name": "security.oauth2.client.client-id",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails",
+      "name": "security.oauth2.client.client-secret",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails",
+      "name": "security.oauth2.client.grant-type",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails",
+      "name": "security.oauth2.client.id",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails",
+      "name": "security.oauth2.client.scope",
+      "type": "java.util.List<java.lang.String>"
+    },
+    {
+      "sourceType": "org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails",
+      "name": "security.oauth2.client.token-name",
+      "type": "java.lang.String"
+    }
+  ]
+}

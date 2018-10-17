@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * 设备基础实体entity
  * 
- * @author RHZhang 张瑞晗
+ * @author RHZhang 张瑞晗 戴常怡
  *
  */
 public class DeviceBaseEntity {
@@ -13,103 +13,167 @@ public class DeviceBaseEntity {
 	 * 标识符
 	 */
 	private int id;
+	
 	/**
 	 * 父设备标识符
 	 */
 	private int parentId;
+	
 	/**
 	 * 设备类型
 	 */
 	private boolean isPrimary;
+	
 	/**
 	 * 设备工艺号
 	 */
 	private String processNo;
+	
 	/**
 	 * 设备编号
 	 */
 	private String code;
+	
 	/**
 	 * 设备名称
 	 */
 	private String name;
+	
 	/**
 	 * 位置标识符
 	 */
 	private int locationId;
+	
+	/**
+	 * 位置名称
+	 */
+	private String locationName;
+	
 	/**
 	 * 机构编码
 	 */
 	private String organizationId;
+	
+	/**
+	 * 机构名称
+	 */
+	private String organizationName;
+	
 	/**
 	 * 工艺系统标识符
 	 */
 	private int processId;
+	
+	/**
+	 * 工艺系统名称
+	 */
+	private String processName;
+	
 	/**
 	 * 型号
 	 */
 	private String model;
+	
 	/**
 	 * 设备类型标识符
 	 */
 	private int deviceCategoryId;
+	
+	/**
+	 * 设备类型名称
+	 */
+	private String deviceCategoryName;
+	
 	/**
 	 * 采购商用厂商标识符
 	 */
 	private int vendorId;
+	
+	/**
+	 * 采购商用厂商名称
+	 */
+	private String vendorName;
+	
 	/**
 	 * 购买日期
 	 */
 	private Date purchaseDate;
+	
 	/**
 	 * 购买价格
 	 */
 	private double purchasePrice;
+	
 	/**
 	 * 制造商用厂商标识符
 	 */
 	private int manufacturerId;
+	
+	/**
+	 * 制造商用厂商名称
+	 */
+	private String manufacturerName;
+	
 	/**
 	 * 出场时间
 	 */
 	private Date manufacturingDate;
+	
 	/**
 	 * 制造产地
 	 */
 	private String manufacturingPlace;
+	
 	/**
 	 * 安装时间
 	 */
 	private Date setupDate;
+	
 	/**
 	 * 设备状态
 	 */
 	private String status;
+	
 	/**
 	 * 备注
 	 */
 	private String memo;
+	
 	/**
 	 * 用于高并发的数据版本控制
 	 */
 	private String versionTag;
+	
 	/**
 	 * 创建时间
 	 */
 	private Date createTime;
+	
 	/**
 	 * 创建的账户标识
 	 */
 	private int createUserId;
+	
 	/**
 	 * 更新时间
 	 */
 	private Date updateTime;
+	
 	/**
 	 * 更新的账号标识
 	 */
 	private int updateUserId;
 
+	/**
+	 * 组织机构全名
+	 */
+	private String organizationFullName;
+	
+	/**
+	 * 位置全名
+	 */
+	private String locationFullName;
+	
 	public int getId() {
 		return id;
 	}
@@ -308,6 +372,70 @@ public class DeviceBaseEntity {
 
 	public void setUpdateUserId(int updateUserId) {
 		this.updateUserId = updateUserId;
+	}
+
+	public String getLocationName() {
+		return locationName;
+	}
+
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
+	}
+
+	public String getOrganizationName() {
+		return organizationName;
+	}
+
+	public void setOrganizationName(String organizationName) {
+		this.organizationName = organizationName;
+	}
+
+	public String getProcessName() {
+		return processName;
+	}
+
+	public void setProcessName(String processName) {
+		this.processName = processName;
+	}
+
+	public String getDeviceCategoryName() {
+		return deviceCategoryName;
+	}
+
+	public void setDeviceCategoryName(String deviceCategoryName) {
+		this.deviceCategoryName = deviceCategoryName;
+	}
+
+	public String getVendorName() {
+		return vendorName;
+	}
+
+	public void setVendorName(String vendorName) {
+		this.vendorName = vendorName;
+	}
+
+	public String getManufacturerName() {
+		return manufacturerName;
+	}
+
+	public void setManufacturerName(String manufacturerName) {
+		this.manufacturerName = manufacturerName;
+	}
+
+	public String getOrganizationFullName() {
+		return organizationFullName;
+	}
+
+	public void setOrganizationFullName(String organizationFullName) {
+		this.organizationFullName = organizationFullName;
+	}
+
+	public String getLocationFullName() {
+		return locationFullName;
+	}
+
+	public void setLocationFillName(String locationFullName) {
+		this.locationFullName = locationFullName;
 	}
 
 }

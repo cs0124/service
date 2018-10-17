@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dtelec.icmes.power.repository.dao.IPowerDelayDao">
+
+    <!-- 新增延迟送电申请单 -->
+	<insert id="createPowerDelayForm" parameterType="com.dtelec.icmes.power.repository.entity.PowerDelayFormBaseEntity">
+		INSERT INTO PowerDelayForm (Id, PowerCutFormId, Status, ScheduledDelaySupplyTime, CreateUserId, UpdateUserId)
+		VALUES (#{id}, #{powerCutFormId}, #{status}, #{scheduledDelaySupplyTime}, '0','0')
+	</insert>
+	
+    <!-- 获取停电申请表列表 -->
+	<select id="searchPowerDelayByParams" resultType="com.dtelec.icmes.power.repository.entity.PowerDelayFormBaseEntity">
+	    
+    </select>
+	
+	<!-- 获取停电申请表列表总数 -->
+	<select id="searchPowerDelayTotalCountByParams" resultType="Long">
+
+    </select>
+	
+	<!-- 根据延时送电申请单标识获取申请单详情 -->
+	<select id="getPowerDelayFormById" resultType="com.dtelec.icmes.power.repository.entity.PowerDelayFormFullEntity">
+	SELECT Id,
+		p.PowerCutFormId,
+		p.Status,
+		p.ScheduledDelaySupplyTime,
+		p.VersionTag,
+		p.CreateTime,
+		p.CreateUserId,
+		p.UpdateTime,
+		p.UpdateUserId,
+		d.Id as mainDeviceId,
+		d.Code as mainDeviceCode,
+		d.Name as mainDeviceName
+		FROM `PowerDelayForm` as p
+		LEFT JOIN `PowerCutFormAssociatedDevice` as a ON a.PowerCutFormId = p.PowerCutFormId
+		LEFT JOIN `icmes_base_dev.Device` as d ON a.DeviceId = d.Id
+	WHERE p.Id = #{id} 
+	</select>
+
+	<!-- 获取当天最大申请单号 -->
+	<select id="getMaxDelayFormId" parameterType="string" resultType="string">
+	select max(id) from `PowerDelayForm`
+	where  CreateTime like concat('',#{nowTime},'%')
+	
+	</select>
+    
+    <!-- 查看停电申请单是否有未审批的延迟送电申请单 -->
+	<select id="getUnapprovedPowerDelayFormNumber" parameterType="string" resultType="java.lang.Integer">
+	select count(1) from `PowerDelayForm`
+	where  PowerCutFormId=#{powerCutFormId} and Status="POWER_DELAY_COMMIT"
+	
+	</select>
+</mapper>

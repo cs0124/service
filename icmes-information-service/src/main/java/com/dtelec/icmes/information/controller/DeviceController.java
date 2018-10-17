@@ -1,5 +1,6 @@
 package com.dtelec.icmes.information.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -12,11 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dtelec.icmes.common.utility.ConditionUtils;
 import com.dtelec.icmes.information.controller.vo.ReqCreateDeviceVO;
+import com.dtelec.icmes.information.controller.vo.ReqCreateDeviceVO.PhotoVO;
+import com.dtelec.icmes.information.controller.vo.ReqCreateDeviceVO.SpecDataVO;
 import com.dtelec.icmes.information.controller.vo.ReqUpdateDeviceVO;
 import com.dtelec.icmes.information.controller.vo.ResUploadDevicePhotoVO;
+import com.dtelec.icmes.information.service.command.DeviceCreateCommand;
+import com.dtelec.icmes.information.service.command.DeviceDeleteCommand;
+import com.dtelec.icmes.information.service.command.DeviceUpdateCommand;
 import com.dtelec.icmes.information.service.model.DeviceCollection;
 import com.dtelec.icmes.information.service.model.DeviceModel;
+import com.dtelec.icmes.information.service.model.DevicePhotoModel;
 import com.dtelec.icmes.information.service.model.DeviceSpecDataModel;
+import com.dtelec.icmes.information.service.query.DeviceDetailQuery;
 import com.dtelec.icmes.information.service.query.DeviceSearchQuery;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -26,24 +34,33 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+/**
+ * 设备控制器
+ * @author schi
+ *
+ */
 @RestController
 @RequestMapping("/devices")
 public class DeviceController {
 
-	@ApiOperation(value = "获取设备详细信息-作者：", notes = "根据url的id来获取设备的详细信息")
-	@ApiResponses({ 
-		@ApiResponse(code = 200, message = "成功"), 
-		@ApiResponse(code = 401, message = "验证失败"),
-		@ApiResponse(code = 404, message = "未找到"), 
-		@ApiResponse(code = 500, message = "内部系统错误") 
-	})
+	@ApiOperation(value = "获取设备详细信息-作者：戴常怡", notes = "根据url的id来获取设备的详细信息")
+	@ApiResponses({ @ApiResponse(code = 200, message = "成功"), @ApiResponse(code = 401, message = "验证失败"),
+			@ApiResponse(code = 404, message = "未找到"), @ApiResponse(code = 500, message = "内部系统错误") })
 	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "设备标示") })
 	@RequestMapping(path = "/{id}", method = RequestMethod.GET)
 	public DeviceModel getDevice(@PathVariable @ApiParam(name = "id", value = "设备标示") int id) throws Exception {
-		return null;
+		DeviceDetailQuery query = new DeviceDetailQuery(id);
+		DeviceModel model = query.queryAndWait();
+		return model;
 	}
 
-	@ApiOperation(value = "修改设备信息-作者：", notes = "根据url的id来修改设备信息")
+	/**
+	 * 编辑设备
+	 * @param id 设备标识符
+	 * @param reqVo 编辑设备模型
+	 * @throws Exception 抛出的异常
+	 */
+	@ApiOperation(value = "修改设备信息-作者：迟山", notes = "根据url的id来修改设备信息")
 	@ApiResponses({ 
 		@ApiResponse(code = 200, message = "成功"), 
 		@ApiResponse(code = 401, message = "验证失败"),
@@ -56,10 +73,62 @@ public class DeviceController {
 			@PathVariable @ApiParam(name = "id", value = "设备标示") int id,
 			@Valid @RequestBody @ApiParam(name = "ReqUpdateDeviceVO", value = "更新模型") ReqUpdateDeviceVO reqVo
 			)throws Exception {
-		// nothing
+		DeviceModel model = new DeviceModel();
+		if (reqVo.parentId < 0) {
+			model.setParentId(0);
+		}
+		else {
+			model.setParentId(reqVo.parentId);
+		}
+		model.setId(id);
+		model.setProcessNo(reqVo.processNo);
+		model.setName(reqVo.name);
+		model.setModel(reqVo.model);
+		model.setPurchaseDate(reqVo.purchaseDate);
+		model.setPurchasePrice(reqVo.purchasePrice);
+		model.setManufacturingDate(reqVo.manufacturingDate);
+		model.setManufacturingPlace(reqVo.manufacturingPlace);
+		model.setSetupDate(reqVo.setupDate);
+		model.setMemo(reqVo.memo);
+		model.setStatus(reqVo.status);
+		model.setLocationId(reqVo.locationId);
+		model.setOrganizationId(reqVo.organizationId);
+		model.setProcessId(reqVo.processId);
+		model.setCategoryId(reqVo.categoryId);
+		model.setVendorId(reqVo.vendorId);
+		model.setManufacturerId(reqVo.manufacturerId);
+		model.setVersionTag(reqVo.versionTag);
+		
+		//遍历规格
+		List<DeviceSpecDataModel> deviceSpecDataList = new ArrayList<>();
+		if (reqVo.specDataList != null) {
+			for (ReqUpdateDeviceVO.SpecDataVO specDataVo : reqVo.specDataList) {
+				DeviceSpecDataModel specDataModel = new DeviceSpecDataModel();
+				specDataModel.setSpecDataId(specDataVo.specId);
+				specDataModel.setValue(specDataVo.value);
+				
+				deviceSpecDataList.add(specDataModel);
+			}
+		}
+		model.setSpecDataList(deviceSpecDataList);
+		
+		//遍历图片
+		List<DevicePhotoModel> devicePhotoList = new ArrayList<>();
+		if (reqVo.photoList != null) {
+			for (ReqUpdateDeviceVO.PhotoVO photoVO : reqVo.photoList) {
+				DevicePhotoModel devicePhotoModel = new DevicePhotoModel();
+				devicePhotoModel.setPhoto(photoVO.photo);;
+				devicePhotoModel.setOrder(photoVO.order);;
+				
+				devicePhotoList.add(devicePhotoModel);
+			}
+		}
+		model.setPhotoList(devicePhotoList);
+		DeviceUpdateCommand command = new DeviceUpdateCommand(model);
+		command.sendAndWait();
 	}
 
-	@ApiOperation(value = "删除设备信息-作者：", notes = "根据url的id来删除设备信息")
+	@ApiOperation(value = "删除设备信息-作者：戴常怡", notes = "根据url的id来删除设备信息")
 	@ApiResponses({ 
 		@ApiResponse(code = 200, message = "成功"), 
 		@ApiResponse(code = 401, message = "验证失败"),
@@ -68,10 +137,18 @@ public class DeviceController {
 	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "设备标示") })
 	@RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
 	public void deleteDevice(@PathVariable @ApiParam(name = "id", value = "设备标示") int id) throws Exception {
-		// nothing
+		//初始化command
+		DeviceDeleteCommand command = new DeviceDeleteCommand(id);
+		command.sendAndWait();
 	}
 
-	@ApiOperation(value = "创建设备信息-作者：", notes = "code和name是必填项")
+	
+	/**
+	 * 新建设备
+	 * @param reqVo 新建设备模型
+	 * @throws Exception 抛出的异常
+	 */
+	@ApiOperation(value = "创建设备信息-作者：迟山", notes = "code和name是必填项")
 	@ApiResponses({ 
 		@ApiResponse(code = 200, message = "成功"),
 		@ApiResponse(code = 401, message = "验证失败"),
@@ -80,6 +157,12 @@ public class DeviceController {
 	@RequestMapping(path = "/", method = RequestMethod.POST)
 	public void createDevice(@Valid @RequestBody @ApiParam(name = "ReqCreateDeviceVO", value = "新建模型") ReqCreateDeviceVO reqVo)throws Exception {
 		DeviceModel model = new DeviceModel();
+		if (reqVo.parentId < 0) {
+			model.setParentId(0);
+		}
+		else {
+			model.setParentId(reqVo.parentId);
+		}
 		model.setProcessNo(reqVo.processNo);
 		model.setCode(reqVo.code);
 		model.setName(reqVo.name);
@@ -98,6 +181,33 @@ public class DeviceController {
 		model.setVendorId(reqVo.vendorId);
 		model.setManufacturerId(reqVo.manufacturerId);
 		
+		//遍历规格
+		List<DeviceSpecDataModel> deviceSpecDataList = new ArrayList<>();
+		if (reqVo.specDataList != null) {
+			for (SpecDataVO specDataVo : reqVo.specDataList) {
+				DeviceSpecDataModel specDataModel = new DeviceSpecDataModel();
+				specDataModel.setSpecDataId(specDataVo.specId);
+				specDataModel.setValue(specDataVo.value);
+				
+				deviceSpecDataList.add(specDataModel);
+			}
+		}
+		model.setSpecDataList(deviceSpecDataList);
+		
+		//遍历图片
+		List<DevicePhotoModel> devicePhotoList = new ArrayList<>();
+		if (reqVo.photoList != null) {
+			for (PhotoVO photoVO : reqVo.photoList) {
+				DevicePhotoModel devicePhotoModel = new DevicePhotoModel();
+				devicePhotoModel.setPhoto(photoVO.photo);;
+				devicePhotoModel.setOrder(photoVO.order);;
+				
+				devicePhotoList.add(devicePhotoModel);
+			}
+		}
+		model.setPhotoList(devicePhotoList);
+		DeviceCreateCommand command = new DeviceCreateCommand(model);
+		command.sendAndWait();
 	}
 
 	/**
@@ -113,7 +223,9 @@ public class DeviceController {
 			@ApiImplicitParam(name = "category", value = "设备标识符", dataType = "int", allowMultiple = true, paramType = "query"),
 			@ApiImplicitParam(name = "location", value = "位置标识符", dataType = "int", allowMultiple = true, paramType = "query"),
 			@ApiImplicitParam(name = "status", value = "设备状态", dataType = "string", allowMultiple = true, paramType = "query"),
-			@ApiImplicitParam(name = "parentId", value = "所属父级设备标识符", dataType = "string", paramType = "query"),
+			@ApiImplicitParam(name = "isPrimary", value = "是否为主设备，1主设备，0附属设备，不传或传空为两者全要", dataType = "Boolean",  paramType = "query"),
+			@ApiImplicitParam(name = "parentId", value = "所属父级设备标识符，为0或者小于0或者空时，为查询主设备", dataType = "int", paramType = "query"),
+			@ApiImplicitParam(name = "hierarchy", value = "迭代层级数，全集为0", dataType = "int", paramType = "query"),
 			@ApiImplicitParam(name = "globalName", value = "全局搜索", dataType = "string", paramType = "query"),
 			@ApiImplicitParam(name = "pageNo", value = "当前页码数", dataType = "int", paramType = "query"),
 			@ApiImplicitParam(name = "pageSize", value = "一页多少条记录 0标识不分页全部显示", dataType = "int", paramType = "query"),
@@ -128,10 +240,15 @@ public class DeviceController {
 	public DeviceCollection getDevices(@PathVariable String condition) throws Exception {
 		// 传入参数初始化
 		ConditionUtils util = new ConditionUtils(condition);
-		List<Integer> categoryList = util.getValueIntegerArray("category");
-		List<Integer> locationList = util.getValueIntegerArray("location");
-		List<String> statusList = util.getValueStringArray("status");
-		String parentId = util.getValueString("parentId", null);
+		List<Integer> categoryList = util.getValueIntegerArray("category", true);
+		List<Integer> locationList = util.getValueIntegerArray("location", true);
+		List<String> statusList = util.getValueStringArray("status", true);
+		int parentId = util.getValueInteger("parentId", 0);
+		if(parentId<0) {
+			parentId=0;
+		}
+		int hierarchy = util.getValueInteger("hierarchy", 0);
+		Boolean isPrimary = util.getValueBoolean("isPrimary", null);
 		String globalName = util.getValueString("globalName", null);
 		int pageNo = util.getValueInteger("pageNo", 1);
 		int pageSize = util.getValueInteger("pageSize", 0);
@@ -146,6 +263,8 @@ public class DeviceController {
 		query.setGlobalName(globalName);
 		query.setOrderBy(orderBy);
 		query.setAscending(ascending);
+		query.setHierarchy(hierarchy);
+		query.setIsPrimary(isPrimary);
 
 		// 调用service
 		DeviceCollection coll = query.queryAndWait();
@@ -157,14 +276,13 @@ public class DeviceController {
 			for (int i = 0; i < items.size(); i++) {
 				DeviceModel deviceModel = items.get(i);
 				int devId = deviceModel.getId();
-				String specDataFullName = "";
+				StringBuffer specDataFullName = new StringBuffer();
 				if (specModList != null && specModList.size() > 0) {
 					for (int j = 0; j < specModList.size(); j++) {
 						DeviceSpecDataModel deviceSpecDataModel = specModList.get(j);
 						if (devId == specModList.get(j).getDeviceId()) {
-							specDataFullName = specDataFullName + deviceSpecDataModel.getName() + "="
-									+ deviceSpecDataModel.getValue() + deviceSpecDataModel.getUnit() + " ";
-							deviceModel.setSpecDataFullName(specDataFullName);
+							specDataFullName.append(deviceSpecDataModel.getName()).append("=").append(deviceSpecDataModel.getValue()).append(deviceSpecDataModel.getUnit()).append(" ");
+							deviceModel.setSpecDataFullName(specDataFullName.toString());
 						}
 					}
 				}

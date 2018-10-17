@@ -5,9 +5,71 @@
 
 
 <mapper namespace="com.dtelec.icmes.information.repository.dao.IDeviceDao">
+
+	<!-- 新建设备 -->
+	<insert id="createDevice" parameterType="com.dtelec.icmes.information.repository.entity.DeviceBaseEntity" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO Device 
+		(ProcessNo, Code, Name,LocationId,OrganizationId,ProcessId,Model,DeviceCategoryId,VendorId, PurchaseDate,PurchasePrice,ManufacturerId,ManufacturingPlace,SetupDate,Status,Memo,CreateUserId,UpdateUserId)
+		VALUES
+		(#{processNo}, #{code}, #{name},#{locationId},#{organizationId},#{processId},#{model},#{deviceCategoryId},#{vendorId},#{purchaseDate},#{purchasePrice},#{manufacturerId},#{manufacturingPlace},#{setupDate},#{status},#{memo}, '0', '0')
+	</insert>
+	
+	<!-- 创建设备相关规格参数 -->
+	<insert id="addSpecaDataForDevice" parameterType="map">
+		INSERT IGNORE INTO Device_SpecModelData_ASS(DeviceId, SpecModelDataId,Value)
+		VALUES
+        <foreach collection="deviceSpecDataEntites" index="index" item="deviceSpecData" separator=",">  
+          (#{deviceId}, #{deviceSpecData.specDataId}, #{deviceSpecData.value})
+        </foreach>
+	</insert>
+	
+	<!-- 添加照片 -->
+	<insert id="addPhotoForDevice" parameterType="map"> 
+		INSERT IGNORE INTO DevicePhoto (DeviceId, Photo, `Order`)
+		VALUES
+        <foreach collection="devicePhotoLists" index="index" item="devicePhoto" separator=",">  
+          (#{deviceId}, #{devicePhoto.photo}, #{devicePhoto.orderId})
+        </foreach>
+	</insert>
+	
+	<!-- 编辑设备 -->
+	<update id="updateDevice" parameterType="com.dtelec.icmes.information.repository.entity.DeviceBaseEntity">
+		 UPDATE Device 
+    		<trim prefix="SET" suffixOverrides=",">
+	    	  <if test="entity.parentId != null and entity.name != ''">ParentId = #{entity.parentId},</if>
+	    	  <if test="entity.processNo != null and entity.processNo != ''">ProcessNo = #{entity.processNo},</if>
+	    	  <if test="entity.name != null and entity.name != ''">Name = #{entity.name},</if>
+	    	  <if test="entity.model != null and entity.model != ''">Model = #{entity.model},</if>
+	    	  <if test="entity.purchaseDate != null and entity.purchaseDate != ''">PurchaseDate = #{entity.purchaseDate},</if>
+	    	  <if test="entity.purchasePrice != null and entity.purchasePrice != ''">PurchasePrice = #{entity.purchasePrice},</if>
+	    	  <if test="entity.manufacturingDate != null and entity.manufacturingDate != ''">ManufacturingDate = #{entity.manufacturingDate},</if>
+	    	  <if test="entity.manufacturingPlace != null and entity.manufacturingPlace != ''">ManufacturingPlace = #{entity.manufacturingPlace},</if>
+	    	  <if test="entity.setupDate != null and entity.setupDate != ''">SetupDate = #{entity.setupDate},</if>
+	    	  <if test="entity.memo != null and entity.memo != ''">Memo = #{entity.memo},</if>
+	    	  <if test="entity.status != null and entity.status != ''">Status = #{entity.status},</if>
+	    	  <if test="entity.locationId != null and entity.locationId != ''">LocationId = #{entity.locationId},</if>
+	    	  <if test="entity.organizationId != null and entity.organizationId != ''">OrganizationId = #{entity.organizationId},</if>
+	    	  <if test="entity.processId != null and entity.processId != ''">ProcessId = #{entity.processId},</if>
+	    	  <if test="entity.deviceCategoryId != null and entity.deviceCategoryId != ''">DeviceCategoryId = #{entity.deviceCategoryId},</if>
+	    	  <if test="entity.vendorId != null and entity.vendorId != ''">VendorId = #{entity.vendorId},</if>
+	    	  <if test="entity.manufacturerId != null and entity.manufacturerId != ''">ManufacturerId = #{entity.manufacturerId},</if>
+	          <if test="entity.versionTag != null and entity.versionTag != ''">VersionTag = #{entity.versionTag},</if>
+	          UpdateTime = now()
+          </trim>
+    	where Id = #{entity.id}
+	</update>
+	
+	<!-- 通过设备标识符删除规格数据和照片 -->
+	<delete id="deleteSpecDataAndPhotoForDeviceByDeviceId" parameterType="map">
+		delete from Device_SpecModelData_ASS where DeviceId = #{deviceId};
+		delete from DevicePhoto where DeviceId = #{deviceId};
+	</delete>
+	
+	
 	<!-- 查询设备列表 -->
 	<select id="searchDeviceColl" parameterType="com.dtelec.icmes.information.repository.param.DevicePageableSearchParam" resultType="com.dtelec.icmes.information.repository.param.DevicePageableSearchResultParam">
 		SELECT 
+			D.Id AS id,
 		    D.ProcessNo AS processNo,
 		    D.Code AS code,
 		    D.Name AS name,
@@ -19,7 +81,8 @@
 		    L.Code AS locationCode,
 		    L.Name AS locationName,
 		    D.Status AS status,
-		    D.ParentId AS parentId
+		    D.ParentId AS parentId,
+			(SELECT COUNT(1) FROM `Device` DD WHERE D.Id = DD.ParentId) as appurtenanceCount
 		FROM
 		    `Device` D
 		        LEFT JOIN
@@ -27,21 +90,18 @@
 		        LEFT JOIN
 		    `Location` L ON D.LocationId = L.Id
 		<trim prefix="WHERE (" suffix=")" prefixOverrides="AND |OR ">
-			<if test="param.parentId != null and param.parentId != ''">
-				and D.ParentId = #{param.parentId}
-				and D.IsPrimary = 0
-			</if>
-			<if test="param.parentId == null or param.parentId == ''">
-				and D.IsPrimary = 1
+			find_in_set(D.Id,getFullChildDeviceId(#{param.parentId},#{param.hierarchy}))
+			<if test="param.isPrimary != null and param.isPrimary != ''">
+				and D.IsPrimary = #{param.isPrimary}
 			</if>
 			<if test="param.categoryList != null">
-				and DC.Code in
+				and DC.Id in
 				<foreach collection="param.categoryList" index="categoryIndex" item="categoryId" open="(" close=")" separator=",">
 					  #{categoryId}
 				</foreach>
 			</if>
 			<if test="param.locationList != null">
-				and L.Code in
+				and L.Id in
 				<foreach collection="param.locationList" index="locationIndex" item="locationId" open="(" close=")" separator=",">
 					  #{locationId}
 				</foreach>
@@ -92,23 +152,20 @@
 		        LEFT JOIN
 		    `Location` L ON D.LocationId = L.Id
 		<trim prefix="WHERE (" suffix=")" prefixOverrides="AND |OR ">
-			<if test="param.parentId != null and param.parentId != ''">
-				and D.ParentId = #{param.parentId}
-				and D.IsPrimary = 0
-			</if>
-			<if test="param.parentId == null or param.parentId == ''">
-				and D.IsPrimary = 1
+		find_in_set(D.Id,getFullChildDeviceId(#{param.parentId},#{param.hierarchy}))
+			<if test="param.isPrimary != null and param.isPrimary != ''"  >
+				and D.IsPrimary = #{param.isPrimary}
 			</if>
 			<if test="param.categoryList != null">
-				and DC.Code in
+				and DC.Id in
 				<foreach collection="param.categoryList" index="categoryIndex" item="categoryId" open="(" close=")" separator=",">
 					  #{categoryId}
 				</foreach>
 			</if>
 			<if test="param.locationList != null">
-				and  L.Code in
+				and L.Id in
 				<foreach collection="param.locationList" index="locationIndex" item="locationId" open="(" close=")" separator=",">
-					 #{locationId}
+					  #{locationId}
 				</foreach>
 			</if>
 			<if test="param.statusList != null">
@@ -155,4 +212,93 @@
 				</foreach>
 	</select>
 	
+	<!-- 通过设备类型标识符查询设备 -->
+	<select id="findDevicesByDeviceCategoryId" parameterType="map" resultType="com.dtelec.icmes.information.repository.entity.DeviceBaseEntity">
+		select DeviceCategoryId from Device where DeviceCategoryId = #{deviceCategoryId}
+	</select>
+	
+	<!-- 通过工艺系统标识符查询设备 -->
+	<select id="findDevicesByProcessId" parameterType="map" resultType="com.dtelec.icmes.information.repository.entity.DeviceBaseEntity">
+		select ProcessId from Device where ProcessId = #{processId}
+	</select>
+	
+	<!-- 通过位置标识符查询设备 -->
+	<select id="findDevicesByLocationId" parameterType="map" resultType="com.dtelec.icmes.information.repository.entity.DeviceBaseEntity">
+		select LocationId from Device where LocationId = #{locationId}
+	</select>
+	
+	<!-- 通过厂商标识符查询设备 -->
+	<select id="findDevicesByVendorId" parameterType="map" resultType="com.dtelec.icmes.information.repository.entity.DeviceBaseEntity">
+		select VendorId from Device where VendorId = #{vendorId}
+	</select>
+	
+	<!-- 根据设备 Id获取设备 -->
+	<select id="getDeviceById" parameterType="java.lang.Integer" resultType="com.dtelec.icmes.information.repository.entity.DeviceBaseEntity">
+		select d.Id,
+			   d.ParentId,
+			   d.IsPrimary,
+			   d.ProcessNo,
+			   d.Code,
+			   d.Name,
+			   d.LocationId,
+			   d.OrganizationId,
+			   d.ProcessId,
+			   d.Model,
+			   d.DeviceCategoryId,
+			   d.VendorId,
+			   d.PurchaseDate,
+			   d.PurchasePrice,
+			   d.ManufacturerId,
+			   d.ManufacturingDate,
+			   d.ManufacturingPlace,
+			   d.SetupDate,
+			   d.Status,
+			   d.Memo,
+			   d.VersionTag,
+			   d.CreateTime,
+			   d.CreateUserId,
+			   d.UpdateTime,
+			   d.UpdateUserId,
+			   o.Name as OrganizationName,
+			   getFullParentOrganizationsName(d.OrganizationId) as organizationFullName,
+			   c.Name as DeviceCategoryName,
+			   l.Name as LocationName,
+			   getFullParentLocationName(d.LocationId) as locationFullName,
+			   p.Name as ProcessName,
+			   v.Name as VendorName,
+			   m.Name as ManufacturerName
+			   FROM `Device` as d
+			   LEFT JOIN `Organization` as o ON d.OrganizationId = o.Id
+			   LEFT JOIN `DeviceCategory` as c ON d.DeviceCategoryId = c.Id
+			   LEFT JOIN `Location` as l ON d.LocationId = l.Id
+			   LEFT JOIN `Process` as p ON d.ProcessId = p.Id
+			   LEFT JOIN `Vendor` as v ON d.VendorId = v.Id
+			   LEFT JOIN `Vendor` as m ON d.ManufacturerId = m.Id
+			   where d.Id = #{id}
+	</select>
+	
+	<!-- 根据设备id查看设备照片列表 -->
+	<select id="getDevicePhotosByDeviceId" parameterType="java.lang.Integer" resultType="com.dtelec.icmes.information.repository.entity.DevicePhotoEntity">
+		select DeviceId,
+			   Photo,
+			   'Order'
+		from DevicePhoto where DeviceId = #{id}
+	</select>
+	
+	<!-- 根据设备Id查看相关设备规格 -->
+	<select id="getSpecModelDataIds" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select SpecModelDataId from Device_SpecModelData_ASS where DeviceId = #{id}
+	</select>
+	
+	<!--查询是否是叶子  -->
+	<select id="countDeviceIfEnd" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select count(1) as count from Device where ParentId = #{id}
+	</select>
+	
+	<!--删除设备  -->
+	<delete id="deleteDeviceByDeviceId" parameterType="java.lang.Integer" >
+		delete from Device_SpecModelData_ASS where DeviceId = #{id};
+		delete from DevicePhoto where DeviceId = #{id};
+		delete from Device where Id = #{id};
+	</delete>
 </mapper>

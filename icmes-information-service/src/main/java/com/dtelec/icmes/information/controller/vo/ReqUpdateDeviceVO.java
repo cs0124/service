@@ -2,7 +2,11 @@ package com.dtelec.icmes.information.controller.vo;
 
 import java.util.List;
 
-
+/**
+ * 设备编辑VO
+ * @author schi
+ *
+ */
 public class ReqUpdateDeviceVO {
 
 	public int parentId;
@@ -27,12 +31,22 @@ public class ReqUpdateDeviceVO {
 	public String versionTag;
 	
 	
-	public class PhotoVO {
+	/**
+	 * 设备照片
+	 * @author schi
+	 *
+	 */
+	public static class PhotoVO {
 		public String photo;
 		public int order;
 	}
 	
-	public class SpecDataVO {
+	/**
+	 * 设备规格数据
+	 * @author schi
+	 *
+	 */
+	public static class SpecDataVO {
 		public int specId;
 		public String value;
 	}

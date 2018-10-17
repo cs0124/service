@@ -128,7 +128,7 @@
     </update>
     
     <!-- 获取字典总条数 -->
-    	 <select id="getDictDataCount"  resultType="java.lang.Integer">
+    <select id="getDictDataCount"  resultType="java.lang.Integer">
         SELECT count(1) as count
         FROM DictData
         <where>

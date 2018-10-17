@@ -256,11 +256,11 @@ public class AccountServiceImpl implements IAccountService {
 	 * 账号角色删除
 	 */
 	@Override
-	public void deleteAccountRoles(String employeeId, List<String> roleIds) throws IcmesBusinessException {
+	public void deleteAccountRoles(String employeeId,String organizationId, List<String> roleIds) throws IcmesBusinessException {
 		if (roleIds != null) {
 			int count = userRepo.checkUserRoleAssProxy(employeeId, roleIds);
 			if(count == 0) {
-				userRepo.deleteAccountRoleAss(employeeId, roleIds);	
+				userRepo.deleteAccountRoleAss(employeeId,organizationId, roleIds);	
 			}
 			else {
 				throw new IcmesBusinessException(IcmesErrorTypeEnum.ACCOUNT_ROLE_ACCOUNT_ASS_DELETE_FAILE, "该成员存在代理关系，不能删除！");

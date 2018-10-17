@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.dtelec.icmes.power.repository.dao.IPowerSupplyApprovalDao">
+	<!-- 根据送电申请审批标识获取送电申请审批 -->
+	<select id="getApprovalProcessById" parameterType="java.lang.Integer" resultType="com.dtelec.icmes.power.repository.entity.PowerSupplyFormApprovalProcessEntity">
+			SELECT Id,
+				PowerSupplyFormId,
+				IsApproved,
+				ApprovalComment,
+				ApprovalTime,
+				ApprovalUserId
+			FORM `PowerSupplyFormApprovalProcess`
+			WHERE Id = #{id} 
+	</select>
+	
+	<!-- 新增送电申请审批 -->
+	<insert id="createPowerSupplyFormApprovalProcess" parameterType="com.dtelec.icmes.power.repository.entity.PowerSupplyFormApprovalProcessEntity">
+		INSERT INTO 
+		`PowerSupplyFormApprovalProcess`
+		(Id,PowerSupplyFormId,IsApproved,ApprovalComment,ApprovalUserId)
+		VALUES
+		(#{entity.id},#{entity.powerSupplyFormId},#{entity.isApproved},#{entity.approvalComment},'0')
+	</insert>
+		
+	<!-- 更新送电申请审批 -->
+	<update id="updatePowerSupplyFormApprovalProcess" parameterType="com.dtelec.icmes.power.repository.entity.PowerSupplyFormApprovalProcessEntity">
+		UPDATE 'PowerSupplyFormApprovalProcess`
+		<trim prefix="SET" suffixOverrides=",">
+		<if test="entity.approvalComment != null and entity.approvalComment != ''">ApprovalComment = #{entity.approvalComment},</if>
+		Id = #{entity.id},
+		PowerSupplyFormId = #{entity.powerSupplyFormId},
+		IsApproved = #{entity.isApproved},
+		ApprovalTime = now(),
+		ApprovalUserId = '0'
+		</trim>
+		WHERE Id = #{entity.id}
+	</update>
+</mapper>

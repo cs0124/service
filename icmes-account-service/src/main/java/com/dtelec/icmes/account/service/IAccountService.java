@@ -107,7 +107,7 @@ public interface IAccountService {
 	 * @param roleIds
 	 * @throws IcmesBusinessException
 	 */
-	void deleteAccountRoles(String employeeId, List<String> roleIds) throws IcmesBusinessException;
+	void deleteAccountRoles(String employeeId,String organizationId, List<String> roleIds) throws IcmesBusinessException;
 	
 	/**
 	 * 修改密码

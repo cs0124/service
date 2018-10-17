@@ -520,11 +520,15 @@ public class AccountController {
 		@ApiResponse(code = 404, message = "未找到"),
 		@ApiResponse(code = 500, message = "内部系统错误")
 	})
-	@RequestMapping(path = "/{id}/roles/{roleId}", method = RequestMethod.DELETE)
-	public boolean deleteAccountRole(@PathVariable @ApiParam(name = "id", value = "员工账号") String id, @PathVariable @ApiParam(name = "roleId", value = "角色ID") String roleId) throws IcmesBusinessException {
+	@RequestMapping(path = "/{id}/organizations/{organizationId}/roles/{roleId}", method = RequestMethod.DELETE)
+	public boolean deleteAccountRole(
+				@PathVariable @ApiParam(name = "id", value = "员工账号") String id,
+				@PathVariable @ApiParam(name = "organizationId", value = "组织机构ID（若不指定组织机构请传ALL）") String organizationId, 
+				@PathVariable @ApiParam(name = "roleId", value = "角色ID") String roleId
+			) throws IcmesBusinessException {
 		List<String> roleIds = new ArrayList<>();
 		roleIds.add(roleId);
-		accSev.deleteAccountRoles(id, roleIds);
+		accSev.deleteAccountRoles(id,organizationId, roleIds);
 		return true;
 	}
 	

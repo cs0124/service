@@ -130,8 +130,13 @@ public class UserRepositoryImpl implements IUserRepository {
 	 * 账号角色删除
 	 */
 	@Override
-	public void deleteAccountRoleAss(String employeeId, List<String> roleIds) {
-		dao.deleteAccountRoleAss(employeeId, roleIds);
+	public void deleteAccountRoleAss(String employeeId, String organizationId, List<String> roleIds) {
+		//如果为ALL，则不考虑所属组织机构，不通的组织机构下，相同的角色全删
+		if("ALL".endsWith(organizationId)) {
+			dao.deleteAccountRoleAss(employeeId, roleIds);
+		}else {
+			dao.deleteAccountRoleAssByOrganizationId(employeeId, organizationId, roleIds);
+		}
 	}
 	
 	/**

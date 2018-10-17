@@ -23,6 +23,10 @@ public class DevicePageableSearchResultParam extends DeviceBaseEntity {
 	 * 位置名称
 	 */
 	private String LocationName;
+	/**
+	 * 附属设备数量
+	 */
+	private int appurtenanceCount;
 
 	public String getDeviceCategoryName() {
 		return deviceCategoryName;
@@ -54,5 +58,13 @@ public class DevicePageableSearchResultParam extends DeviceBaseEntity {
 
 	public void setLocationName(String locationName) {
 		LocationName = locationName;
+	}
+
+	public int getAppurtenanceCount() {
+		return appurtenanceCount;
+	}
+
+	public void setAppurtenanceCount(int appurtenanceCount) {
+		this.appurtenanceCount = appurtenanceCount;
 	}
 }

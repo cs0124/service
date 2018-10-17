@@ -90,4 +90,11 @@ public interface IDeviceCategoryDao {
 	 * @return 规格类型和数据模版集合
 	 */
 	List<SpecDataEntity> getAllSpecData();
+	
+	
+	/**
+	 * 根据设备类型获取规格类型和数据模版
+	 * @return 设备类型获取规格类型和数据模版集合
+	 */
+	List<SpecDataEntity> getDeviceCategorySpecData(@Param("deviceCategoryId") int deviceCategoryId);
 }

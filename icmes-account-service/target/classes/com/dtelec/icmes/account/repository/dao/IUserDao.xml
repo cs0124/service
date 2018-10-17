@@ -211,6 +211,23 @@
           ) as ASS
         )
     </delete>
+
+
+	<!-- 根据组织机构id删除账号下的role -->
+    <delete id="deleteAccountRoleAssByOrganizationId" parameterType="map" >
+        DELETE FROM `User_Role_ASS` WHERE Id IN (
+          SELECT ASS.Id FROM (
+	        SELECT UR.Id
+                FROM `User_Role_ASS` as UR
+                    INNER JOIN `User` as U ON UR.UserId = U.Id
+					INNER JOIN `UserRoleAss_Organization_ASS` as UOA ON UOA.AssId = UR.Id and UOA.OrganizationId = #{organizationId}
+			    WHERE U.employeeId = #{employeeId} and UR.RoleId IN 
+			    <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
+				  #{roleId}
+		        </foreach>
+          ) as ASS
+        )
+    </delete>
     
     <!-- 修改密码 -->
     <update id="changeAccountPassword" parameterType="map">

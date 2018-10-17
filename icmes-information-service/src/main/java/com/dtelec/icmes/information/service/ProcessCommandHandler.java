@@ -1,14 +1,18 @@
 package com.dtelec.icmes.information.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.dtelec.icmes.common.error.IcmesBusinessException;
 import com.dtelec.icmes.common.error.IcmesErrorTypeEnum;
+import com.dtelec.icmes.information.repository.IDeviceRepository;
 import com.dtelec.icmes.information.repository.IProcessRepository;
+import com.dtelec.icmes.information.repository.entity.DeviceBaseEntity;
 import com.dtelec.icmes.information.repository.entity.ProcessEntity;
 import com.dtelec.icmes.information.service.annotation.CommandAction;
 import com.dtelec.icmes.information.service.command.ProcessCreateCommand;
@@ -30,6 +34,9 @@ public class ProcessCommandHandler implements ICommandHandler {
 	@Autowired
 	IProcessRepository processRepo;
 	
+	@Autowired
+	private IDeviceRepository deviceRepo;
+	
 	/**
 	 * 新建工艺信息
 	 * @param command 新建command
@@ -48,7 +55,7 @@ public class ProcessCommandHandler implements ICommandHandler {
 	    	try {
 	    		processRepo.createProcess(model.covert());	
 	    		
-	    	}catch(Exception e){
+	    	}catch(DuplicateKeyException e){
 	    		throw new IcmesBusinessException(IcmesErrorTypeEnum.INFO_PROCESS_CREATEPROCESS_ISNOTNULL, "工艺编号已存在");
 	    	}
 	    }
@@ -97,6 +104,11 @@ public class ProcessCommandHandler implements ICommandHandler {
 		ProcessEntity entity = processRepo.getProcessById(id);
 		if (entity == null) {
 			throw new IcmesBusinessException(IcmesErrorTypeEnum.INFO_PROCESS_UPDATEPROCESS_ISNULL, "该工艺不存在或已删除");
+		}
+		//做删除关联判断
+		List<DeviceBaseEntity> devices = deviceRepo.findDevicesByProcessId(id);
+		if (devices != null && !devices.isEmpty()) {
+			throw new IcmesBusinessException(IcmesErrorTypeEnum.INFO_PROCESS_DELETEPROCESS_ISFAIL, "该工艺与设备有关联，不能删除");
 		}
 		processRepo.deleteProcess(id);
 	}

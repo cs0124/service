@@ -23,6 +23,7 @@ import com.dtelec.icmes.information.service.model.SpecDataModel;
 import com.dtelec.icmes.information.service.query.AllSpecDataQuery;
 import com.dtelec.icmes.information.service.query.DeviceCategoryDetailQuery;
 import com.dtelec.icmes.information.service.query.DeviceCategorySearchQuery;
+import com.dtelec.icmes.information.service.query.DeviceCategorySpecDataQuery;
 
 /**
  * 设备类型业务层
@@ -136,11 +137,34 @@ public class DeviceCategoryQueryHandler implements IQueryHandler{
 	 */
 	@QueryAction
 	public SpecDataCollection getAllSpecData(AllSpecDataQuery query) {
-		List<SpecDataEntity> entitys = deviceCategoryRepo.getAllSpecData();
+		List<SpecDataEntity> entities = deviceCategoryRepo.getAllSpecData();
 		
 		SpecDataCollection coll = new SpecDataCollection();
-		coll.fill(entitys);
+		coll.fill(entities);
 		
+		return coll;
+	}
+	
+	
+	
+	/**
+	 * 根据设备类型获取规格类型和数据模版
+	 * @param query 设备类型获取规格类型和数据模版查询
+	 * @return  根据设备类型获取规格类型和数据模版集合
+	 */
+	@QueryAction
+	public SpecDataCollection getDeviceCategorySpecData(DeviceCategorySpecDataQuery query) {
+		// 获取设备类型的标识符
+		int deviceCategoryId = query.getDeviceCategoryId();
+		
+		// 通过设备类型标识符获取相关的所有规格类型及数据
+		List<SpecDataEntity> entities = deviceCategoryRepo.getDeviceCategorySpecData(deviceCategoryId);
+		
+		// 封装规格类型及数据并填充服务端的集合对象
+		SpecDataCollection coll = new SpecDataCollection();
+		coll.fill(entities);
+		
+		// 返回服务端的集合对象
 		return coll;
 	}
 	

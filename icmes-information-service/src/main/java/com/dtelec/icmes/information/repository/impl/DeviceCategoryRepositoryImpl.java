@@ -120,11 +120,21 @@ public class DeviceCategoryRepositoryImpl implements IDeviceCategoryRepository {
 
 	/**
 	 * 获取所有规格类型和数据模版
+	 * @return 规格类型和数据模版集合
 	 */
 	@Override
 	public List<SpecDataEntity> getAllSpecData() {
 		return deviceCategoryDao.getAllSpecData();
 	}
 
+
+	/**
+	 * 根据设备类型获取规格类型和数据模版
+	 * @return 设备类型获取规格类型和数据模版集合
+	 */
+	@Override
+	public List<SpecDataEntity> getDeviceCategorySpecData(int deviceCategoryId) {
+		return deviceCategoryDao.getDeviceCategorySpecData(deviceCategoryId);
+	}
 
 }

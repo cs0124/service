@@ -1,5 +1,6 @@
 package com.dtelec.icmes.information.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
@@ -8,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.dtelec.icmes.common.error.IcmesBusinessException;
 import com.dtelec.icmes.common.error.IcmesErrorTypeEnum;
+import com.dtelec.icmes.information.repository.IDeviceRepository;
 import com.dtelec.icmes.information.repository.IVendorRepository;
+import com.dtelec.icmes.information.repository.entity.DeviceBaseEntity;
 import com.dtelec.icmes.information.repository.entity.VendorEntity;
 import com.dtelec.icmes.information.service.annotation.CommandAction;
 import com.dtelec.icmes.information.service.command.VendorCreateCommand;
@@ -21,6 +24,8 @@ import com.dtelec.icmes.information.service.model.VendorModel;
 public class VendorCommandHandler implements ICommandHandler{
 	@Autowired
 	IVendorRepository vendorRepo;
+	@Autowired
+	IDeviceRepository deviceRepo;
 	
 	/**
 	 * 新增厂商信息
@@ -76,8 +81,11 @@ public class VendorCommandHandler implements ICommandHandler{
 	public void deleteVendorDetail(VendorDeleteCommand command) throws IcmesBusinessException {
 		Integer id = command.getVendorId();
 		//通过厂商自增id查询关联台账表中是否存在此厂商，如果存在需要先删除关联表数据
-		
-		
+		List<DeviceBaseEntity> list = deviceRepo.findDevicesByVendorId(id);
+		if(list != null && !list.isEmpty()) {
+	    	 throw new IcmesBusinessException(IcmesErrorTypeEnum.INFO_VENDOR__DONT_DELETE_WITH_DEVICE, "Cannot delete the vendor of the associated device");
+	     }
+	     
 		//通过厂商自增Id查询数据库里是否存在此厂商
 		VendorEntity entity = vendorRepo.geVendorById(id);
 		if (entity == null) {

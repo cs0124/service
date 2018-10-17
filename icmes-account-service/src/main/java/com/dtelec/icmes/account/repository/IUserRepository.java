@@ -85,7 +85,7 @@ public interface IUserRepository {
 	 * @param employeeId
 	 * @param roleIds
 	 */
-	void deleteAccountRoleAss(String employeeId, List<String> roleIds);
+	void deleteAccountRoleAss(String employeeId, String organizationId, List<String> roleIds);
 	
 	/**
 	 * 修改密码

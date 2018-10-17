@@ -62,17 +62,8 @@ public class LocationRepositoryImpl implements ILocationRepository {
      */
 	@Override
 	public int countLocationDevice(LocationEntity entity) {
-		//定义返回的returnCount
-		int returnCount = 1;
 		//获取是不是叶子，最后一级，为0是
-		int countEnd = locationDao.countLocationIfEnd(entity);
-		//判断当前机构是否有关联用户，为0则没有用户
-		int count = locationDao.countLocationDevice(entity);
-
-		//如果都是0则可以删除
-		if (count == 0 && countEnd == 0 ) {
-			returnCount = 0;
-		}
+		int returnCount = locationDao.countLocationIfEnd(entity);
 		return returnCount;
 	}
 
@@ -89,6 +80,25 @@ public class LocationRepositoryImpl implements ILocationRepository {
 		List<LocationFullNameEntity> fullNameLocation = locationDao.getFullNameLocation(param);
 		//统计条数
 		int totalCount = locationDao.getFullNameLocationCount(param);
+
+		//如果不是根节点，则将节点本身信息追加到集合中。
+		if(param.getParentId() != 0) {
+			LocationEntity entityTemp = locationDao.getLocationDetail(param.getParentId());
+			LocationFullNameEntity entityFullNameTemp = new LocationFullNameEntity();
+			entityFullNameTemp.setId(entityTemp.getId());
+			entityFullNameTemp.setCode(entityTemp.getCode());
+			entityFullNameTemp.setName(entityTemp.getName());
+			entityFullNameTemp.setFullName(entityTemp.getFullName());
+			entityFullNameTemp.setParentFullName(entityTemp.getParentFullName());
+			entityFullNameTemp.setParentId(entityTemp.getParentId());
+			entityFullNameTemp.setParentCode(entityTemp.getParentCode());
+			entityFullNameTemp.setVersionTag(entityTemp.getVersionTag());
+			entityFullNameTemp.setHasChild(totalCount > 0 ? true: false);
+			//追加到集合中
+			fullNameLocation.add(0, entityFullNameTemp);
+			totalCount++;
+		}
+		
 		entity.setTotalCount(totalCount);
 		entity.setItems(fullNameLocation);
 		return entity;

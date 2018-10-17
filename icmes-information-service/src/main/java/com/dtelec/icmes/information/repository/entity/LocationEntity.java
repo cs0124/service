@@ -23,6 +23,10 @@ public class LocationEntity {
      */
     private String name;
 
+    private String fullName;
+
+    private String parentFullName;
+
     /**
      * 层级关系
      */
@@ -57,11 +61,11 @@ public class LocationEntity {
     
     public String getCode() {
         return code;
-      }
+    }
 
-      public void setCode(String code) {
+    public void setCode(String code) {
         this.code = code;
-      }
+    }
     
     public String getName() {
       return name;
@@ -69,6 +73,22 @@ public class LocationEntity {
 
     public void setName(String name) {
       this.name = name;
+    }
+
+    public String getFullName() {
+      return fullName;
+    }
+
+    public void setFullName(String fullName) {
+      this.fullName = fullName;
+    }
+
+    public String getParentFullName() {
+      return parentFullName;
+    }
+
+    public void setparentName(String parentFullName) {
+      this.parentFullName = parentFullName;
     }
 
     public int getParentId() {

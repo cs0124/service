@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dtelec.icmes.information.repository.dao.IDeviceValueDao">
+
+    <!-- 查询传入的设备净值信息版本号 -->
+    <select id="fetchDeviceValueVersionTag" parameterType="Integer" resultType="java.lang.String">
+        select VersionTag from DeviceValue where Id = #{id}
+
+    </select>
+
+    <!-- 创建位置信息 -->
+    <insert id="createDeviceValue" parameterType="com.dtelec.icmes.information.repository.entity.DeviceValueEntity">
+        insert into DeviceValue
+            (NetValuePeriod, GrossOrgValue, GrossNetValue, CreateUserId, UpdateUserId)
+        value 
+            (#{entity.netValuePeriod}, #{entity.grossOrgValue}, #{entity.grossNetValue}, #{entity.createUserId}, #{entity.updateUserId})
+
+    </insert>
+
+    <!-- 删除设备净值信息 -->
+    <delete id="deleteDeviceValue" parameterType="java.lang.Integer">
+        delete from DeviceValue
+        where Id = #{id}
+
+    </delete>
+
+    <!-- 修改设备净值信息 -->
+    <update id="updateDeviceValue" parameterType="com.dtelec.icmes.information.repository.entity.DeviceValueEntity">
+       update DeviceValue set NetValuePeriod = #{entity.netValuePeriod}, 
+                              GrossOrgValue = #{entity.grossOrgValue},
+                              GrossNetValue = #{entity.grossNetValue},
+                              VersionTag = #{entity.versionTag},
+                              UpdateTime = now()
+       where Id = #{entity.id}
+    </update>
+
+    <!--获取设备净值详情  -->
+	<select id="getDeviceValueDetail" parameterType="java.lang.Integer" resultType="com.dtelec.icmes.information.repository.entity.DeviceValueEntity">
+		select Id,
+	   		   NetValuePeriod,
+			   GrossOrgValue,
+			   GrossNetValue,
+			   VersionTag,
+			   CreateTime,
+			   UpdateTime 
+	    from DeviceValue 
+		where Id = #{id}
+	
+	</select>
+
+    <!-- 获取设备净值信息列表 -->
+	<select id="getDeviceValues" resultType="com.dtelec.icmes.information.repository.entity.DeviceValueEntity">
+		select Id,
+	   		   NetValuePeriod,
+			   GrossOrgValue,
+			   GrossNetValue,
+			   VersionTag,
+			   CreateTime,
+			   UpdateTime 
+	    from DeviceValue 	
+		<if test="param.orderBy != null and param.orderBy != '' and param.ascending == true">
+		    order by ${param.orderBy} asc
+		</if>
+		<if test="param.orderBy != null and param.orderBy != '' and param.ascending == false">
+		    order by ${param.orderBy} desc
+		</if>
+		<if test="param.startIndex > -1 and param.pageSize > 0">
+		    LIMIT #{param.startIndex}, #{param.pageSize}
+		</if>
+	</select>
+
+    <!-- 计算设备台账已录入的设备总原值的总和 -->
+    <select id="computeAllGrossOrgValueTotal" resultType="java.lang.Double">
+        select sum(GrossOrgValue) 
+        from DeviceValue
+
+    </select>
+
+	<!-- 获取设备净值数量统计 -->
+	<select id="getDeviceValuesCount" resultType="java.lang.Integer">
+		select count(1) as count 
+		from   DeviceValue
+
+	</select>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="POWER_DELIVERY_POSTPONE_PROCESS" name="延时送电流程" isExecutable="true">
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <userTask id="DISPATCHER_CHECK" name="调度审批"></userTask>
+    <userTask id="POWER_DELIVERY_POSTPONE_REQ" name="延时送电申请"></userTask>
+    <sequenceFlow id="sid-CD8559CE-350E-4C04-82B1-705694BED1CC" sourceRef="startevent1" targetRef="POWER_DELIVERY_POSTPONE_REQ"></sequenceFlow>
+    <sequenceFlow id="flow25" sourceRef="POWER_DELIVERY_POSTPONE_REQ" targetRef="DISPATCHER_CHECK"></sequenceFlow>
+    <serviceTask id="DISPATCHER_CHECK_SERVICETASK" name="调度审批服务任务" activiti:class="com.dtelec.icmes.workflow.service.impl.TestServiceTask"></serviceTask>
+    <endEvent id="endevent5" name="End"></endEvent>
+    <sequenceFlow id="flow30" sourceRef="DISPATCHER_CHECK_SERVICETASK" targetRef="endevent5"></sequenceFlow>
+    <sequenceFlow id="flow31" sourceRef="DISPATCHER_CHECK" targetRef="DISPATCHER_CHECK_SERVICETASK"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_POWER_DELIVERY_POSTPONE_PROCESS">
+    <bpmndi:BPMNPlane bpmnElement="POWER_DELIVERY_POSTPONE_PROCESS" id="BPMNPlane_POWER_DELIVERY_POSTPONE_PROCESS">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="73.0" y="272.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="DISPATCHER_CHECK" id="BPMNShape_DISPATCHER_CHECK">
+        <omgdc:Bounds height="55.0" width="105.0" x="311.0" y="262.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="POWER_DELIVERY_POSTPONE_REQ" id="BPMNShape_POWER_DELIVERY_POSTPONE_REQ">
+        <omgdc:Bounds height="53.0" width="100.0" x="150.0" y="263.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="DISPATCHER_CHECK_SERVICETASK" id="BPMNShape_DISPATCHER_CHECK_SERVICETASK">
+        <omgdc:Bounds height="55.0" width="105.0" x="480.0" y="262.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent5" id="BPMNShape_endevent5">
+        <omgdc:Bounds height="35.0" width="35.0" x="640.0" y="272.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-CD8559CE-350E-4C04-82B1-705694BED1CC" id="BPMNEdge_sid-CD8559CE-350E-4C04-82B1-705694BED1CC">
+        <omgdi:waypoint x="108.0" y="289.0"></omgdi:waypoint>
+        <omgdi:waypoint x="150.0" y="289.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow25" id="BPMNEdge_flow25">
+        <omgdi:waypoint x="250.0" y="289.0"></omgdi:waypoint>
+        <omgdi:waypoint x="311.0" y="289.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow30" id="BPMNEdge_flow30">
+        <omgdi:waypoint x="585.0" y="289.0"></omgdi:waypoint>
+        <omgdi:waypoint x="640.0" y="289.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow31" id="BPMNEdge_flow31">
+        <omgdi:waypoint x="416.0" y="289.0"></omgdi:waypoint>
+        <omgdi:waypoint x="480.0" y="289.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

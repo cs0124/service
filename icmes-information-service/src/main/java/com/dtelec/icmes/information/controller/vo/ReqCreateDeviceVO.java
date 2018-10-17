@@ -77,12 +77,21 @@ public class ReqCreateDeviceVO {
 	/**制造商用厂商标识符*/
 	public int manufacturerId;
 	
-	public class PhotoVO {
+	/**
+	 * 设备照片
+	 * @author schi
+	 */
+	public static class PhotoVO {
 		public String photo;
 		public int order;
 	}
 	
-	public class SpecDataVO {
+	/**
+	 * 规格数据
+	 * @author schi
+	 *
+	 */
+	public static class SpecDataVO {
 		public int specId;
 		public String value;
 	}

@@ -140,4 +140,23 @@
 		WHERE
 		    SMD.IsDeleted = 0
 	</select>
+	
+	<!-- 根据设备类型获取规格类型和数据模版 -->
+	<select id="getDeviceCategorySpecData" parameterType="map" resultType="com.dtelec.icmes.information.repository.entity.SpecDataEntity">
+		SELECT 
+		    SMD.Id,
+		    SMD.TypeId,
+		    SMD.DisplayMode AS isExtraDisplayMode,
+		    SMD.Name,
+		    SMD.Unit,
+		    SMD.IsDeleted,
+		    SMT.Name AS typeName
+		FROM
+		    SpecModelData SMD 
+		      INNER JOIN DeviceCategory_SpecModelData_ASS ASS ON ASS.SpecModelDataId = SMD.Id
+		        INNER JOIN SpecModelType SMT ON SMD.TypeId = SMT.Id
+
+		WHERE
+		    ASS.DeviceCategoryId = #{deviceCategoryId}
+	</select>
 </mapper>

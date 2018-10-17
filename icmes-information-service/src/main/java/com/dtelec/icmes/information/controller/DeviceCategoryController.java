@@ -164,7 +164,7 @@ public class DeviceCategoryController {
 		//初始化查询参数
 		ConditionUtils conditionUtil = new ConditionUtils(condition);
 		
-		Boolean isPrimary = conditionUtil.getValueBoolean("isPrimary", true);
+		Boolean isPrimary = conditionUtil.getValueBoolean("isPrimary", null);
 		String globalName = conditionUtil.getValueString("globalName", null);
 		Integer pageNo = conditionUtil.getValueInteger("pageNo", 1);
 		Integer pageSize = conditionUtil.getValueInteger("pageSize", 0);

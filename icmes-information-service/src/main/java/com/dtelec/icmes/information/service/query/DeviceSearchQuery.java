@@ -17,16 +17,12 @@ public class DeviceSearchQuery extends PageableSearchBaseQuery implements IQuery
 	private List<Integer> locationList;
 	private List<String> statusList;
 
-	private String parentId;
+	private int parentId;
+	private int hierarchy;
 	private String globalName;
+	private Boolean isPrimary;
 
-	public String getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(String parentId) {
-		this.parentId = parentId;
-	}
+	
 
 	public String getGlobalName() {
 		return globalName;
@@ -58,6 +54,30 @@ public class DeviceSearchQuery extends PageableSearchBaseQuery implements IQuery
 
 	public void setStatusList(List<String> statusList) {
 		this.statusList = statusList;
+	}
+
+	public int getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(int parentId) {
+		this.parentId = parentId;
+	}
+
+	public int getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(int hierarchy) {
+		this.hierarchy = hierarchy;
+	}
+
+	public Boolean getIsPrimary() {
+		return isPrimary;
+	}
+
+	public void setIsPrimary(Boolean isPrimary) {
+		this.isPrimary = isPrimary;
 	}
 
 }

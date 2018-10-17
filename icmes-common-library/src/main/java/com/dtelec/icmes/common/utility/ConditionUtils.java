@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * 
  * ConditionUtils 用于分析 URL 查询字符
@@ -116,17 +118,29 @@ public class ConditionUtils {
 	}
 	
 	
-	public List<String> getValueStringArray(String key) {
+	public List<String> getValueStringArray(String key, boolean removeEmpty) {
 		List<String> result = null;
 		if (key != null) {
 			key = key.toLowerCase();
-		    result = this.paramMapping.get(key);
+			List<String> values = this.paramMapping.get(key);
+			if (values != null && values.isEmpty() == false) {
+				result = new ArrayList<>();
+				for (String val : values) {
+					if (removeEmpty == true) {
+						String valStr = StringUtils.trimToNull(val);
+						if (valStr == null) {
+							continue;	
+						}
+					}
+					result.add(val);
+				}
+			}
 		}
 		
 		return result;
 	}
 	
-	public List<Integer> getValueIntegerArray(String key) {
+	public List<Integer> getValueIntegerArray(String key, boolean removeEmpty) {
 		List<Integer> result = null;
 		if (key != null) {
 			key = key.toLowerCase();
@@ -141,6 +155,9 @@ public class ConditionUtils {
 					catch(Exception ex) {
 						ex.printStackTrace();
 					}
+					if (removeEmpty == true && valInt == null) {
+						continue;
+					}
 					result.add(valInt);
 				}
 			}
@@ -149,7 +166,7 @@ public class ConditionUtils {
 		return result;
 	}
 	
-	public List<Long> getValueLongArray(String key) {
+	public List<Long> getValueLongArray(String key, boolean removeEmpty) {
 		List<Long> result = null;
 		if (key != null) {
 			key = key.toLowerCase();
@@ -164,6 +181,9 @@ public class ConditionUtils {
 					catch(Exception ex) {
 						ex.printStackTrace();
 					}
+					if (removeEmpty == true && valLong == null) {
+						continue;
+					}
 					result.add(valLong);
 				}
 			}
@@ -172,7 +192,7 @@ public class ConditionUtils {
 		return result;
 	}
 	
-	public List<Boolean> getValueBooleanArray(String key) {
+	public List<Boolean> getValueBooleanArray(String key, boolean removeEmpty) {
 		List<Boolean> result = null;
 		if (key != null) {
 			key = key.toLowerCase();
@@ -180,14 +200,19 @@ public class ConditionUtils {
 			if (values != null && values.isEmpty() == false) {
 				result = new ArrayList<>();
 				for (String val : values) {
-					Boolean valInt = null;
+					val = StringUtils.trimToNull(val);
+					Boolean valBool = null;
 					if ("1".equalsIgnoreCase(val) || "true".equalsIgnoreCase(val)) {
-						valInt = true;
+						valBool = true;
 					}
 					else if ("0".equalsIgnoreCase(val) || "false".equalsIgnoreCase(val)) {
-						valInt = false;
+						valBool = false;
 					}
-					result.add(valInt);
+					
+					if (removeEmpty == true && valBool == null) {
+						continue;
+					}
+					result.add(valBool);
 				}
 			}
 		}

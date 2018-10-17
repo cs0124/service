@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="POWER_DELIVERY_PROCESS" name="送电流程" isExecutable="true">
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <subProcess id="POWER_DELIVERY_SUBPROCESS" name="送电确认流程">
+      <extensionElements>
+        <activiti:executionListener event="start" class="com.dtelec.icmes.workflow.listener.WireManCheckProcessCreateListener"></activiti:executionListener>
+      </extensionElements>
+      <startEvent id="startevent3" name="Start"></startEvent>
+      <endEvent id="endevent2" name="End"></endEvent>
+      <userTask id="WIREMAN_POWER_DELIVERY" name="电工确认" activiti:assignee="${wireman}">
+        <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="${wiremanList}" activiti:elementVariable="wireman">
+          <completionCondition>${nrOfCompletedInstances==2}</completionCondition>
+        </multiInstanceLoopCharacteristics>
+      </userTask>
+      <sequenceFlow id="flow32" sourceRef="startevent3" targetRef="WIREMAN_POWER_DELIVERY"></sequenceFlow>
+      <sequenceFlow id="flow33" sourceRef="WIREMAN_POWER_DELIVERY" targetRef="endevent2"></sequenceFlow>
+    </subProcess>
+    <userTask id="POWER_DELIVERY_CHECK" name="试车停电确认"></userTask>
+    <userTask id="POWER_DELIVERY_REQ" name="申请送电"></userTask>
+    <sequenceFlow id="sid-CD8559CE-350E-4C04-82B1-705694BED1CC" sourceRef="startevent1" targetRef="POWER_DELIVERY_REQ"></sequenceFlow>
+    <sequenceFlow id="flow24" sourceRef="POWER_DELIVERY_SUBPROCESS" targetRef="POWER_DELIVERY_CHECK"></sequenceFlow>
+    <sequenceFlow id="flow25" sourceRef="POWER_DELIVERY_REQ" targetRef="POWER_DELIVERY_SUBPROCESS"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
+    <subProcess id="POWER_CUT_SUBPROCESS" name="停电确认流程">
+      <startEvent id="startevent4" name="Start"></startEvent>
+      <endEvent id="endevent4" name="End"></endEvent>
+      <userTask id="WIREMAN_POWER_CUT" name="电工确认" activiti:assignee="${wireman}">
+        <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="${wiremanList}" activiti:elementVariable="wireman">
+          <completionCondition>${nrOfCompletedInstances==2}</completionCondition>
+        </multiInstanceLoopCharacteristics>
+      </userTask>
+      <sequenceFlow id="flow34" sourceRef="startevent4" targetRef="WIREMAN_POWER_CUT"></sequenceFlow>
+      <sequenceFlow id="flow35" sourceRef="WIREMAN_POWER_CUT" targetRef="endevent4"></sequenceFlow>
+    </subProcess>
+    <sequenceFlow id="flow28" sourceRef="exclusivegateway1" targetRef="POWER_CUT_SUBPROCESS">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${POWER_DELIVERY_CHECK_APPROVE==false}]]></conditionExpression>
+    </sequenceFlow>
+    <endEvent id="endevent5" name="End"></endEvent>
+    <sequenceFlow id="flow30" sourceRef="POWER_CUT_SUBPROCESS" targetRef="endevent5"></sequenceFlow>
+    <sequenceFlow id="flow31" sourceRef="exclusivegateway1" targetRef="endevent5">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${POWER_DELIVERY_CHECK_APPROVE==true}]]></conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="POWER_DELIVERY_CHECK_SERVICETASK" name="试车停电服务任务" activiti:class="com.dtelec.icmes.workflow.service.impl.TestServiceTask"></serviceTask>
+    <sequenceFlow id="flow36" sourceRef="POWER_DELIVERY_CHECK" targetRef="POWER_DELIVERY_CHECK_SERVICETASK"></sequenceFlow>
+    <sequenceFlow id="flow37" sourceRef="POWER_DELIVERY_CHECK_SERVICETASK" targetRef="exclusivegateway1"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_POWER_DELIVERY_PROCESS">
+    <bpmndi:BPMNPlane bpmnElement="POWER_DELIVERY_PROCESS" id="BPMNPlane_POWER_DELIVERY_PROCESS">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="2.0" y="266.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="POWER_DELIVERY_SUBPROCESS" id="BPMNShape_POWER_DELIVERY_SUBPROCESS">
+        <omgdc:Bounds height="315.0" width="148.0" x="210.0" y="126.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent3" id="BPMNShape_startevent3">
+        <omgdc:Bounds height="35.0" width="35.0" x="270.0" y="168.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent2" id="BPMNShape_endevent2">
+        <omgdc:Bounds height="35.0" width="35.0" x="270.0" y="380.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="WIREMAN_POWER_DELIVERY" id="BPMNShape_WIREMAN_POWER_DELIVERY">
+        <omgdc:Bounds height="55.0" width="105.0" x="235.0" y="259.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="POWER_DELIVERY_CHECK" id="BPMNShape_POWER_DELIVERY_CHECK">
+        <omgdc:Bounds height="55.0" width="105.0" x="390.0" y="256.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="POWER_DELIVERY_REQ" id="BPMNShape_POWER_DELIVERY_REQ">
+        <omgdc:Bounds height="53.0" width="100.0" x="70.0" y="257.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="677.0" y="263.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="POWER_CUT_SUBPROCESS" id="BPMNShape_POWER_CUT_SUBPROCESS">
+        <omgdc:Bounds height="315.0" width="151.0" x="760.0" y="126.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent4" id="BPMNShape_startevent4">
+        <omgdc:Bounds height="35.0" width="35.0" x="820.0" y="160.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent4" id="BPMNShape_endevent4">
+        <omgdc:Bounds height="35.0" width="35.0" x="820.0" y="390.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="WIREMAN_POWER_CUT" id="BPMNShape_WIREMAN_POWER_CUT">
+        <omgdc:Bounds height="55.0" width="105.0" x="785.0" y="259.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent5" id="BPMNShape_endevent5">
+        <omgdc:Bounds height="35.0" width="35.0" x="970.0" y="266.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="POWER_DELIVERY_CHECK_SERVICETASK" id="BPMNShape_POWER_DELIVERY_CHECK_SERVICETASK">
+        <omgdc:Bounds height="55.0" width="105.0" x="530.0" y="256.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow32" id="BPMNEdge_flow32">
+        <omgdi:waypoint x="287.0" y="203.0"></omgdi:waypoint>
+        <omgdi:waypoint x="287.0" y="259.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow33" id="BPMNEdge_flow33">
+        <omgdi:waypoint x="287.0" y="314.0"></omgdi:waypoint>
+        <omgdi:waypoint x="287.0" y="380.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-CD8559CE-350E-4C04-82B1-705694BED1CC" id="BPMNEdge_sid-CD8559CE-350E-4C04-82B1-705694BED1CC">
+        <omgdi:waypoint x="37.0" y="283.0"></omgdi:waypoint>
+        <omgdi:waypoint x="70.0" y="283.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow24" id="BPMNEdge_flow24">
+        <omgdi:waypoint x="358.0" y="283.0"></omgdi:waypoint>
+        <omgdi:waypoint x="390.0" y="283.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow25" id="BPMNEdge_flow25">
+        <omgdi:waypoint x="170.0" y="283.0"></omgdi:waypoint>
+        <omgdi:waypoint x="210.0" y="283.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow34" id="BPMNEdge_flow34">
+        <omgdi:waypoint x="837.0" y="195.0"></omgdi:waypoint>
+        <omgdi:waypoint x="837.0" y="259.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow35" id="BPMNEdge_flow35">
+        <omgdi:waypoint x="837.0" y="314.0"></omgdi:waypoint>
+        <omgdi:waypoint x="837.0" y="390.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow28" id="BPMNEdge_flow28">
+        <omgdi:waypoint x="717.0" y="283.0"></omgdi:waypoint>
+        <omgdi:waypoint x="760.0" y="283.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow30" id="BPMNEdge_flow30">
+        <omgdi:waypoint x="911.0" y="283.0"></omgdi:waypoint>
+        <omgdi:waypoint x="970.0" y="283.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow31" id="BPMNEdge_flow31">
+        <omgdi:waypoint x="697.0" y="263.0"></omgdi:waypoint>
+        <omgdi:waypoint x="696.0" y="73.0"></omgdi:waypoint>
+        <omgdi:waypoint x="987.0" y="73.0"></omgdi:waypoint>
+        <omgdi:waypoint x="987.0" y="266.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow36" id="BPMNEdge_flow36">
+        <omgdi:waypoint x="495.0" y="283.0"></omgdi:waypoint>
+        <omgdi:waypoint x="530.0" y="283.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow37" id="BPMNEdge_flow37">
+        <omgdi:waypoint x="635.0" y="283.0"></omgdi:waypoint>
+        <omgdi:waypoint x="677.0" y="283.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

@@ -122,6 +122,14 @@ public interface IUserDao {
 	void deleteAccountRoleAss(@Param("employeeId")String employeeId, @Param("roleIds")List<String> roleIds);
 	
 	/**
+	 * 根据组织机构id删除账号角色
+	 * @param employeeId
+	 * @param organizationId
+	 * @param roleIds
+	 */
+	void deleteAccountRoleAssByOrganizationId(@Param("employeeId")String employeeId,@Param("organizationId")String organizationId, @Param("roleIds")List<String> roleIds);
+	
+	/**
 	 * 修改密码
 	 * @param employeeId
 	 * @param password

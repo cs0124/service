@@ -2,9 +2,6 @@ package com.dtelec.icmes.information.repository.entity;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.Length;
 
 /**
  * 系统字典 类型entity
@@ -13,36 +10,21 @@ import org.hibernate.validator.constraints.Length;
  */
 public class DictTypeEntity {
 
-	@NotNull
-	@Length( max = 30)
 	private String code;
 
-	@NotNull
-	@Length( max = 200)
 	private String name;
 	
-	@NotNull
-	@Length( max = 1)
 	private String isBuiltIn;
 	
-	@NotNull
-	@Length( max = 36)
 	private String versionTag;
 	
-	@NotNull
 	private Date createTime;
 	
-	@NotNull
-	@Length( max = 15)
 	private Integer createUserId;
 	
-	@NotNull
 	private Date LastUpdateTime;
 	
-	@NotNull
-	@Length( max = 15)
 	private Integer LastUpdateUserId;
-	
 	
 	
 	public String getCode() {

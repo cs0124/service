@@ -15,6 +15,7 @@ import com.dtelec.icmes.information.controller.vo.ResSpecTypeVO;
 import com.dtelec.icmes.information.service.model.SpecDataCollection;
 import com.dtelec.icmes.information.service.model.SpecDataModel;
 import com.dtelec.icmes.information.service.query.AllSpecDataQuery;
+import com.dtelec.icmes.information.service.query.DeviceCategorySpecDataQuery;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -91,7 +92,7 @@ public class SpecDataController {
 	}
 		
 	
-	@ApiOperation(value="根据设备类型获取规格类型和数据模版-作者：", notes="根据url的deviceCategoryId来获取规格类型和数据模版")
+	@ApiOperation(value="根据设备类型获取规格类型和数据模版-作者：徐宏亮", notes="根据url的deviceCategoryId来获取规格类型和数据模版")
 	@ApiResponses({ 
 		@ApiResponse(code = 200, message = "成功"), 
 		@ApiResponse(code = 401, message = "验证失败"), 
@@ -103,7 +104,10 @@ public class SpecDataController {
 	})
 	@RequestMapping(path = "/deviceCategory/{id}", method = RequestMethod.GET)
 	public List<SpecDataModel> getSpecDataByDeviceCategory(@PathVariable @ApiParam(name = "id", value = "设备类型标示") int id) throws Exception {
-		return null;
+		DeviceCategorySpecDataQuery query = new DeviceCategorySpecDataQuery(id);
+		SpecDataCollection coll = query.queryAndWait();
+		
+		return (coll == null) ? null : coll.getItems();
 	}
 	
 }
